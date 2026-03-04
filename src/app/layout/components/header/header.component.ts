@@ -1,6 +1,7 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, inject } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -52,156 +53,18 @@ import { filter } from 'rxjs/operators';
       </nav>
     </header>
   `,
-  styles: [`
-    .header {
-      position: fixed;
-      top: 1.5rem;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      transition: all var(--transition-normal);
-      padding: 0 1.5rem;
-    }
-
-    .header.scrolled {
-      top: 0.5rem;
-    }
-
-    .nav-container {
-      max-width: var(--container-max-width);
-      margin: 0 auto;
-      padding: 0.6rem 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-      border-radius: var(--border-radius-full);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-    }
-
-    .logo-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    .logo-circle {
-      width: 36px;
-      height: 36px;
-      background: var(--color-primary);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.9rem;
-      box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
-    }
-
-    .brand-text {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 1.4rem;
-      letter-spacing: -0.03em;
-      color: var(--color-text);
-      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-menu {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
-    }
-
-    .nav-link {
-      color: var(--color-text-secondary);
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: var(--border-radius-full);
-      transition: color var(--transition-fast);
-      font-weight: 600;
-      font-size: var(--font-size-sm);
-      position: relative;
-      z-index: 1;
-    }
-
-    .nav-link:hover {
-      color: var(--color-primary);
-    }
-
-    .nav-link.active {
-      color: var(--color-primary);
-    }
-
-    .nav-indicator {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      background: rgba(var(--color-primary-rgb), 0.1);
-      border-radius: var(--border-radius-full);
-      transition: all var(--transition-normal);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .theme-toggle {
-      background: rgba(var(--color-primary-rgb), 0.05);
-      border: 1px solid var(--color-border);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all var(--transition-fast);
-    }
-
-    .theme-toggle:hover {
-      transform: rotate(15deg) scale(1.1);
-      background: rgba(var(--color-primary-rgb), 0.1);
-    }
-
-    .login-btn {
-      padding: 0.6rem 1.4rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 0.75rem;
-    }
-
-    @media (max-width: 1024px) {
-      .nav-menu {
-        display: none;
-      }
-    }
-  `]
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService);
+
   currentRoute = '';
   isDarkTheme = false;
   headerClass = '';
   isScrolled = false;
   indicatorTransform = 'scaleX(0)';
   indicatorOpacity = '0';
-
-  constructor(private router: Router) { }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -215,7 +78,9 @@ export class HeaderComponent implements OnInit {
         this.currentRoute = event.urlAfterRedirects;
       });
 
-    this.isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+    this.themeService.currentTheme$.subscribe(theme => {
+      this.isDarkTheme = theme === 'dark';
+    });
   }
 
   isActive(route: string): boolean {
@@ -223,16 +88,11 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleTheme(): void {
-    this.isDarkTheme = !this.isDarkTheme;
-    document.documentElement.setAttribute('data-theme', this.isDarkTheme ? 'dark' : 'light');
-    localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
+    this.themeService.toggleTheme();
   }
 
   setHoverPos(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const parentRect = target.parentElement?.getBoundingClientRect() || { left: 0 };
-
+    const target = event.currentTarget as HTMLElement;
     this.indicatorTransform = `translateX(${target.offsetLeft}px) scaleX(1)`;
     const indicator = document.querySelector('.nav-indicator') as HTMLElement;
     if (indicator) {

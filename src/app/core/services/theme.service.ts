@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
   private readonly THEME_KEY = 'theme';
+  private readonly themeSubject = new BehaviorSubject<'light' | 'dark'>('light');
+
+  /** Observable para ouvir mudanças de tema em qualquer lugar da app */
+  readonly currentTheme$ = this.themeSubject.asObservable();
 
   constructor() { }
 
@@ -17,7 +22,8 @@ export class ThemeService {
 
     // Listen for system theme changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!savedTheme) {
+      // Só muda automaticamente se o usuário não tiver uma preferência salva
+      if (!localStorage.getItem(this.THEME_KEY)) {
         this.setTheme(e.matches ? 'dark' : 'light');
       }
     });
@@ -26,15 +32,15 @@ export class ThemeService {
   setTheme(theme: 'light' | 'dark'): void {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(this.THEME_KEY, theme);
+    this.themeSubject.next(theme);
   }
 
   getCurrentTheme(): 'light' | 'dark' {
-    return document.documentElement.getAttribute('data-theme') as 'light' | 'dark' || 'light';
+    return this.themeSubject.value;
   }
 
   toggleTheme(): void {
-    const currentTheme = this.getCurrentTheme();
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    const newTheme = this.getCurrentTheme() === 'light' ? 'dark' : 'light';
     this.setTheme(newTheme);
   }
 }
