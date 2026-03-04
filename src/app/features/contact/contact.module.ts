@@ -1,5 +1,7 @@
 import { NgModule, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { RouterModule, Routes } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
@@ -81,8 +83,12 @@ import { Component } from '@angular/core';
                   <textarea id="message" formControlName="message" rows="6" placeholder="Descreva sua solicitação ou dúvida detalhadamente..."></textarea>
                 </div>
 
-                <button type="submit" [disabled]="form.invalid || submitted" class="btn btn-primary submit-btn">
-                  <span *ngIf="!submitted">Enviar Mensagem</span>
+                <div *ngIf="errorMessage" class="error-message" style="color: #ff6b6b; margin-bottom: 1rem; font-size: 0.9rem;">
+                  {{ errorMessage }}
+                </div>
+                <button type="submit" [disabled]="form.invalid || submitted || isSubmitting" class="btn btn-primary submit-btn">
+                  <span *ngIf="!submitted && !isSubmitting">Enviar Mensagem</span>
+                  <span *ngIf="isSubmitting">Enviando...</span>
                   <span *ngIf="submitted">✅ Mensagem Enviada com Sucesso</span>
                 </button>
               </form>
@@ -221,6 +227,7 @@ import { Component } from '@angular/core';
 })
 export class ContactComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
 
   form = this.fb.group({
     name: ['', Validators.required],
@@ -230,12 +237,32 @@ export class ContactComponent {
   });
 
   submitted = false;
+  isSubmitting = false;
+  errorMessage = '';
 
   submit() {
     if (this.form.valid) {
-      this.submitted = true;
-      console.log('Mensagem enviada:', this.form.value);
-      // Aqui integraria com um serviço de e-mail
+      this.isSubmitting = true;
+      this.errorMessage = '';
+
+      this.http.post(`${environment.apiUrl}/api/contact`, this.form.value)
+        .subscribe({
+          next: () => {
+            this.submitted = true;
+            this.isSubmitting = false;
+            this.form.reset();
+
+            // Reset state after 5 seconds so they can send another message if they want
+            setTimeout(() => {
+              this.submitted = false;
+            }, 5000);
+          },
+          error: (err) => {
+            console.error('Erro ao enviar mensagem', err);
+            this.errorMessage = 'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.';
+            this.isSubmitting = false;
+          }
+        });
     }
   }
 }

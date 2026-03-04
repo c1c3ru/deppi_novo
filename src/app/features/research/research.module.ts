@@ -4,101 +4,112 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { Component } from '@angular/core';
 
-const THEME_STYLES = `
-  .page-container { min-height: 100vh; padding-top: 120px; }
-  .page-hero { 
-    text-align: center; 
-    padding: 6rem 1.5rem 4rem; 
-    background: linear-gradient(135deg, var(--color-primary-light), #fff); 
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-decoration {
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .page-icon { font-size: 5rem; margin-bottom: 2rem; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-  .page-title { 
-    font-size: clamp(2rem, 5vw, 3.5rem); 
-    color: var(--color-text); 
-    margin: 0 0 1.5rem; 
-    font-family: var(--font-display);
-    position: relative;
-  }
-  .page-subtitle { 
-    font-size: 1.25rem; 
-    color: var(--color-text-secondary); 
-    max-width: 700px; 
-    margin: 0 auto; 
-    line-height: 1.6;
-  }
-  .content-area { max-width: var(--container-max-width); margin: 6rem auto; padding: 0 1.5rem; }
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
-  .info-card { 
-    padding: 0;
-    overflow: hidden;
-  }
-  .card-banner { width: 100%; height: 200px; object-fit: cover; }
-  .card-top { font-size: 4rem; padding: 3rem 2rem 1rem; }
-  .card-body { padding: 0 2.5rem 3rem; }
-  .card-body h2 { 
-    font-size: 1.6rem; 
-    font-weight: 700; 
-    color: var(--color-text); 
-    margin: 0 0 1.2rem; 
-    font-family: var(--font-display);
-  }
-  .card-body p { color: var(--color-text-secondary); line-height: 1.7; margin: 0; font-size: 1rem; }
-`;
-
 @Component({
   selector: 'app-research',
   template: `
-    <main class="page-container ifce-bg-accent">
-      <section class="page-hero reveal-up">
-        <div class="hero-decoration"></div>
-        <div class="page-icon">🔬</div>
-        <h1 class="page-title">Pesquisa Científica</h1>
-        <p class="page-subtitle">
-          O pilar fundamental da produção de conhecimento. No IFCE Maracanaú, fomentamos soluções tecnológicas reais para os desafios do amanhã.
-        </p>
-      </section>
-      
-      <div class="content-area">
-        <div class="card-grid">
-          <div class="info-card surface">
-            <div class="card-top">📊</div>
-            <div class="card-body">
-              <h2>Projetos em Andamento</h2>
-              <p>O DEPPI coordena projetos de pesquisa aplicada em parceria com empresas e instituições do Ceará e do Brasil, focando em soluções de alto impacto.</p>
-            </div>
-          </div>
-          
-          <div class="info-card surface">
-            <div class="card-top">🧬</div>
-            <div class="card-body">
-              <h2>Grupos de Pesquisa</h2>
-              <p>Nossos grupos são certificados pelo CNPq e atuam em áreas críticas como Inteligência Artificial, Energias Renováveis e Sustentabilidade.</p>
-            </div>
-          </div>
-          
-          <div class="info-card surface">
-            <div class="card-top">✍️</div>
-            <div class="card-body">
-              <h2>Produção Intelectual</h2>
-              <p>Acesse publicações, artigos e patentes produzidos por nosso corpo docente e discente, consolidando a excelência acadêmica do campus.</p>
-            </div>
-          </div>
+    <main class="page-container">
+      <section class="split-section">
+        <div class="content-col">
+          <span class="subtitle">IDEIAS DE INOVAÇÃO</span>
+          <h1 class="title">Pesquisa</h1>
+          <p class="description">
+            A pesquisa institucional é um dos pilares que suportam a evolução de nossa comunidade (docentes, discentes, técnicos administrativos e toda a sociedade). <span class="highlight">A PRPI existe para fomentar e direcionar as ações de pesquisa para que haja harmonia nessa evolução.</span> Como Instituto de Tecnologia, o IFCE se destaca na forte aplicação da pesquisa acadêmica desenvolvida em seus laboratórios. Neste contexto, ações que objetivam a transferência de produtos, protótipos e/ou processos para o mercado têm sido alvo de diversas iniciativas internas bem como na busca de fomento externo.
+          </p>
         </div>
-      </div>
+        <div class="image-col">
+          <img src="assets/introduction/laboratory.jpg" alt="Pesquisa - Laboratório">
+        </div>
+      </section>
+
+      <section class="split-section reverse-mobile">
+        <div class="image-col">
+          <img src="assets/pesquisa/managers.jpg" alt="Gestor de Pesquisa">
+        </div>
+        <div class="content-col">
+          <span class="subtitle">IDEIAS DE INOVAÇÃO</span>
+          <h1 class="title">Gestor de pesquisa</h1>
+          <p class="description">
+            Conjuntamente com a equipe da PRPI, os gestores de pesquisa, pós-graduação e inovação são os servidores designados em seus campi para coordenar as atividades de pesquisa, pós-graduação e inovação. Dependendo da estrutura organizacional de cada campus eles podem ser representados por chefes de departamentos de pesquisa, diretores de pesquisa, coordenadores de pesquisa ou funções equivalentes. <span class="highlight">Cada gestor dos campi do IFCE tem como papel fundamental fomentar e incentivar as ações e oportunidades na área de pesquisa, pós-graduação e inovação no âmbito interno e externo do IFCE além de relacionar-se com as políticas e informações disponibilizadas pela PRPI.</span>
+          </p>
+        </div>
+      </section>
     </main>
   `,
-  styles: [THEME_STYLES]
+  styles: [`
+    .page-container {
+      min-height: 100vh;
+      padding-top: 120px;
+      padding-bottom: 60px;
+      background-color: #ffffff;
+      font-family: var(--font-display, 'Inter', sans-serif);
+      color: #333;
+    }
+    .split-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      align-items: center;
+    }
+    .subtitle {
+      color: #00d97e;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .subtitle::before {
+      content: '';
+      display: inline-block;
+      width: 30px;
+      height: 2px;
+      background-color: #00d97e;
+      margin-right: 15px;
+    }
+    .title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin: 0 0 1.5rem;
+      line-height: 1.1;
+    }
+    .description {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #4a4a4a;
+    }
+    .highlight {
+      background-color: #00e676;
+      color: #000;
+      font-weight: 600;
+      padding: 0 0.2rem;
+    }
+    .image-col img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .split-section {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .reverse-mobile .image-col {
+        order: 2;
+      }
+      .reverse-mobile .content-col {
+        order: 1;
+      }
+      .title { font-size: 2.5rem; }
+    }
+  `]
 })
 export class ResearchComponent { }
 

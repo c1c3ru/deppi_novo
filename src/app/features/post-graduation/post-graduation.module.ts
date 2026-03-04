@@ -4,98 +4,168 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { Component } from '@angular/core';
 
-const THEME_STYLES = `
-  .page-container { min-height: 100vh; padding-top: 120px; }
-  .page-hero { 
-    text-align: center; 
-    padding: 6rem 1.5rem 4rem; 
-    background: linear-gradient(135deg, var(--color-primary-light), #fff); 
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-decoration {
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .page-icon { font-size: 5rem; margin-bottom: 2rem; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-  .page-title { 
-    font-size: clamp(2rem, 5vw, 3.5rem); 
-    color: var(--color-text); 
-    margin: 0 0 1.5rem; 
-    font-family: var(--font-display);
-  }
-  .page-subtitle { 
-    font-size: 1.25rem; 
-    color: var(--color-text-secondary); 
-    max-width: 700px; 
-    margin: 0 auto; 
-    line-height: 1.6;
-  }
-  .content-area { max-width: var(--container-max-width); margin: 6rem auto; padding: 0 1.5rem; }
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
-  .info-card { padding: 0; overflow: hidden; }
-  .card-top { font-size: 4rem; padding: 3rem 2rem 1rem; }
-  .card-body { padding: 0 2.5rem 3rem; }
-  .card-body h2 { 
-    font-size: 1.6rem; 
-    font-weight: 700; 
-    color: var(--color-text); 
-    margin: 0 0 1.2rem; 
-    font-family: var(--font-display);
-  }
-  .card-body p { color: var(--color-text-secondary); line-height: 1.7; margin: 0; font-size: 1rem; }
-`;
-
 @Component({
   selector: 'app-post-graduation',
   template: `
-    <main class="page-container ifce-bg-accent">
-      <section class="page-hero reveal-up">
-        <div class="hero-decoration"></div>
-        <div class="page-icon">🎓</div>
-        <h1 class="page-title">Pós-Graduação</h1>
-        <p class="page-subtitle">
-          Evolução constante e excelência acadêmica continuada. Oferecemos especializações e mestrados com foco no desenvolvimento técnico e profissional regional.
-        </p>
-      </section>
-      
-      <div class="content-area">
-        <div class="card-grid">
-          <div class="info-card surface">
-            <div class="card-top">📚</div>
-            <div class="card-body">
-              <h2>Lato Sensu</h2>
-              <p>Nossas especializações são desenhadas para atender às demandas diretas do mercado de Maracanaú, focando em Tecnologia, Gestão e Educação.</p>
-            </div>
-          </div>
-          
-          <div class="info-card surface">
-            <div class="card-top">🏛️</div>
-            <div class="card-body">
-              <h2>Stricto Sensu</h2>
-              <p>Programas de mestrado profissionais em parceria com IFs nacionais e redes de pesquisa de excelência científica.</p>
-            </div>
-          </div>
-          
-          <div class="info-card surface">
-            <div class="card-top">📅</div>
-            <div class="card-body">
-              <h2>Editais e Seleções</h2>
-              <p>Acesse as informações sobre os processos seletivos públicos e cronogramas acadêmicos de nossos cursos em andamento.</p>
-            </div>
-          </div>
+    <main class="page-container">
+      <section class="split-section">
+        <div class="content-col">
+          <span class="subtitle">SEMPRE EM CRESCIMENTO</span>
+          <h1 class="title">Pós-Graduação</h1>
+          <p class="description">
+            Os cursos de pós-graduação (lato sensu) são destinados a todos que concluíram o ensino superior e desejam <span class="highlight">obter atualização acadêmica ou profissional e o consequente progresso das competências obtidas na graduação.</span>
+          </p>
         </div>
-      </div>
+        <div class="image-col">
+          <img src="assets/pos-graduacao/colecao-grau.jpg" alt="Colação de Grau">
+        </div>
+      </section>
+
+      <section class="tabs-section">
+        <div class="tabs-nav">
+          <button 
+            [class.active]="activeTab === 'acadêmico'" 
+            (click)="activeTab = 'acadêmico'">
+            Mestrado Acadêmico
+          </button>
+          <button 
+            [class.active]="activeTab === 'profissional'" 
+            (click)="activeTab = 'profissional'">
+            Mestrado Profissional
+          </button>
+          <button 
+            [class.active]="activeTab === 'doutorado'" 
+            (click)="activeTab = 'doutorado'">
+            Doutorado
+          </button>
+        </div>
+
+        <div class="tab-content" *ngIf="activeTab === 'acadêmico'">
+          <p>O mestrado acadêmico é destinado a todos que tenham concluído o ensino superior e desejam obter titulação com grau de mestre, por meio de estudos voltados para o ensino e pesquisa direcionados para a carreira acadêmica.</p>
+        </div>
+        <div class="tab-content" *ngIf="activeTab === 'profissional'">
+          <p>O mestrado profissional é voltado para a capacitação de profissionais nas diversas áreas do conhecimento, mediante estudo de técnicas e processos com foco na aplicação prática no mercado de trabalho ou no desenvolvimento de inovações.</p>
+        </div>
+        <div class="tab-content" *ngIf="activeTab === 'doutorado'">
+          <p>O doutorado visa a formação de pesquisadores de alto nível, com capacidade para realizar estudos originais e independentes que contribuam para o avanço do conhecimento em sua área de atuação.</p>
+        </div>
+      </section>
     </main>
   `,
-  styles: [THEME_STYLES]
+  styles: [`
+    .page-container {
+      min-height: 100vh;
+      padding-top: 120px;
+      padding-bottom: 60px;
+      background-color: #ffffff;
+      font-family: var(--font-display, 'Inter', sans-serif);
+      color: #333;
+    }
+    .split-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+      align-items: center;
+    }
+    .subtitle {
+      color: #00d97e;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .subtitle::before {
+      content: '';
+      display: inline-block;
+      width: 30px;
+      height: 2px;
+      background-color: #00d97e;
+      margin-right: 15px;
+    }
+    .title {
+      font-size: 4rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin: 0 0 1.5rem;
+      line-height: 1.1;
+    }
+    .description {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #4a4a4a;
+    }
+    .highlight {
+      background-color: #00e676;
+      color: #000;
+      font-weight: 600;
+      padding: 0 0.2rem;
+    }
+    .image-col img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .tabs-section {
+      max-width: 900px;
+      margin: 4rem auto 0;
+      padding: 0 2rem;
+    }
+    .tabs-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border: 1px solid #ccc;
+      border-radius: 50px;
+      padding: 0.5rem;
+    }
+    .tabs-nav button {
+      background: transparent;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .tabs-nav button.active {
+      background-color: #00A650;
+      color: #fff;
+    }
+    .tab-content {
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      padding: 2.5rem 3rem;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #4a4a4a;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .split-section {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .title { font-size: 2.5rem; }
+      .tabs-nav { flex-direction: column; border-radius: 20px; }
+      .tabs-nav button { border-radius: 10px; }
+    }
+  `]
 })
-export class PostGraduationComponent { }
+export class PostGraduationComponent {
+  activeTab = 'acadêmico';
+}
 
 const routes: Routes = [{ path: '', component: PostGraduationComponent }];
 
@@ -104,3 +174,4 @@ const routes: Routes = [{ path: '', component: PostGraduationComponent }];
   imports: [CommonModule, RouterModule.forChild(routes), SharedModule]
 })
 export class PostGraduationModule { }
+

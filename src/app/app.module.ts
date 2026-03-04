@@ -130,6 +130,10 @@ import { AuthGuard } from './core/guards/auth.guard';
         loadChildren: () => import('./features/contact/contact.module').then(m => m.ContactModule)
       },
       {
+        path: 'privacy',
+        loadChildren: () => import('./features/privacy/privacy.module').then(m => m.PrivacyModule)
+      },
+      {
         path: '**',
         redirectTo: 'home'
       }
