@@ -29,7 +29,6 @@ const routes: Routes = [
   {
     path: '',
     component: BoletinsComponent,
-    canActivate: [BoletinsGuard],
     children: [
       {
         path: '',
@@ -79,4 +78,4 @@ const routes: Routes = [
     BoletinsGuard
   ]
 })
-export class BoletinsModule {}
+export class BoletinsModule { }

@@ -123,8 +123,7 @@ import { AuthGuard } from './core/guards/auth.guard';
       },
       {
         path: 'boletins',
-        loadChildren: () => import('./features/boletins/boletins.module').then(m => m.BoletinsModule),
-        canActivate: [AuthGuard]
+        loadChildren: () => import('./features/boletins/boletins.module').then(m => m.BoletinsModule)
       },
       {
         path: 'contact',
