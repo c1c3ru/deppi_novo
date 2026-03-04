@@ -1,0 +1,186 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "warning": "Aviso",
+    "info": "Informação",
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Salvar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "add": "Adicionar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "previous": "Anterior",
+    "send": "Enviar",
+    "login": "Entrar",
+    "logout": "Sair",
+    "home": "Início",
+    "contact": "Contato",
+    "about": "Sobre",
+    "menu": "Menu",
+    "language": "Idioma",
+    "theme": "Tema"
+  },
+  "navigation": {
+    "home": "Início",
+    "research": "Pesquisa",
+    "extension": "Extensão",
+    "innovation": "Inovação",
+    "postGraduation": "Pós-Graduação",
+    "boletins": "Boletins",
+    "contact": "Contato"
+  },
+  "home": {
+    "title": "DEPPI - IFCE Campus Maracanaú",
+    "subtitle": "Departamento de Extensão, Pesquisa, Pós-Graduação e Inovação",
+    "whoWeAre": {
+      "title": "Quem somos?",
+      "description": "O Departamento de Extensão, Pesquisa, Pós-Graduação e Inovação (DEPPI) tem como objetivo fomentar a <span>pesquisa, extensão e as novas tecnologias, a busca da atualização sistemática de dados da Pesquisa e da Inovação Tecnológica</span>, divulgando-as por meio de periódicos e incentivando a ética na pesquisa do Instituto, bem como promover a interface do IFCE, com empresas e entidades, para implantação de cursos e atividades da extensão na área de atuação do IFCE."
+    },
+    "whatWeDo": {
+      "title": "O que fazemos?",
+      "description": "<span>Possibilitamos meios para captação de recursos externos para a pesquisa básica e aplicada, convocamos pesquisadores para elaboração conjunta de projetos institucionais, e mantemos atualizados os dados junto a órgãos de fomento.</span> Promovemos a coleta sistemática de dados para avaliação da pesquisa científica e incentivamos parcerias com a sociedade civil para o desenvolvimento de pesquisa e extensão. Supervisionamos ações do NEABI, coordenamos cursos de Extensão e a Semana de Integração Científica, além de disseminar a cultura empreendedora através de empresas júnior e grupos de inovação."
+    },
+    "ourActions": {
+      "title": "Nossas Ações",
+      "research": "Pesquisa",
+      "extension": "Extensão", 
+      "innovation": "Inovação",
+      "postGraduation": "Pós-Graduação"
+    }
+  },
+  "research": {
+    "title": "Pesquisa",
+    "subtitle": "Ideais de Inovação",
+    "description": "A pesquisa institucional é um dos pilares que suportam a evolução de nossa comunidade (docentes, discentes, técnicos administrativos e toda a sociedade). <span>A PRPI existe para fomentar e direcionar as ações de pesquisa para que haja harmonia nessa evolução. Como Instituto de Tecnologia, o IFCE se destaca na forte aplicação da pesquisa acadêmica desenvolvida em seus laboratórios.</span> Neste contexto, ações que objetivam a transferência de produtos, protótipos e/ou processos para o mercado tem sido alvo de diversas iniciativas internas bem como na busca de fomento externo.",
+    "researchManager": {
+      "title": "Gestor de Pesquisa",
+      "subtitle": "Ideais de Inovação",
+      "description": "Conjuntamente com a equipe da PRPI, os gestores de pesquisa, pós graduação e inovação são os servidores designados em seus campi para coordenar as atividades de pesquisa, pós-graduação e inovação. Dependendo da estrutura organizacional de cada campus eles podem ser representados por chefes de departamentos de pesquisa, diretores de pesquisa, coordenadores de pesquisa ou funções equivalentes. <span>Cada gestor dos campi do IFCE tem como papel fundamental fomentar e incentivas as ações e oportunidades na área de pesquisa, pós-graduação e inovação no âmbito interno do campus, além de servir como ponto de contato e apoio para pesquisadores e estudantes.</span>"
+    }
+  },
+  "extension": {
+    "title": "Extensão",
+    "subtitle": "Conectando Comunidade",
+    "description": "A extensão no IFCE Campus Maracanaú representa a ponte entre a instituição e a sociedade, promovendo ações que levam conhecimento e tecnologia à comunidade e trazem as demandas sociais para dentro do campus."
+  },
+  "innovation": {
+    "title": "Inovação",
+    "subtitle": "Transformando Ideias",
+    "description": "A inovação é o motor que impulsiona o desenvolvimento de novas soluções tecnológicas e processos criativos, preparando nossos alunos e servidores para os desafios do mercado atual."
+  },
+  "postGraduation": {
+    "title": "Pós-Graduação",
+    "subtitle": "Excelência Acadêmica",
+    "description": "Os programas de pós-graduação do IFCE Campus Maracanaú oferecem formação avançada e qualificada, contribuindo para o desenvolvimento científico e tecnológico da região."
+  },
+  "boletins": {
+    "title": "Boletim DEPPI",
+    "subtitle": "IFCE Campus Maracanaú",
+    "description": "O boletim do departamento de Extensão, Pesquisa, Pós-Graduação e Inovação (Deppi) é um informativo criado para mostrar a dinâmica das atividades promovidas por docentes e técnicos-administrativos no âmbito da pesquisa, da pós-graduação, da inovação e da extensão no IFCE Campus de Maracanaú.",
+    "frequency": "A cada início de mês um boletim será postado com as ações referentes ao mês anterior. E, em alguns casos, ações que acontecem próximas as datas de publicação do boletim.",
+    "submission": "As solicitações de divulgação devem ser enviadas por meio de formulário eletrônico neste endereço:",
+    "guidelines": {
+      "title": "Orientações Gerais",
+      "requirements": "As notícias devem ter: Título, texto entre 5 e 10 linhas com alternativa de foto acompanhando ou não, exceto a notícia de abertura do boletim, que obrigatoriamente deve ter foto."
+    },
+    "access": {
+      "title": "Acesso Restrito",
+      "description": "Para acessar os boletins completos, é necessário fazer login com suas credenciais de servidor.",
+      "loginButton": "Fazer Login",
+      "registration": "Matrícula de Servidor",
+      "password": "Senha"
+    },
+    "current": {
+      "title": "Boletim de Deppi amplia divulgação de ações de pesquisa e extensão no campus",
+      "description": "A partir de agora as ações de pesquisa e extensão do campus de Maracanaú ganham mais um espaço de divulgação. Trata-se do boletim do Deppi. Este boletim foi pensado para trazer de forma mais rápida as movimentações de pesquisa, pós-graduação, inovação e extensão. Palestras, fases de desenvolvimento de pesquisas, publicação de artigos, cotidiano de ações de extensão e de experimentos.",
+      "accessButton": "Acesso o boletim completo neste link"
+    },
+    "archives": {
+      "title": "Boletins Anteriores",
+      "allBoletins": "Todos os Boletins"
+    }
+  },
+  "login": {
+    "title": "Acesso Restrito",
+    "subtitle": "Boletins DEPPI",
+    "description": "Área exclusiva para servidores do IFCE Campus Maracanaú",
+    "registration": {
+      "label": "Matrícula",
+      "placeholder": "Digite sua matrícula",
+      "required": "Matrícula é obrigatória"
+    },
+    "password": {
+      "label": "Senha",
+      "placeholder": "Digite sua senha",
+      "required": "Senha é obrigatória"
+    },
+    "submitButton": "Entrar",
+    "forgotPassword": "Esqueci minha senha",
+    "error": {
+      "invalid": "Matrícula ou senha inválidos",
+      "network": "Erro de conexão. Tente novamente.",
+      "unauthorized": "Você não tem permissão para acessar esta área."
+    },
+    "success": "Login realizado com sucesso!"
+  },
+  "contact": {
+    "title": "Contato",
+    "subtitle": "Entre em Conosco",
+    "description": "Envie sua mensagem ou dúvida para o DEPPI",
+    "form": {
+      "name": "Nome",
+      "email": "E-mail",
+      "subject": "Assunto",
+      "message": "Mensagem",
+      "send": "Enviar Mensagem"
+    },
+    "info": {
+      "address": "Endereço",
+      "phone": "Telefone",
+      "email": "E-mail",
+      "hours": "Horário de Atendimento"
+    }
+  },
+  "footer": {
+    "description": "Departamento de Extensão, Pesquisa, Pós-Graduação e Inovação",
+    "address": "IFCE Campus Maracanaú - Av. Dr. Sá, 2481 - Maracanaú, CE",
+    "contact": "Telefone: (85) 3307-3700",
+    "social": "Redes Sociais",
+    "copyright": "© 2024 DEPPI IFCE Maracanaú. Todos os direitos reservados.",
+    "developedBy": "Desenvolvido por"
+  },
+  "accessibility": {
+    "skipToContent": "Pular para o conteúdo principal",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "darkMode": "Modo escuro",
+    "lightMode": "Modo claro",
+    "increaseFont": "Aumentar fonte",
+    "decreaseFont": "Diminuir fonte",
+    "highContrast": "Alto contraste"
+  },
+  "errors": {
+    "404": {
+      "title": "Página não encontrada",
+      "description": "A página que você está procurando não existe ou foi movida.",
+      "button": "Voltar para a página inicial"
+    },
+    "500": {
+      "title": "Erro interno do servidor",
+      "description": "Ocorreu um erro inesperado. Tente novamente mais tarde.",
+      "button": "Recarregar página"
+    },
+    "network": {
+      "title": "Erro de conexão",
+      "description": "Verifique sua conexão com a internet e tente novamente.",
+      "button": "Tentar novamente"
+    }
+  }
+}
