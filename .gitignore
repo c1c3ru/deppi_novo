@@ -41,3 +41,11 @@ styles-*.css
 vendor-*.js
 *.js.map
 *.css.map
+# AI Skills and Agents
+.agent/
+.agents/
+.gemini/
+.cursor/
+backend_log.txt
+build_log.txt
+.worktrees/
