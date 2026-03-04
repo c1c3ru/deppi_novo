@@ -29,7 +29,7 @@ export class AuthService {
   public readonly isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   // URL da API
-  private readonly apiUrl = environment.apiUrl;
+  private readonly apiUrl = `${environment.apiUrl}/api`;
   private readonly tokenKey = 'auth_token';
   private readonly userKey = 'current_user';
   private readonly refreshKey = 'refresh_token';
@@ -81,7 +81,7 @@ export class AuthService {
    */
   logout(redirectUrl: string = '/home'): void {
     const refreshToken = this.storageService.getItem(this.refreshKey);
-    
+
     if (refreshToken) {
       this.http.post(`${this.apiUrl}/auth/logout`, { refreshToken }).subscribe({
         next: () => this.clearAuthData(),
@@ -116,7 +116,7 @@ export class AuthService {
    */
   refreshToken(): Observable<LoginResponse> {
     const refreshToken = this.storageService.getItem(this.refreshKey);
-    
+
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token available'));
     }
@@ -251,10 +251,10 @@ export class AuthService {
    */
   private scheduleTokenRefresh(): void {
     this.cancelTokenRefresh();
-    
+
     // Agenda refresh 5 minutos antes da expiração
     const refreshTime = 4 * 60 * 1000; // 4 minutos
-    
+
     const timerId = window.setTimeout(() => {
       this.refreshToken().subscribe({
         error: () => {
