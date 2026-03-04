@@ -2,100 +2,293 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BoletinsService } from '../../services/boletins.service';
 import { Boletim } from '../../../../shared/models';
+import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-boletim-detail',
-    template: `
-    <div class="boletim-detail">
+  selector: 'app-boletim-detail',
+  template: `
+    <div class="boletim-detail-page animate-in">
       <div class="loading-state" *ngIf="loading">
         <div class="spinner"></div>
-        <p>Carregando boletim...</p>
+        <p class="font-display">Recuperando informativo...</p>
       </div>
 
-      <div class="error-state" *ngIf="error">
-        <p>{{ error }}</p>
-        <button (click)="goBack()" class="back-btn">← Voltar</button>
+      <div class="error-state surface" *ngIf="error">
+        <div class="error-content">
+          <span class="error-icon">📂</span>
+          <h3>Boletim não encontrado</h3>
+          <p>{{ error }}</p>
+          <button (click)="goBack()" class="btn btn-primary">Voltar ao Arquivo</button>
+        </div>
       </div>
 
-      <div *ngIf="boletim && !loading">
-        <button (click)="goBack()" class="back-link">← Voltar à lista</button>
+      <div class="detail-container" *ngIf="boletim && !loading">
+        <nav class="detail-nav">
+          <button (click)="goBack()" class="btn-back">
+            <span>&larr;</span> Voltar para a lista
+          </button>
+        </nav>
 
-        <div class="detail-header">
-          <div class="detail-badge">📄 Boletim</div>
+        <header class="detail-header surface">
+          <div class="header-meta">
+            <span class="detail-badge" [class.featured]="boletim.isFeatured">
+              {{ boletim.isFeatured ? '⭐ Destaque' : '📄 Boletim DEPPI' }}
+            </span>
+            <span class="detail-date">{{ boletim.publicationDate | date:'fullDate' }}</span>
+          </div>
+          
           <h1 class="detail-title">{{ boletim.title }}</h1>
           <p class="detail-desc">{{ boletim.description }}</p>
-          <div class="detail-meta">
-            <span>📅 {{ boletim.publicationDate | date:'dd/MM/yyyy' }}</span>
-            <span *ngIf="boletim.viewCount">👁 {{ boletim.viewCount }} visualizações</span>
+          
+          <div class="header-actions">
+            <a *ngIf="boletim.fileUrl" [href]="boletim.fileUrl" target="_blank" class="btn btn-primary">
+               Baixar Edição Completa (PDF)
+            </a>
+            <div class="view-count" *ngIf="boletim.viewCount">
+              <span class="icon">👁</span>
+              <span>{{ boletim.viewCount }} visualizações</span>
+            </div>
           </div>
-          <a *ngIf="boletim.fileUrl" [href]="boletim.fileUrl" target="_blank" class="download-btn">
-            📥 Baixar PDF
-          </a>
-        </div>
+        </header>
 
-        <div class="news-section" *ngIf="boletim.news?.length">
-          <h2 class="section-title">📰 Notícias do Boletim</h2>
+        <section class="news-section" *ngIf="boletim.news?.length">
+          <div class="section-header">
+            <h2 class="section-title">Conteúdo Destaque</h2>
+            <div class="section-divider"></div>
+          </div>
+          
           <div class="news-grid">
-            <div class="news-card" *ngFor="let n of boletim.news" [class.main]="n.isMain">
-              <img *ngIf="n.imageUrl" [src]="n.imageUrl" [alt]="n.title" class="news-img" onerror="this.style.display='none'">
+            <div class="news-card surface" *ngFor="let n of boletim.news" [class.main]="n.isMain">
+              <div class="news-visual" *ngIf="n.imageUrl">
+                <img [src]="n.imageUrl" [alt]="n.title" class="news-img" onerror="this.parentElement.style.display='none'">
+              </div>
               <div class="news-body">
-                <span class="news-badge" *ngIf="n.isMain">⭐ Principal</span>
-                <h3>{{ n.title }}</h3>
-                <p>{{ n.content }}</p>
+                <span class="news-type-badge" *ngIf="n.isMain">Destaque Principal</span>
+                <h3 class="news-title">{{ n.title }}</h3>
+                <p class="news-content">{{ n.content }}</p>
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   `,
-    styles: [`
-    .boletim-detail { max-width: 820px; }
-    .loading-state, .error-state { text-align: center; padding: 4rem; color: #6b7280; }
-    .spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #0066b3; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .back-link, .back-btn { background: none; border: none; color: #0066b3; font-size: 0.95rem; cursor: pointer; padding: 0 0 1.5rem; display: inline-block; font-weight: 600; }
-    .back-link:hover, .back-btn:hover { text-decoration: underline; }
-    .detail-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; background: #e0f2fe; color: #0066b3; margin-bottom: 1rem; font-weight: 600; }
-    .detail-title { font-size: 2rem; font-weight: 800; color: #1a1a2e; margin: 0 0 0.75rem; line-height: 1.25; }
-    .detail-desc { color: #6b7280; font-size: 1.05rem; line-height: 1.6; margin: 0 0 1.25rem; }
-    .detail-meta { display: flex; gap: 1.5rem; color: #9ca3af; font-size: 0.9rem; margin-bottom: 1.5rem; }
-    .download-btn { display: inline-block; padding: 0.75rem 1.5rem; background: #0066b3; color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background 0.2s; }
-    .download-btn:hover { background: #0052a3; }
-    .news-section { margin-top: 3rem; }
-    .section-title { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; margin: 0 0 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e5e7eb; }
-    .news-grid { display: grid; gap: 1.25rem; }
-    .news-card { background: white; border-radius: 1rem; overflow: hidden; border: 1px solid #e5e7eb; display: flex; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .news-card.main { border-color: #0066b3; }
-    .news-img { width: 200px; object-fit: cover; flex-shrink: 0; }
-    .news-body { padding: 1.5rem; }
-    .news-badge { display: inline-block; padding: 0.2rem 0.6rem; background: #fef3c7; color: #d97706; border-radius: 99px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem; }
-    .news-body h3 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 0.75rem; }
-    .news-body p { color: #6b7280; line-height: 1.6; margin: 0; }
-    @media (max-width: 600px) { .news-card { flex-direction: column; } .news-img { width: 100%; height: 160px; } }
+  styles: [`
+    .boletim-detail-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding-bottom: 5rem;
+    }
+
+    .detail-nav {
+      margin-bottom: 2rem;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      transition: transform var(--transition-fast);
+    }
+
+    .btn-back:hover {
+      transform: translateX(-5px);
+    }
+
+    .detail-header {
+      padding: 4rem;
+      margin-bottom: 4rem;
+    }
+
+    .header-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .detail-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.4rem 1.2rem;
+      background: rgba(var(--color-primary-rgb), 0.1);
+      color: var(--color-primary);
+      border-radius: var(--border-radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .detail-badge.featured {
+      background: rgba(var(--color-accent-rgb), 0.15);
+      color: #b45309;
+    }
+
+    .detail-date {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      text-transform: capitalize;
+    }
+
+    .detail-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 1.5rem;
+      color: var(--color-text);
+      line-height: 1.1;
+    }
+
+    .detail-desc {
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin-bottom: 3rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .view-count {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+
+    .news-section {
+      margin-top: 4rem;
+    }
+
+    .section-header {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-divider {
+      width: 40px;
+      height: 4px;
+      background: var(--color-primary);
+      border-radius: var(--border-radius-full);
+    }
+
+    .news-grid {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .news-card {
+      padding: 0;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+    }
+
+    .news-card.main {
+      border: 2px solid rgba(var(--color-primary-rgb), 0.2);
+    }
+
+    .news-visual {
+      height: 100%;
+    }
+
+    .news-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .news-body {
+      padding: 2.5rem;
+    }
+
+    .news-type-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: 1rem;
+    }
+
+    .news-title {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+
+    .news-content {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      .detail-header {
+        padding: 2.5rem 1.5rem;
+      }
+      .news-card {
+        grid-template-columns: 1fr;
+      }
+      .news-visual {
+        height: 200px;
+      }
+      .header-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+      }
+    }
   `]
 })
 export class BoletimDetailComponent implements OnInit {
-    private readonly route = inject(ActivatedRoute);
-    private readonly router = inject(Router);
-    private readonly boletinsService = inject(BoletinsService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly boletinsService = inject(BoletinsService);
 
-    boletim: Boletim | null = null;
-    loading = false;
-    error = '';
+  boletim: Boletim | null = null;
+  loading = false;
+  error = '';
 
-    ngOnInit(): void {
-        const id = Number(this.route.snapshot.paramMap.get('id'));
-        if (id) { this.load(id); } else { this.error = 'ID inválido.'; }
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id) {
+      this.load(id);
+    } else {
+      this.error = 'Identificador de boletim inválido.';
     }
+  }
 
-    load(id: number): void {
-        this.loading = true;
-        this.boletinsService.getById(id).subscribe({
-            next: (b) => { this.boletim = b; this.loading = false; },
-            error: () => { this.error = 'Boletim não encontrado.'; this.loading = false; }
-        });
-    }
+  load(id: number): void {
+    this.loading = true;
+    this.boletinsService.getById(id).subscribe({
+      next: (b) => {
+        this.boletim = b;
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'O boletim solicitado não foi encontrado em nossa base de dados.';
+        this.loading = false;
+      }
+    });
+  }
 
-    goBack(): void { this.router.navigate(['/boletins']); }
+  goBack(): void {
+    this.router.navigate(['/boletins']);
+  }
 }

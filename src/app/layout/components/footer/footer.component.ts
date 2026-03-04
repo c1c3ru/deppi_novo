@@ -3,52 +3,73 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-footer',
   template: `
-    <footer class="footer">
+    <footer class="footer ifce-bg-accent">
       <div class="footer-container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <h3 class="footer-title">DEPPI</h3>
-            <p class="footer-description">
-              Departamento de Extensão, Pesquisa, Pós-Graduação e Inovação
-              <br>
-              IFCE Campus Maracanaú
+        <div class="footer-grid">
+          <div class="footer-brand-section">
+            <div class="brand-identity">
+              <span class="logo-text">DEPPI</span>
+              <span class="logo-divider"></span>
+              <span class="campus-text">MARACANAÚ</span>
+            </div>
+            <p class="brand-description">
+              Pilar de excelência em Extensão, Pesquisa, Pós-Graduação e Inovação do IFCE Campus Maracanaú. Transformando conhecimento em desenvolvimento regional.
             </p>
+            <div class="social-links">
+              <a href="#" class="social-btn" aria-label="Instagram">IG</a>
+              <a href="#" class="social-btn" aria-label="LinkedIn">LN</a>
+              <a href="#" class="social-btn" aria-label="YouTube">YT</a>
+            </div>
           </div>
 
-          <div class="footer-section">
-            <h4 class="footer-subtitle">Links Úteis</h4>
-            <ul class="footer-links">
+          <div class="footer-links-column">
+            <h4 class="column-title">Institucional</h4>
+            <ul class="link-list">
               <li><a routerLink="/home">Início</a></li>
               <li><a routerLink="/research">Pesquisa</a></li>
               <li><a routerLink="/extension">Extensão</a></li>
-              <li><a routerLink="/contact">Contato</a></li>
+              <li><a routerLink="/innovation">Inovação</a></li>
             </ul>
           </div>
 
-          <div class="footer-section">
-            <h4 class="footer-subtitle">Área Restrita</h4>
-            <ul class="footer-links">
-              <li><a routerLink="/boletins">Boletins</a></li>
-              <li><a href="#" onclick="return false;">Login</a></li>
+          <div class="footer-links-column">
+            <h4 class="column-title">Recursos</h4>
+            <ul class="link-list">
+              <li><a routerLink="/post-graduation">Pós-Graduação</a></li>
+              <li><a routerLink="/boletins">Boletins Informativos</a></li>
+              <li><a routerLink="/contact">Fale Conosco</a></li>
+              <li><a href="https://ifce.edu.br/maracanau" target="_blank">Portal IFCE</a></li>
             </ul>
           </div>
 
-          <div class="footer-section">
-            <h4 class="footer-subtitle">Contato</h4>
-            <div class="contact-info">
-              <p>📧 deppi&#64;ifce.edu.br</p>
-              <p>📞 (85) 1234-5678</p>
-              <p>📍 Av. XYZ, 123 - Maracanaú/CE</p>
+          <div class="footer-contact-column">
+            <h4 class="column-title">Contato Direto</h4>
+            <div class="contact-card glass">
+              <div class="contact-item">
+                <span class="icon">📧</span>
+                <span class="content">deppi&#64;ifce.edu.br</span>
+              </div>
+              <div class="contact-item">
+                <span class="icon">📞</span>
+                <span class="content">(85) 3401.2233</span>
+              </div>
+              <div class="contact-item">
+                <span class="icon">📍</span>
+                <span class="content">Av. Parque Central, S/N - Distrito Industrial I, Maracanaú - CE</span>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="footer-bottom">
-          <div class="footer-copyright">
-            <p>&copy; 2024 DEPPI - IFCE Maracanaú. Todos os direitos reservados.</p>
+          <div class="copyright">
+            &copy; {{ currentYear }} DEPPI - Instituto Federal do Ceará. 
+            <span class="highlight">Compromisso com a Ciência e Tecnologia.</span>
           </div>
-          <div class="footer-social">
-            <!-- Ícones de redes sociais podem ser adicionados aqui -->
+          <div class="footer-meta">
+            <a href="#">Privacidade</a>
+            <span class="dot"></span>
+            <a href="#">Termos</a>
           </div>
         </div>
       </div>
@@ -58,108 +79,205 @@ import { Component } from '@angular/core';
     .footer {
       background: var(--color-background-secondary);
       border-top: 1px solid var(--color-border);
-      margin-top: auto;
+      padding: 5rem 0 2rem;
+      margin-top: 4rem;
     }
 
     .footer-container {
-      max-width: 1200px;
+      max-width: var(--container-max-width);
       margin: 0 auto;
-      padding: 3rem 1rem 1rem;
+      padding: 0 1.5rem;
     }
 
-    .footer-content {
+    .footer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2rem;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 3rem;
+      margin-bottom: 4rem;
     }
 
-    .footer-section h3,
-    .footer-section h4 {
-      color: var(--color-text);
-      margin-bottom: 1rem;
+    .brand-identity {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .footer-title {
-      font-size: 1.5rem;
-      font-weight: 700;
+    .logo-text {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.8rem;
       color: var(--color-primary);
     }
 
-    .footer-subtitle {
-      font-size: 1.1rem;
+    .logo-divider {
+      width: 2px;
+      height: 24px;
+      background: var(--color-border);
+    }
+
+    .campus-text {
       font-weight: 600;
-    }
-
-    .footer-description {
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
       color: var(--color-text-secondary);
-      line-height: 1.6;
     }
 
-    .footer-links {
+    .brand-description {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .social-btn:hover {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+      transform: translateY(-3px);
+    }
+
+    .column-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: var(--color-text);
+      position: relative;
+    }
+
+    .column-title::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -0.5rem;
+      width: 20px;
+      height: 3px;
+      background: var(--color-secondary);
+      border-radius: var(--border-radius-full);
+    }
+
+    .link-list {
       list-style: none;
       padding: 0;
     }
 
-    .footer-links li {
-      margin-bottom: 0.5rem;
+    .link-list li {
+      margin-bottom: 1rem;
     }
 
-    .footer-links a {
+    .link-list a {
       color: var(--color-text-secondary);
       text-decoration: none;
-      transition: color 0.2s ease;
+      font-size: 0.95rem;
+      transition: all var(--transition-fast);
+      display: inline-block;
     }
 
-    .footer-links a:hover {
+    .link-list a:hover {
       color: var(--color-primary);
+      transform: translateX(5px);
     }
 
-    .contact-info p {
-      margin-bottom: 0.5rem;
-      color: var(--color-text-secondary);
+    .contact-card {
+      padding: 1.5rem;
+      border-radius: var(--border-radius-lg);
+      border: 1px solid var(--color-border);
+    }
+
+    .contact-item {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .contact-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-item .icon {
+      font-size: 1.2rem;
+    }
+
+    .contact-item .content {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
     }
 
     .footer-bottom {
       border-top: 1px solid var(--color-border);
-      padding-top: 1.5rem;
+      padding-top: 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
     }
 
-    .footer-copyright {
-      color: var(--color-text-secondary);
-      font-size: 0.9rem;
+    .highlight {
+      color: var(--color-primary);
+      font-weight: 600;
     }
 
-    .footer-social {
+    .footer-meta {
       display: flex;
+      align-items: center;
       gap: 1rem;
     }
 
-    @media (max-width: 768px) {
-      .footer-container {
-        padding: 2rem 0.5rem 1rem;
-      }
+    .footer-meta a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-      .footer-content {
+    .dot {
+      width: 4px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+
+    @media (max-width: 1024px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .footer-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
       }
-
       .footer-bottom {
         flex-direction: column;
+        gap: 1rem;
         text-align: center;
       }
     }
   `]
 })
 export class FooterComponent {
-  constructor() { }
+  currentYear = new Date().getFullYear();
 }

@@ -4,60 +4,96 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { Component } from '@angular/core';
 
-const COMMON_STYLES = `
-  .page-container { min-height: 100vh; padding-top: 80px; }
-  .page-hero { text-align: center; padding: 4rem 2rem 2rem; background: linear-gradient(135deg,#f0fff4,#d1fae5); }
-  .page-icon { font-size: 4rem; margin-bottom: 1rem; }
-  .page-title { font-size: 2.5rem; font-weight: 800; color: #1a1a2e; margin: 0 0 1rem; }
-  .page-subtitle { font-size: 1.1rem; color: #6b7280; max-width: 600px; margin: 0 auto; }
-  .content-area { max-width: 1200px; margin: 3rem auto; padding: 0 2rem; }
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-  .info-card { background: white; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; transition: all 0.2s; }
-  .info-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,150,100,0.12); }
-  .card-img { width: 100%; height: 180px; object-fit: cover; }
-  .card-icon { font-size: 3rem; padding: 1.5rem 1.5rem 0; }
-  .card-body { padding: 1.5rem; }
-  .card-body h2 { font-size: 1.2rem; font-weight: 700; color: #1a1a2e; margin: 0 0 0.75rem; }
-  .card-body p { color: #6b7280; line-height: 1.6; margin: 0; }
+const THEME_STYLES = `
+  .page-container { min-height: 100vh; padding-top: 120px; }
+  .page-hero { 
+    text-align: center; 
+    padding: 6rem 1.5rem 4rem; 
+    background: linear-gradient(135deg, var(--color-primary-light), #fff); 
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-decoration {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .page-icon { font-size: 5rem; margin-bottom: 2rem; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+  .page-title { 
+    font-size: clamp(2rem, 5vw, 3.5rem); 
+    color: var(--color-text); 
+    margin: 0 0 1.5rem; 
+    font-family: var(--font-display);
+  }
+  .page-subtitle { 
+    font-size: 1.25rem; 
+    color: var(--color-text-secondary); 
+    max-width: 700px; 
+    margin: 0 auto; 
+    line-height: 1.6;
+  }
+  .content-area { max-width: var(--container-max-width); margin: 6rem auto; padding: 0 1.5rem; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
+  .info-card { padding: 0; overflow: hidden; }
+  .card-top { font-size: 4rem; padding: 3rem 2rem 1rem; }
+  .card-body { padding: 0 2.5rem 3rem; }
+  .card-body h2 { 
+    font-size: 1.6rem; 
+    font-weight: 700; 
+    color: var(--color-text); 
+    margin: 0 0 1.2rem; 
+    font-family: var(--font-display);
+  }
+  .card-body p { color: var(--color-text-secondary); line-height: 1.7; margin: 0; font-size: 1rem; }
 `;
 
 @Component({
   selector: 'app-extension',
   template: `
-    <main class="page-container">
-      <div class="page-hero">
+    <main class="page-container ifce-bg-accent">
+      <section class="page-hero reveal-up">
+        <div class="hero-decoration"></div>
         <div class="page-icon">🤝</div>
-        <h1 class="page-title">Extensão</h1>
-        <p class="page-subtitle">Projetos de extensão que aproximam o IFCE Maracanaú da comunidade</p>
-      </div>
+        <h1 class="page-title">Projetos de Extensão</h1>
+        <p class="page-subtitle">
+          Promovendo o diálogo transformador entre o Instituto e a Sociedade. O DEPPI conecta o conhecimento acadêmico às necessidades da comunidade regional.
+        </p>
+      </section>
+      
       <div class="content-area">
         <div class="card-grid">
-          <div class="info-card">
-            <img src="assets/extensao/gestores.jpg" alt="Extensão" class="card-img" onerror="this.style.display='none'">
+          <div class="info-card surface">
+            <div class="card-top">🎨</div>
+            <div class="card-body">
+              <h2>Cursos e Eventos</h2>
+              <p>Oferecemos capacitação, oficinas e eventos culturais abertos ao público, levando a excelência do IFCE para além dos muros do campus.</p>
+            </div>
+          </div>
+          
+          <div class="info-card surface">
+            <div class="card-top">🏙️</div>
             <div class="card-body">
               <h2>Ações Comunitárias</h2>
-              <p>Atividades de extensão voltadas para capacitação profissional, inclusão digital e desenvolvimento social.</p>
+              <p>Nossos projetos visam o desenvolvimento social, econômico e cultural através de intervenções diretas nas comunidades locais.</p>
             </div>
           </div>
-          <div class="info-card">
-            <img src="assets/extensao/projeto.jpg" alt="Projetos" class="card-img" onerror="this.style.display='none'">
+          
+          <div class="info-card surface">
+            <div class="card-top">🛠️</div>
             <div class="card-body">
-              <h2>Projetos Ativos</h2>
-              <p>Conheça os projetos de extensão em andamento no campus e como participar.</p>
-            </div>
-          </div>
-          <div class="info-card">
-            <div class="card-icon">📋</div>
-            <div class="card-body">
-              <h2>Relatórios</h2>
-              <p>Relatórios e resultados das ações de extensão realizadas pelo DEPPI.</p>
+              <h2>Prestação de Serviços</h2>
+              <p>Apoio técnico especializado para empresas, associações e prefeituras, fortalecendo a economia regional com a expertise do nosso corpo docente.</p>
             </div>
           </div>
         </div>
       </div>
     </main>
   `,
-  styles: [COMMON_STYLES]
+  styles: [THEME_STYLES]
 })
 export class ExtensionComponent { }
 
