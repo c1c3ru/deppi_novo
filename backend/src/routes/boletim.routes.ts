@@ -12,8 +12,8 @@ const router = Router();
  */
 router.get('/admin/all', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
     const offset = (page - 1) * limit;
 
     const boletinsQuery = db('boletins')
@@ -65,8 +65,8 @@ router.get('/admin/all', authMiddleware, async (req: Request, res: Response) => 
  */
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
     const offset = (page - 1) * limit;
 
     // Busca boletins publicados
