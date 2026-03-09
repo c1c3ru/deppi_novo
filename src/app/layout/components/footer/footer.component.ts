@@ -76,7 +76,7 @@ import { Component } from '@angular/core';
             <span class="highlight">Compromisso com a Ciência e Tecnologia.</span>
           </div>
           <div class="footer-meta">
-            <a routerLink="/privacy" class="privacy-note">Não coletamos informações como cookies e nos respaldamos na LGPD.</a>
+            <a routerLink="/privacy" class="privacy-note">Não fazemos uso de cookies e nos guiamos pela LGPD.</a>
           </div>
         </div>
       </div>
