@@ -38,6 +38,7 @@ export interface Boletim {
     createdBy: number;
     isFeatured?: boolean;
     viewCount?: number;
+    authorName?: string;
     news?: NewsItem[];
     createdAt?: string;
     updatedAt?: string;

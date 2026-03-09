@@ -52,6 +52,14 @@ import { CommonModule } from '@angular/common';
               <span>{{ boletim.viewCount }} visualizações</span>
             </div>
           </div>
+
+          <div class="detail-signature" *ngIf="boletim.authorName">
+            <div class="signature-content">
+              <span class="author-label">Postado por:</span>
+              <span class="author-name">{{ boletim.authorName }}</span>
+              <span class="post-date">{{ boletim.publicationDate | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
         </header>
 
         <section class="news-section" *ngIf="boletim.news?.length">
@@ -186,6 +194,39 @@ import { CommonModule } from '@angular/common';
       padding-top: 2.5rem;
       margin-top: 2rem;
       border-top: 1px solid var(--color-border-light);
+    }
+
+    .detail-signature {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: flex-end;
+      text-align: right;
+      padding: 1rem 0;
+    }
+
+    .signature-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .author-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+    }
+
+    .author-name {
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .post-date {
+      font-size: 0.8rem;
+      opacity: 0.8;
     }
 
     .detail-main-content {

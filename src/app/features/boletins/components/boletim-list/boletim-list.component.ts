@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { BoletinsService } from '../../services/boletins.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Boletim } from '../../../../shared/models';
@@ -77,11 +77,12 @@ import { Subscription } from 'rxjs';
         <p>Ainda não há boletins publicados. Novos conteúdos serão listados aqui em breve.</p>
       </div>
 
-      <!-- Pagination -->
-      <div class="pagination-controls" *ngIf="totalPages > 1 && !loading && !error">
-        <button class="btn-page" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">Anterior</button>
-        <span class="page-info">Página {{ currentPage }} de {{ totalPages }}</span>
-        <button class="btn-page" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">Próxima</button>
+      <!-- Scroll Trigger -->
+      <div #scrollTrigger class="scroll-trigger" [class.visible]="hasMore && !loading && !loadingMore">
+         <div class="loading-more-spinner" *ngIf="loadingMore">
+            <div class="small-spinner"></div>
+            <span>Carregando mais boletins...</span>
+         </div>
       </div>
     </div>
   `,
@@ -373,6 +374,40 @@ import { Subscription } from 'rxjs';
       color: var(--color-text-secondary);
     }
 
+    .scroll-trigger {
+       height: 100px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 100%;
+       opacity: 0;
+       transition: opacity 0.3s;
+       pointer-events: none;
+    }
+
+    .scroll-trigger.visible {
+       opacity: 1;
+    }
+
+    .loading-more-spinner {
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       gap: 1rem;
+       color: var(--color-text-muted);
+       font-weight: 600;
+       font-size: 0.9rem;
+    }
+
+    .small-spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid var(--color-background-secondary);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
     @media (max-width: 768px) {
       .boletins-grid {
         grid-template-columns: 1fr;
@@ -386,13 +421,17 @@ import { Subscription } from 'rxjs';
     }
   `]
 })
-export class BoletimListComponent implements OnInit, OnDestroy {
+export class BoletimListComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly boletinsService = inject(BoletinsService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  @ViewChild('scrollTrigger') scrollTrigger!: ElementRef;
+
   boletins: Boletim[] = [];
   loading = false;
+  loadingMore = false;
+  hasMore = false;
   error = '';
   isAuthenticated = false;
 
@@ -401,22 +440,50 @@ export class BoletimListComponent implements OnInit, OnDestroy {
   totalPages = 1;
 
   private authSub!: Subscription;
+  private observer!: IntersectionObserver;
 
   ngOnInit(): void {
     this.authSub = this.authService.isAuthenticated$.subscribe(isAuth => {
       this.isAuthenticated = isAuth;
-      this.load();
+      this.resetAndLoad();
     });
   }
 
+  ngAfterViewInit(): void {
+    this.setupIntersectionObserver();
+  }
+
   ngOnDestroy(): void {
-    if (this.authSub) {
-      this.authSub.unsubscribe();
+    if (this.authSub) this.authSub.unsubscribe();
+    if (this.observer) this.observer.disconnect();
+  }
+
+  private setupIntersectionObserver(): void {
+    this.observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !this.loading && !this.loadingMore && this.hasMore) {
+        this.loadMore();
+      }
+    }, { rootMargin: '200px' });
+
+    if (this.scrollTrigger) {
+      this.observer.observe(this.scrollTrigger.nativeElement);
     }
   }
 
+  resetAndLoad(): void {
+    this.currentPage = 1;
+    this.boletins = [];
+    this.hasMore = false;
+    this.load();
+  }
+
   load(): void {
-    this.loading = true;
+    if (this.currentPage === 1) {
+      this.loading = true;
+    } else {
+      this.loadingMore = true;
+    }
+
     this.error = '';
 
     const obs$ = this.isAuthenticated
@@ -425,25 +492,31 @@ export class BoletimListComponent implements OnInit, OnDestroy {
 
     obs$.subscribe({
       next: (res) => {
-        this.boletins = res.data;
+        if (this.currentPage === 1) {
+          this.boletins = res.data;
+        } else {
+          this.boletins = [...this.boletins, ...res.data];
+        }
+
         if (res.pagination) {
           this.totalPages = res.pagination.pages;
+          this.hasMore = this.currentPage < this.totalPages;
         }
-        this.loading = false;
 
-        // Scroll to top when loading new page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.loading = false;
+        this.loadingMore = false;
       },
       error: (err) => {
         this.error = 'Não foi possível estabelecer conexão com o servidor de boletins.';
         this.loading = false;
+        this.loadingMore = false;
       }
     });
   }
 
-  changePage(newPage: number): void {
-    if (newPage >= 1 && newPage <= this.totalPages) {
-      this.currentPage = newPage;
+  loadMore(): void {
+    if (this.hasMore && !this.loadingMore) {
+      this.currentPage++;
       this.load();
     }
   }

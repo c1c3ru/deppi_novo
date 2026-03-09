@@ -127,7 +127,11 @@ router.get('/:id', optionalAuthMiddleware, async (req: Request, res: Response) =
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
 
-    const boletim = await db('boletins').where({ id }).first();
+    const boletim = await db('boletins as b')
+      .leftJoin('users as u', 'b.created_by', 'u.id')
+      .select('b.*', 'u.name as authorName')
+      .where({ 'b.id': id })
+      .first();
 
     if (!boletim) {
       return res.status(404).json({ error: 'Boletim não encontrado' });
@@ -157,6 +161,7 @@ router.get('/:id', optionalAuthMiddleware, async (req: Request, res: Response) =
       status: boletim.status,
       isFeatured: boletim.is_featured,
       viewCount: (boletim.view_count || 0) + 1,
+      authorName: boletim.authorName || 'Equipe DEPPI',
       news: news.map(n => ({
         id: n.id,
         title: n.title,
