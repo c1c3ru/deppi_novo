@@ -3,13 +3,21 @@ import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import rateLimit from 'express-rate-limit';
 import db from '../database/db';
 import { emailService } from '../services/email.service';
+import { config } from '../config/environment';
 
 const router = Router();
 
-// JWT secret - TODO: Move to environment
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+// Strict rate limiter for sensitive auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: { error: 'Muitas tentativas. Tente novamente em 15 minutos.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 /**
  * @swagger
@@ -50,7 +58,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login', [
+router.post('/login', authLimiter, [
   body('registration').isLength({ min: 1 }).withMessage('Matrícula é obrigatória'),
   body('password').isLength({ min: 1 }).withMessage('Senha é obrigatória'),
 ], async (req: Request, res: Response) => {
@@ -68,7 +76,7 @@ router.post('/login', [
     // Busca usuário no banco
     const user = await db('users').where({ registration }).first();
 
-    if (!user) {
+    if (!user || !user.is_active) {
       return res.status(401).json({
         error: 'Credenciais inválidas',
         message: 'Matrícula ou senha incorretos'
@@ -94,16 +102,16 @@ router.post('/login', [
       }
     }
 
-    // Gera tokens
+    // Gera tokens usando config
     const accessToken = jwt.sign(
       { id: user.id, registration: user.registration, roles: roles },
-      JWT_SECRET,
+      config.jwt.secret,
       { expiresIn: '1h' }
     );
 
     const refreshToken = jwt.sign(
       { id: user.id },
-      JWT_SECRET,
+      config.jwt.secret,
       { expiresIn: '30d' }
     );
 
@@ -155,8 +163,8 @@ router.post('/refresh', [
   try {
     const { refreshToken } = req.body;
 
-    // Verifica token
-    const decoded = jwt.verify(refreshToken, JWT_SECRET) as any;
+    // Verifica token usando config
+    const decoded = jwt.verify(refreshToken, config.jwt.secret) as any;
 
     // Busca usuário para pegar dados atuais (como roles)
     const user = await db('users').where({ id: decoded.id }).first();
@@ -177,10 +185,10 @@ router.post('/refresh', [
       }
     }
 
-    // Novo access token
+    // Novo access token usando config
     const accessToken = jwt.sign(
       { id: user.id, registration: user.registration, roles: roles },
-      JWT_SECRET,
+      config.jwt.secret,
       { expiresIn: '1h' }
     );
 
@@ -249,8 +257,12 @@ router.post('/logout', [
  *       404:
  *         description: SIAPE not found in allowed list
  */
-router.post('/request-access', [
-  body('registration').isLength({ min: 1 }).withMessage('Matrícula SIAPE é obrigatória'),
+router.post('/request-access', authLimiter, [
+  body('registration')
+    .isLength({ min: 4, max: 20 })
+    .withMessage('Matrícula SIAPE inválida')
+    .matches(/^[0-9]+$/)
+    .withMessage('Matrícula deve conter apenas números'),
 ], async (req: Request, res: Response) => {
   try {
     const { registration } = req.body;

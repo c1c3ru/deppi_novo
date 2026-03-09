@@ -66,10 +66,11 @@ import { AuthGuard } from './core/guards/auth.guard';
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
-      logOnly: !environment.production,
+      logOnly: environment.production,
       autoPause: true,
-      trace: true,
-      traceLimit: 75,
+      trace: false,
+      traceLimit: 25,
+      connectInZone: true,
     }),
     EffectsModule.forRoot([]),
     StoreRouterConnectingModule.forRoot({

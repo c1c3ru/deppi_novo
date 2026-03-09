@@ -1,79 +1,66 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 
 const router = Router();
 
-// Configure multer for file uploads
+// Ensure uploads directory exists
+const uploadDir = path.resolve(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Strict MIME whitelist (both MIME type and extension must match)
+const ALLOWED = new Map<string, string[]>([
+  ['image/jpeg', ['.jpg', '.jpeg']],
+  ['image/png', ['.png']],
+  ['image/gif', ['.gif']],
+  ['image/webp', ['.webp']],
+  ['application/pdf', ['.pdf']],
+  ['video/mp4', ['.mp4']],
+  ['video/webm', ['.webm']],
+  ['application/msword', ['.doc']],
+  ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', ['.docx']],
+]);
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+  destination: (_req, _file, cb) => {
+    cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  filename: (_req, file, cb) => {
+    // Use crypto random to avoid predictable filenames / path traversal
+    const ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    const safeExt = ext.length <= 5 ? ext : '';
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExt}`;
+    cb(null, uniqueName);
   }
 });
 
 const upload = multer({
   storage,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB
+    fileSize: 15 * 1024 * 1024, // 15MB
+    files: 10,
   },
-  fileFilter: (req, file, cb) => {
-    // Allow PDF, DOC, DOCX, JPG, JPEG, PNG, GIF files
-    const allowedTypes = /pdf|doc|docx|jpg|jpeg|png|gif/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
+  fileFilter: (_req, file, cb) => {
+    const allowedExts = ALLOWED.get(file.mimetype);
+    const ext = path.extname(file.originalname).toLowerCase();
 
-    if (mimetype && extname) {
+    if (allowedExts && allowedExts.includes(ext)) {
       return cb(null, true);
-    } else {
-      cb(new Error('Tipo de arquivo não permitido'));
     }
+    cb(new Error(`Tipo de arquivo não permitido: ${file.mimetype}`));
   }
 });
 
 /**
- * @swagger
- * /upload/file:
- *   post:
- *     summary: Upload a file
- *     tags: [Upload]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- *                 description: File to upload
- *     responses:
- *       200:
- *         description: File uploaded successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 filename:
- *                   type: string
- *                 url:
- *                   type: string
- *       400:
- *         description: Bad request
+ * POST /upload/file – single file upload (requires auth, applied at route level in index.ts)
  */
 router.post('/file', upload.single('file'), (req: Request, res: Response) => {
   try {
     if (!req.file) {
-      return res.status(400).json({
-        error: 'Nenhum arquivo foi enviado'
-      });
+      return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
     }
 
     res.json({
@@ -84,64 +71,39 @@ router.post('/file', upload.single('file'), (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Upload error:', error);
-    res.status(500).json({
-      error: 'Erro interno do servidor',
-      message: 'Erro ao fazer upload do arquivo'
-    });
+    res.status(500).json({ error: 'Erro ao fazer upload do arquivo' });
   }
 });
 
 /**
- * @swagger
- * /upload/multiple:
- *   post:
- *     summary: Upload multiple files
- *     tags: [Upload]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               files:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
- *                 description: Files to upload
- *     responses:
- *       200:
- *         description: Files uploaded successfully
+ * POST /upload/multiple – multiple files upload (requires auth, applied at route level in index.ts)
  */
 router.post('/multiple', upload.array('files', 10), (req: Request, res: Response) => {
   try {
-    if (!req.files || (req.files as any[]).length === 0) {
-      return res.status(400).json({
-        error: 'Nenhum arquivo foi enviado'
-      });
+    if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+      return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
     }
 
-    const files = (req.files as any[]).map(file => ({
+    const files = (req.files as Express.Multer.File[]).map(file => ({
       filename: file.filename,
       originalName: file.originalname,
       size: file.size,
       url: `/uploads/${file.filename}`
     }));
 
-    res.json({
-      files,
-      count: files.length
-    });
+    res.json({ files, count: files.length });
   } catch (error) {
     console.error('Multiple upload error:', error);
-    res.status(500).json({
-      error: 'Erro interno do servidor',
-      message: 'Erro ao fazer upload dos arquivos'
-    });
+    res.status(500).json({ error: 'Erro ao fazer upload dos arquivos' });
   }
+});
+
+// Multer error handler
+router.use((err: any, _req: Request, res: Response, next: any) => {
+  if (err instanceof multer.MulterError || err.message?.includes('não permitido')) {
+    return res.status(400).json({ error: err.message });
+  }
+  next(err);
 });
 
 export default router;

@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ThemeService } from './core/services/theme.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -51,7 +52,11 @@ export class AppComponent implements OnInit {
     // Inicializar tema do sistema
     this.themeService.initTheme();
 
-    // Log de inicialização
-    console.log('🚀 DEPPI Application Started');
+    // Suprimir logs em produção para evitar vazamento de informação
+    if (environment.production) {
+      console.log = () => { };
+      console.debug = () => { };
+      console.info = () => { };
+    }
   }
 }

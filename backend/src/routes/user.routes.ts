@@ -1,69 +1,56 @@
 import { Router, Request, Response } from 'express';
+import db from '../database/db';
 
 const router = Router();
 
 /**
- * @swagger
- * /users/profile:
- *   get:
- *     summary: Get current user profile
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: User profile
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
+ * GET /users/profile – Retorna o perfil do usuário autenticado
  */
-router.get('/profile', (req: Request, res: Response) => {
-  // TODO: Get user from JWT token
-  res.json({
-    id: 1,
-    registration: '12345',
-    name: 'Usuário Teste',
-    email: 'teste@ifce.edu.br',
-    roles: ['user']
-  });
+router.get('/profile', async (req: Request, res: Response) => {
+  try {
+    const user = await db('users').where({ id: req.user!.id }).first();
+    if (!user || !user.is_active) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+
+    let roles = user.roles;
+    if (typeof roles === 'string') {
+      try { roles = JSON.parse(roles); } catch { roles = ['user']; }
+    }
+
+    const { password_hash: _, ...safeUser } = user;
+    safeUser.roles = roles;
+    res.json(safeUser);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar perfil' });
+  }
 });
 
 /**
- * @swagger
- * /users/profile:
- *   put:
- *     summary: Update user profile
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *     responses:
- *       200:
- *         description: Profile updated successfully
+ * PUT /users/profile – Atualiza nome e email do usuário autenticado
  */
-router.put('/profile', (req: Request, res: Response) => {
-  // TODO: Update user profile
-  res.json({
-    message: 'Perfil atualizado com sucesso',
-    user: {
-      id: 1,
-      registration: '12345',
-      name: req.body.name || 'Usuário Teste',
-      email: req.body.email || 'teste@ifce.edu.br',
-      roles: ['user']
+router.put('/profile', async (req: Request, res: Response) => {
+  try {
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Nome e e-mail são obrigatórios' });
     }
-  });
+
+    await db('users')
+      .where({ id: req.user!.id })
+      .update({
+        name: name.trim().substring(0, 255),
+        email: email.trim().toLowerCase().substring(0, 255),
+        updated_at: new Date()
+      });
+
+    const updated = await db('users').where({ id: req.user!.id }).first();
+    const { password_hash: _, ...safeUser } = updated;
+    res.json({ message: 'Perfil atualizado com sucesso', user: safeUser });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar perfil' });
+  }
 });
 
 export default router;

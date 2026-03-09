@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BoletinsService } from '../../services/boletins.service';
 import { Boletim } from '../../../../shared/models';
 import { CommonModule } from '@angular/common';
@@ -40,7 +41,7 @@ import { CommonModule } from '@angular/common';
           <h1 class="detail-title">{{ boletim.title }}</h1>
           <p class="detail-desc">{{ boletim.description }}</p>
           
-          <div class="detail-main-content ql-editor" *ngIf="boletim.content" [innerHTML]="boletim.content"></div>
+          <div class="detail-main-content ql-editor" *ngIf="safeContent" [innerHTML]="safeContent"></div>
           
           <div class="header-actions">
             <a *ngIf="boletim.fileUrl" [href]="boletim.fileUrl" target="_blank" class="btn btn-primary">
@@ -358,8 +359,10 @@ export class BoletimDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly boletinsService = inject(BoletinsService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   boletim: Boletim | null = null;
+  safeContent: SafeHtml | null = null;
   loading = false;
   error = '';
   showScrollBtn = false;
@@ -383,6 +386,10 @@ export class BoletimDetailComponent implements OnInit {
     this.boletinsService.getById(id).subscribe({
       next: (b) => {
         this.boletim = b;
+        // Sanitize HTML content from Quill to prevent XSS
+        this.safeContent = b.content
+          ? this.sanitizer.bypassSecurityTrustHtml(b.content)
+          : null;
         this.loading = false;
       },
       error: () => {

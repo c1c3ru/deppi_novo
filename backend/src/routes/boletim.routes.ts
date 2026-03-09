@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import db from '../database/db';
-import { authMiddleware } from '../middleware/auth.middleware';
+import { authMiddleware, optionalAuthMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
@@ -122,16 +122,20 @@ router.get('/', async (req: Request, res: Response) => {
  *     summary: Get boletim by ID (com notícias)
  *     tags: [Boletins]
  */
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', optionalAuthMiddleware, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
 
     const boletim = await db('boletins').where({ id }).first();
 
     if (!boletim) {
-      return res.status(404).json({
-        error: 'Boletim não encontrado'
-      });
+      return res.status(404).json({ error: 'Boletim não encontrado' });
+    }
+
+    // Rascunhos só são visíveis para usuários autenticados (admin)
+    if (boletim.status !== 'published' && !req.user) {
+      return res.status(404).json({ error: 'Boletim não encontrado' });
     }
 
     // Busca notícias relacionadas
@@ -177,19 +181,27 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const body = req.body;
-    const [id] = await db('boletins').insert({
-      title: body.title,
-      description: body.description,
-      content: body.content,
-      publication_date: body.publicationDate || new Date(),
-      file_url: body.fileUrl,
-      status: body.status || 'draft',
-      is_featured: body.isFeatured || false,
+    const { title, description, content, publicationDate, fileUrl, status, isFeatured } = req.body;
+
+    if (!title || title.trim().length < 3) {
+      return res.status(400).json({ error: 'Título obrigatório (mín. 3 caracteres)' });
+    }
+
+    const validStatuses = ['draft', 'published', 'archived'];
+    const safeStatus = validStatuses.includes(status) ? status : 'draft';
+
+    const [row] = await db('boletins').insert({
+      title: title.trim().substring(0, 255),
+      description: description?.trim().substring(0, 1000),
+      content,
+      publication_date: publicationDate || new Date(),
+      file_url: fileUrl,
+      status: safeStatus,
+      is_featured: isFeatured === true,
       created_by: req.user?.id
     }).returning('id');
 
-    res.status(201).json({ id: typeof id === 'object' ? id.id : id, message: 'Criado com sucesso' });
+    res.status(201).json({ id: typeof row === 'object' ? row.id : row, message: 'Criado com sucesso' });
   } catch (error) {
     console.error('Error creating boletim:', error);
     res.status(500).json({ error: 'Erro ao criar boletim' });
@@ -198,19 +210,24 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
 
 router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const body = req.body;
-    await db('boletins').where({ id }).update({
-      title: body.title,
-      description: body.description,
-      content: body.content,
-      publication_date: body.publicationDate,
-      file_url: body.fileUrl,
-      status: body.status,
-      is_featured: body.isFeatured,
-      updated_at: new Date()
-    });
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
 
+    const { title, description, content, publicationDate, fileUrl, status, isFeatured } = req.body;
+
+    const validStatuses = ['draft', 'published', 'archived'];
+    const safeStatus = status && validStatuses.includes(status) ? status : undefined;
+
+    const updateData: Record<string, any> = { updated_at: new Date() };
+    if (title !== undefined) updateData.title = title.trim().substring(0, 255);
+    if (description !== undefined) updateData.description = description?.trim().substring(0, 1000);
+    if (content !== undefined) updateData.content = content;
+    if (publicationDate !== undefined) updateData.publication_date = publicationDate;
+    if (fileUrl !== undefined) updateData.file_url = fileUrl;
+    if (safeStatus !== undefined) updateData.status = safeStatus;
+    if (isFeatured !== undefined) updateData.is_featured = isFeatured === true;
+
+    await db('boletins').where({ id }).update(updateData);
     res.json({ message: 'Atualizado com sucesso' });
   } catch (error) {
     console.error('Error updating boletim:', error);
@@ -220,7 +237,8 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
 
 router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
     await db('boletins').where({ id }).delete();
     res.json({ message: 'Removido com sucesso' });
   } catch (error) {
