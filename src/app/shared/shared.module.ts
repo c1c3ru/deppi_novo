@@ -23,6 +23,6 @@ import { LoadingComponent } from './components/loading/loading.component';
 })
 export class SharedModule {
   constructor() {
-    console.log('🔗 SharedModule loaded');
+    console.log('SharedModule loaded');
   }
 }
