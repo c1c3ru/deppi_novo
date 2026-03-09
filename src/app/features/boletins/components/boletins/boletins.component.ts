@@ -61,6 +61,11 @@ import { CommonModule } from '@angular/common';
       padding-top: var(--header-height);
     }
 
+    /* Padding adjustment to not overlap with sidebar on desktop */
+    .authenticated .boletins-main {
+       padding-top: 1rem;
+    }
+
     .boletins-sidebar {
       width: 280px;
       display: flex;
@@ -237,12 +242,23 @@ import { CommonModule } from '@angular/common';
       margin: 0 auto;
     }
 
+    @media (max-width: 1200px) {
+      .boletins-sidebar {
+         width: 240px;
+         left: 10px;
+      }
+      .boletins-main {
+        margin-left: 260px;
+      }
+    }
+
     @media (max-width: 1024px) {
       .boletins-sidebar {
         display: none;
       }
       .boletins-main {
         margin-left: 0;
+        padding: 1.5rem;
       }
     }
   `]

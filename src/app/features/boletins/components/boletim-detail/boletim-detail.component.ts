@@ -130,8 +130,9 @@ import { CommonModule } from '@angular/common';
     }
 
     .detail-header {
-      padding: 4rem;
-      margin-bottom: 4rem;
+      padding: 3rem 4rem;
+      margin-bottom: 2rem;
+      border-radius: var(--border-radius-xl);
     }
 
     .header-meta {
@@ -188,10 +189,11 @@ import { CommonModule } from '@angular/common';
 
     .detail-main-content {
       margin-top: 2rem;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       line-height: 1.8;
       color: var(--color-text);
-      /* Base resets if not importing full quill classes globally */
+      overflow-wrap: break-word;
+      word-wrap: break-word;
     }
     .detail-main-content img {
       max-width: 100%;
@@ -321,13 +323,22 @@ import { CommonModule } from '@angular/common';
 
     @media (max-width: 768px) {
       .detail-header {
-        padding: 2.5rem 1.5rem;
+        padding: 2rem 1.5rem;
+      }
+      .detail-title {
+         font-size: 2rem;
+      }
+      .detail-desc {
+         font-size: 1.1rem;
       }
       .news-card {
         grid-template-columns: 1fr;
       }
       .news-visual {
         height: 200px;
+      }
+      .news-body {
+        padding: 1.5rem;
       }
       .header-actions {
         flex-direction: column;
@@ -337,6 +348,8 @@ import { CommonModule } from '@angular/common';
       .float-btn {
         right: 20px;
         bottom: 20px;
+        width: 44px;
+        height: 44px;
       }
     }
   `]

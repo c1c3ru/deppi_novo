@@ -5,10 +5,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { NotificationMessage } from '../../../shared/models';
 
 @Component({
-    selector: 'app-notification',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-notification',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="notification-container">
       <div 
         *ngFor="let msg of (messages$ | async)" 
@@ -31,7 +31,7 @@ import { NotificationMessage } from '../../../shared/models';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .notification-container {
       position: fixed;
       top: 20px;
@@ -91,8 +91,8 @@ import { NotificationMessage } from '../../../shared/models';
     .notification-message {
       margin: 0;
       font-size: 0.95rem;
-      font-weight: 500;
-      color: #1f2937;
+      font-weight: 600;
+      color: var(--color-text);
       line-height: 1.4;
     }
 
@@ -100,7 +100,7 @@ import { NotificationMessage } from '../../../shared/models';
       background: none;
       border: none;
       font-size: 1.5rem;
-      color: #6b7280;
+      color: var(--color-text-secondary);
       cursor: pointer;
       padding: 4px;
       line-height: 1;
@@ -110,6 +110,7 @@ import { NotificationMessage } from '../../../shared/models';
 
     .notification-close:hover {
       opacity: 1;
+      color: var(--color-text);
     }
 
     .notification-card::after {
@@ -130,23 +131,23 @@ import { NotificationMessage } from '../../../shared/models';
       to { transform: scaleX(0); }
     }
   `],
-    animations: [
-        trigger('slideIn', [
-            transition(':enter', [
-                style({ transform: 'translateX(100%)', opacity: 0 }),
-                animate('0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)', style({ transform: 'translateX(0)', opacity: 1 }))
-            ]),
-            transition(':leave', [
-                animate('0.2s ease-in', style({ transform: 'translateX(100%)', opacity: 0 }))
-            ])
-        ])
-    ]
+  animations: [
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)', opacity: 0 }),
+        animate('0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)', style({ transform: 'translateX(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('0.2s ease-in', style({ transform: 'translateX(100%)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class NotificationComponent {
-    private readonly notificationService = inject(NotificationService);
-    readonly messages$ = this.notificationService.messages$;
+  private readonly notificationService = inject(NotificationService);
+  readonly messages$ = this.notificationService.messages$;
 
-    dismiss(id: string): void {
-        this.notificationService.dismiss(id);
-    }
+  dismiss(id: string): void {
+    this.notificationService.dismiss(id);
+  }
 }

@@ -144,8 +144,8 @@ import { Subscription } from 'rxjs';
 
     .boletins-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
       margin-bottom: 4rem;
     }
 
@@ -204,6 +204,18 @@ import { Subscription } from 'rxjs';
 
     .boletim-card:hover .card-title {
       color: var(--color-primary);
+    }
+    
+    @media (max-width: 480px) {
+       .boletins-grid {
+          grid-template-columns: 1fr;
+       }
+       .boletim-card {
+          padding: 1.5rem;
+       }
+       .card-title {
+          font-size: 1.25rem;
+       }
     }
 
     .card-desc {

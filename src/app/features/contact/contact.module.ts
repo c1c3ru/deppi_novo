@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import { Component } from '@angular/core';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-contact',
@@ -65,31 +66,31 @@ import { Component } from '@angular/core';
                 <div class="form-row">
                   <div class="form-group">
                     <label for="name">Nome Completo</label>
-                    <input id="name" type="text" formControlName="name" placeholder="Como podemos chamar você?">
+                    <input id="name" type="text" formControlName="name" placeholder="Como podemos chamar você?" [class.error]="form.get('name')?.invalid && form.get('name')?.touched">
+                    <span class="field-error" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">Mínimo 3 caracteres</span>
                   </div>
                   <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input id="email" type="email" formControlName="email" placeholder="seu&#64;exemplo.com">
+                    <input id="email" type="email" formControlName="email" placeholder="seu@exemplo.com" [class.error]="form.get('email')?.invalid && form.get('email')?.touched">
+                    <span class="field-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">E-mail inválido</span>
                   </div>
                 </div>
 
                 <div class="form-group">
                   <label for="subject">Assunto</label>
-                  <input id="subject" type="text" formControlName="subject" placeholder="Do que se trata sua mensagem?">
+                  <input id="subject" type="text" formControlName="subject" placeholder="Do que se trata sua mensagem?" [class.error]="form.get('subject')?.invalid && form.get('subject')?.touched">
+                  <span class="field-error" *ngIf="form.get('subject')?.invalid && form.get('subject')?.touched">Mínimo 5 caracteres</span>
                 </div>
 
                 <div class="form-group">
                   <label for="message">Sua Mensagem</label>
-                  <textarea id="message" formControlName="message" rows="6" placeholder="Descreva sua solicitação ou dúvida detalhadamente..."></textarea>
+                  <textarea id="message" formControlName="message" rows="6" placeholder="Descreva sua solicitação ou dúvida detalhadamente..." [class.error]="form.get('message')?.invalid && form.get('message')?.touched"></textarea>
+                  <span class="field-error" *ngIf="form.get('message')?.invalid && form.get('message')?.touched">Mínimo 20 caracteres</span>
                 </div>
 
-                <div *ngIf="errorMessage" class="error-message" style="color: #ff6b6b; margin-bottom: 1rem; font-size: 0.9rem;">
-                  {{ errorMessage }}
-                </div>
-                <button type="submit" [disabled]="form.invalid || submitted || isSubmitting" class="btn btn-primary submit-btn">
-                  <span *ngIf="!submitted && !isSubmitting">Enviar Mensagem</span>
+                <button type="submit" [disabled]="isSubmitting" class="btn btn-primary submit-btn">
+                  <span *ngIf="!isSubmitting">Enviar Mensagem</span>
                   <span *ngIf="isSubmitting">Enviando...</span>
-                  <span *ngIf="submitted">✅ Mensagem Enviada com Sucesso</span>
                 </button>
               </form>
             </div>
@@ -203,6 +204,18 @@ import { Component } from '@angular/core';
       margin-top: 1rem;
     }
 
+    .field-error {
+      display: block;
+      color: var(--color-error);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.4rem;
+    }
+
+    input.error, textarea.error {
+      border-color: var(--color-error) !important;
+    }
+
     @media (max-width: 1024px) {
       .contact-grid {
         grid-template-columns: 1fr;
@@ -228,42 +241,40 @@ import { Component } from '@angular/core';
 export class ContactComponent {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
+  private readonly notificationService = inject(NotificationService);
 
   form = this.fb.group({
-    name: ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    subject: ['', Validators.required],
-    message: ['', [Validators.required, Validators.minLength(10)]]
+    subject: ['', [Validators.required, Validators.minLength(5)]],
+    message: ['', [Validators.required, Validators.minLength(20)]]
   });
 
-  submitted = false;
   isSubmitting = false;
-  errorMessage = '';
 
   submit() {
-    if (this.form.valid) {
-      this.isSubmitting = true;
-      this.errorMessage = '';
-
-      this.http.post(`${environment.apiUrl}/api/contact`, this.form.value)
-        .subscribe({
-          next: () => {
-            this.submitted = true;
-            this.isSubmitting = false;
-            this.form.reset();
-
-            // Reset state after 5 seconds so they can send another message if they want
-            setTimeout(() => {
-              this.submitted = false;
-            }, 5000);
-          },
-          error: (err) => {
-            console.error('Erro ao enviar mensagem', err);
-            this.errorMessage = 'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.';
-            this.isSubmitting = false;
-          }
-        });
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.notificationService.showWarning('Por favor, preencha todos os campos obrigatórios corretamente.');
+      return;
     }
+
+    this.isSubmitting = true;
+
+    this.http.post(`${environment.apiUrl}/api/contact`, this.form.value)
+      .subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Sua mensagem foi enviada com sucesso! Responderemos em breve.');
+          this.isSubmitting = false;
+          this.form.reset();
+        },
+        error: (err: any) => {
+          console.error('Erro ao enviar mensagem', err);
+          const msg = err?.error?.message || 'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.';
+          this.notificationService.showError(msg);
+          this.isSubmitting = false;
+        }
+      });
   }
 }
 
