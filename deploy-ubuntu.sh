@@ -96,7 +96,7 @@ npm run build:prod
 echo "🚀 Iniciando API Backend com PM2..."
 cd backend
 pm2 delete deppi-api || true
-pm2 start dist/index.js --name deppi-api --env production
+pm2 start dist/src/index.js --name deppi-api --env production
 pm2 save
 cd ..
 
