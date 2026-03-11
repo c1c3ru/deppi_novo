@@ -176,7 +176,10 @@ router.post(
       const { refreshToken } = req.body;
 
       // Verifica token usando config
-      const decoded = jwt.verify(refreshToken, config.jwt.secret) as jwt.JwtPayload;
+      const decoded = jwt.verify(
+        refreshToken,
+        config.jwt.secret
+      ) as jwt.JwtPayload;
 
       // Busca usuário para pegar dados atuais (como roles)
       const user = await db('users').where({ id: decoded.id }).first();
