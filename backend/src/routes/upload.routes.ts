@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -109,7 +109,7 @@ router.post(
 );
 
 // Multer error handler
-router.use((err: any, _req: Request, res: Response, next: any) => {
+router.use((err: any, _req: Request, res: Response, next: NextFunction) => {
   if (
     err instanceof multer.MulterError ||
     err.message?.includes('não permitido')

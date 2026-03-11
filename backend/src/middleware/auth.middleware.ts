@@ -10,7 +10,7 @@ declare global {
         id: number;
         registration: string;
         roles: string[];
-        [key: string]: any;
+        [key: string]: unknown;
       };
     }
   }
@@ -37,7 +37,11 @@ export const authMiddleware = (
     const token = authHeader.substring(7); // Remove 'Bearer '
 
     // Use the config secret (not a raw fallback string)
-    const decoded = jwt.verify(token, config.jwt.secret) as any;
+    const decoded = jwt.verify(token, config.jwt.secret) as jwt.JwtPayload & {
+      id: number;
+      registration: string;
+      roles: string[];
+    };
     req.user = decoded;
 
     next();
@@ -88,7 +92,11 @@ export const optionalAuthMiddleware = (
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
-      const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const decoded = jwt.verify(token, config.jwt.secret) as jwt.JwtPayload & {
+        id: number;
+        registration: string;
+        roles: string[];
+      };
       req.user = decoded;
     }
 

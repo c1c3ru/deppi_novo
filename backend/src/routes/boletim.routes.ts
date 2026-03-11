@@ -261,7 +261,7 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
     const safeStatus =
       status && validStatuses.includes(status) ? status : undefined;
 
-    const updateData: Record<string, any> = { updated_at: new Date() };
+    const updateData: Record<string, unknown> = { updated_at: new Date() };
     if (title !== undefined) updateData.title = title.trim().substring(0, 255);
     if (description !== undefined)
       updateData.description = description?.trim().substring(0, 1000);

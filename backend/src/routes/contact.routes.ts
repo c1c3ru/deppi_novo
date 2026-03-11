@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import rateLimit from 'express-rate-limit';
 import { contactController } from '../controllers/contact.controller';
@@ -41,7 +41,7 @@ router.post(
       .isLength({ min: 20, max: 5000 })
       .withMessage('Mensagem inválida'),
   ],
-  (req: Request, res: Response, next: any) => {
+  (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
