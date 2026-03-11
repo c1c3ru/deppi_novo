@@ -33,7 +33,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  transition: background-color var(--transition-normal), color var(--transition-normal);
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
 }
 
 /* Fluid Typography */
@@ -81,7 +83,9 @@ p {
   border-radius: var(--border-radius-lg);
   padding: 2rem;
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:hover {
     transform: translateY(-5px);
@@ -218,7 +222,10 @@ p {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(var(--color-primary) 0.5px, transparent 0.5px);
+    background-image: radial-gradient(
+      var(--color-primary) 0.5px,
+      transparent 0.5px
+    );
     background-size: 24px 24px;
     opacity: 0.03;
     pointer-events: none;

@@ -34,28 +34,28 @@ const routes: Routes = [
       {
         path: '',
         component: BoletimListComponent,
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
       },
       {
         path: ':id',
-        component: BoletimDetailComponent
+        component: BoletimDetailComponent,
       },
       {
         path: 'admin/novo',
         component: BoletimFormComponent,
-        canActivate: [BoletinsGuard]
+        canActivate: [BoletinsGuard],
       },
       {
         path: 'admin/:id/editar',
         component: BoletimFormComponent,
-        canActivate: [BoletinsGuard]
-      }
-    ]
-  }
+        canActivate: [BoletinsGuard],
+      },
+    ],
+  },
 ];
 
 @NgModule({
@@ -64,7 +64,7 @@ const routes: Routes = [
     BoletimListComponent,
     BoletimDetailComponent,
     LoginComponent,
-    BoletimFormComponent
+    BoletimFormComponent,
   ],
   imports: [
     CommonModule,
@@ -73,11 +73,8 @@ const routes: Routes = [
     SharedModule,
     StoreModule.forFeature('boletins', boletinsReducer),
     EffectsModule.forFeature([BoletinsEffects]),
-    QuillModule.forRoot()
+    QuillModule.forRoot(),
   ],
-  providers: [
-    BoletinsService,
-    BoletinsGuard
-  ]
+  providers: [BoletinsService, BoletinsGuard],
 })
-export class BoletinsModule { }
+export class BoletinsModule {}

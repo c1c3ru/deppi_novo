@@ -25,10 +25,7 @@ import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import * as coreDirectives from './directives';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    HttpClientModule
-  ],
+  imports: [CommonModule, HttpClientModule],
   providers: [
     // Services
     AuthService,
@@ -45,15 +42,15 @@ import * as coreDirectives from './directives';
     RoleGuard,
 
     // Directives
-    ...Object.values(coreDirectives)
-  ]
+    ...Object.values(coreDirectives),
+  ],
 })
 export class CoreModule {
-  constructor(
-    @Optional() @SkipSelf() parentModule: CoreModule
-  ) {
+  constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
     if (parentModule) {
-      throw new Error('CoreModule has already been loaded. Import CoreModule in the AppModule only.');
+      throw new Error(
+        'CoreModule has already been loaded. Import CoreModule in the AppModule only.'
+      );
     }
   }
 }

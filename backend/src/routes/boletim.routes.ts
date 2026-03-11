@@ -232,12 +232,10 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       })
       .returning('id');
 
-    res
-      .status(201)
-      .json({
-        id: typeof row === 'object' ? row.id : row,
-        message: 'Criado com sucesso',
-      });
+    res.status(201).json({
+      id: typeof row === 'object' ? row.id : row,
+      message: 'Criado com sucesso',
+    });
   } catch (error) {
     console.error('Error creating boletim:', error);
     res.status(500).json({ error: 'Erro ao criar boletim' });

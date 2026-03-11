@@ -11,7 +11,7 @@ import { environment } from '../environments/environment';
     <div class="app-container">
       <!-- Loading Indicators -->
       <app-loading></app-loading>
-      
+
       <!-- Feedback Notifications -->
       <app-notification></app-notification>
 
@@ -27,18 +27,20 @@ import { environment } from '../environments/environment';
       <app-footer></app-footer>
     </div>
   `,
-  styles: [`
-    .app-container {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+  styles: [
+    `
+      .app-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-    .main-content {
-      flex: 1;
-      margin-top: 80px; /* header height */
-    }
-  `]
+      .main-content {
+        flex: 1;
+        margin-top: 80px; /* header height */
+      }
+    `,
+  ],
 })
 export class AppComponent implements OnInit {
   title = 'DEPPI - IFCE Maracanaú';
@@ -46,7 +48,7 @@ export class AppComponent implements OnInit {
   constructor(
     private store: Store,
     private themeService: ThemeService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Inicializar tema do sistema
@@ -54,9 +56,9 @@ export class AppComponent implements OnInit {
 
     // Suprimir logs em produção para evitar vazamento de informação
     if (environment.production) {
-      console.log = () => { };
-      console.debug = () => { };
-      console.info = () => { };
+      console.log = () => {};
+      console.debug = () => {};
+      console.info = () => {};
     }
   }
 }

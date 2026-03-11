@@ -11,7 +11,7 @@ declare global {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AnalyticsService {
   private readonly router = inject(Router);
@@ -46,8 +46,8 @@ export class AnalyticsService {
         send_page_view: false,
         custom_map: {
           custom_parameter_1: 'user_role',
-          custom_parameter_2: 'campus'
-        }
+          custom_parameter_2: 'campus',
+        },
       });
     };
   }
@@ -56,11 +56,15 @@ export class AnalyticsService {
    * Rastreia visualizações de página
    */
   private trackPageViews(): void {
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      this.trackPageView(event.urlAfterRedirects);
-    });
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.trackPageView(event.urlAfterRedirects);
+      });
   }
 
   /**
@@ -72,20 +76,25 @@ export class AnalyticsService {
     window.gtag('config', this.trackingId, {
       page_path: path,
       page_location: window.location.href,
-      page_title: document.title
+      page_title: document.title,
     });
   }
 
   /**
    * Rastreia um evento personalizado
    */
-  trackEvent(action: string, category: string, label?: string, value?: number): void {
+  trackEvent(
+    action: string,
+    category: string,
+    label?: string,
+    value?: number
+  ): void {
     if (!this.isProduction || !window.gtag) return;
 
     const eventParams: any = {
       event_category: category,
       event_label: label,
-      value: value
+      value: value,
     };
 
     window.gtag('event', action, eventParams);
@@ -163,7 +172,7 @@ export class AnalyticsService {
     if (!this.isProduction || !window.gtag) return;
 
     window.gtag('config', this.trackingId, {
-      [dimension]: value
+      [dimension]: value,
     });
   }
 
@@ -174,7 +183,7 @@ export class AnalyticsService {
     if (!this.isProduction || !window.gtag) return;
 
     window.gtag('config', this.trackingId, {
-      user_id: userId
+      user_id: userId,
     });
   }
 
@@ -196,7 +205,11 @@ export class AnalyticsService {
    * Rastreia interações com componentes
    */
   trackComponentInteraction(componentName: string, action: string): void {
-    this.trackEvent('component_interaction', 'ui', `${componentName}_${action}`);
+    this.trackEvent(
+      'component_interaction',
+      'ui',
+      `${componentName}_${action}`
+    );
   }
 
   /**
@@ -231,7 +244,11 @@ export class AnalyticsService {
    * Rastreia impressões de elementos
    */
   trackImpression(elementName: string, context?: string): void {
-    this.trackEvent('impression', 'content', context ? `${elementName}_${context}` : elementName);
+    this.trackEvent(
+      'impression',
+      'content',
+      context ? `${elementName}_${context}` : elementName
+    );
   }
 
   /**
@@ -252,7 +269,7 @@ export class AnalyticsService {
       event_category: 'Web Vitals',
       event_label: id,
       value: Math.round(metricName === 'CLS' ? value * 1000 : value),
-      non_interaction: true
+      non_interaction: true,
     });
 
     // Também rastrear como performance
@@ -281,7 +298,7 @@ export class AnalyticsService {
 
     window.gtag('event', 'exception', {
       description,
-      fatal: isFatal
+      fatal: isFatal,
     });
   }
 
@@ -291,7 +308,7 @@ export class AnalyticsService {
   disableTracking(): void {
     if (window.gtag) {
       window.gtag('config', this.trackingId, {
-        send_page_view: false
+        send_page_view: false,
       });
     }
   }
@@ -302,7 +319,7 @@ export class AnalyticsService {
   enableTracking(): void {
     if (window.gtag) {
       window.gtag('config', this.trackingId, {
-        send_page_view: true
+        send_page_view: true,
       });
     }
   }

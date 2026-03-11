@@ -46,9 +46,7 @@ import { CustomSerializer } from './store/router/custom-serializer';
 import { AuthGuard } from './core/guards/auth.guard';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -62,7 +60,7 @@ import { AuthGuard } from './core/guards/auth.guard';
         strictActionImmutability: true,
         strictStateSerializability: true,
         strictActionSerializability: true,
-      }
+      },
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -74,7 +72,7 @@ import { AuthGuard } from './core/guards/auth.guard';
     }),
     EffectsModule.forRoot([]),
     StoreRouterConnectingModule.forRoot({
-      serializer: CustomSerializer
+      serializer: CustomSerializer,
     }),
 
     // Internationalization
@@ -83,7 +81,7 @@ import { AuthGuard } from './core/guards/auth.guard';
     // Service Worker
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerWhenStable:30000',
     }),
 
     // Core Module (singleton services)
@@ -96,73 +94,98 @@ import { AuthGuard } from './core/guards/auth.guard';
     LayoutModule,
 
     // Feature Modules (lazy loaded)
-    RouterModule.forRoot([
+    RouterModule.forRoot(
+      [
+        {
+          path: '',
+          pathMatch: 'full',
+          redirectTo: 'home',
+        },
+        {
+          path: 'home',
+          loadChildren: () =>
+            import('./features/home/home.module').then((m) => m.HomeModule),
+        },
+        {
+          path: 'research',
+          loadChildren: () =>
+            import('./features/research/research.module').then(
+              (m) => m.ResearchModule
+            ),
+        },
+        {
+          path: 'extension',
+          loadChildren: () =>
+            import('./features/extension/extension.module').then(
+              (m) => m.ExtensionModule
+            ),
+        },
+        {
+          path: 'innovation',
+          loadChildren: () =>
+            import('./features/innovation/innovation.module').then(
+              (m) => m.InnovationModule
+            ),
+        },
+        {
+          path: 'post-graduation',
+          loadChildren: () =>
+            import('./features/post-graduation/post-graduation.module').then(
+              (m) => m.PostGraduationModule
+            ),
+        },
+        {
+          path: 'boletins',
+          loadChildren: () =>
+            import('./features/boletins/boletins.module').then(
+              (m) => m.BoletinsModule
+            ),
+        },
+        {
+          path: 'contact',
+          loadChildren: () =>
+            import('./features/contact/contact.module').then(
+              (m) => m.ContactModule
+            ),
+        },
+        {
+          path: 'privacy',
+          loadChildren: () =>
+            import('./features/privacy/privacy.module').then(
+              (m) => m.PrivacyModule
+            ),
+        },
+        {
+          path: '**',
+          redirectTo: 'home',
+        },
+      ],
       {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'home'
-      },
-      {
-        path: 'home',
-        loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule)
-      },
-      {
-        path: 'research',
-        loadChildren: () => import('./features/research/research.module').then(m => m.ResearchModule)
-      },
-      {
-        path: 'extension',
-        loadChildren: () => import('./features/extension/extension.module').then(m => m.ExtensionModule)
-      },
-      {
-        path: 'innovation',
-        loadChildren: () => import('./features/innovation/innovation.module').then(m => m.InnovationModule)
-      },
-      {
-        path: 'post-graduation',
-        loadChildren: () => import('./features/post-graduation/post-graduation.module').then(m => m.PostGraduationModule)
-      },
-      {
-        path: 'boletins',
-        loadChildren: () => import('./features/boletins/boletins.module').then(m => m.BoletinsModule)
-      },
-      {
-        path: 'contact',
-        loadChildren: () => import('./features/contact/contact.module').then(m => m.ContactModule)
-      },
-      {
-        path: 'privacy',
-        loadChildren: () => import('./features/privacy/privacy.module').then(m => m.PrivacyModule)
-      },
-      {
-        path: '**',
-        redirectTo: 'home'
+        scrollPositionRestoration: 'enabled',
+        anchorScrolling: 'enabled',
+        paramsInheritanceStrategy: 'always',
       }
-    ], {
-      scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'enabled',
-      paramsInheritanceStrategy: 'always'
-    })
+    ),
   ],
   providers: [
     // HTTP Interceptors (order matters)
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoadingInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor() {

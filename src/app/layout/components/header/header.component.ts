@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  HostListener,
+  inject,
+} from '@angular/core';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
@@ -10,7 +16,11 @@ import { CommonModule } from '@angular/common';
   selector: 'app-header',
   standalone: false,
   template: `
-    <header class="header" [ngClass]="headerClass" [class.scrolled]="isScrolled">
+    <header
+      class="header"
+      [ngClass]="headerClass"
+      [class.scrolled]="isScrolled"
+    >
       <nav class="nav-container glass">
         <div class="nav-brand">
           <a routerLink="/home" class="brand-link">
@@ -22,52 +32,102 @@ import { CommonModule } from '@angular/common';
         </div>
 
         <div class="nav-menu">
-          <a routerLink="/home" class="nav-link" [class.active]="isActive('/home')" (mouseenter)="setHoverPos($event)" (mouseleave)="clearHoverPos()">
+          <a
+            routerLink="/home"
+            class="nav-link"
+            [class.active]="isActive('/home')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+          >
             <span>Início</span>
           </a>
-          <a routerLink="/research" class="nav-link" [class.active]="isActive('/research')" (mouseenter)="setHoverPos($event)" (mouseleave)="clearHoverPos()">
+          <a
+            routerLink="/research"
+            class="nav-link"
+            [class.active]="isActive('/research')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+          >
             <span>Pesquisa</span>
           </a>
-          <a routerLink="/extension" class="nav-link" [class.active]="isActive('/extension')" (mouseenter)="setHoverPos($event)" (mouseleave)="clearHoverPos()">
+          <a
+            routerLink="/extension"
+            class="nav-link"
+            [class.active]="isActive('/extension')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+          >
             <span>Extensão</span>
           </a>
-          <a routerLink="/innovation" class="nav-link" [class.active]="isActive('/innovation')" (mouseenter)="setHoverPos($event)" (mouseleave)="clearHoverPos()">
+          <a
+            routerLink="/innovation"
+            class="nav-link"
+            [class.active]="isActive('/innovation')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+          >
             <span>Inovação</span>
           </a>
-          <a routerLink="/post-graduation" class="nav-link" [class.active]="isActive('/post-graduation')" (mouseenter)="setHoverPos($event)" (mouseleave)="clearHoverPos()">
+          <a
+            routerLink="/post-graduation"
+            class="nav-link"
+            [class.active]="isActive('/post-graduation')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+          >
             <span>Pós</span>
           </a>
-          <a routerLink="/boletins" class="nav-link" [class.active]="isActive('/boletins')" (mouseenter)="setHoverPos($event)" (mouseleave)="clearHoverPos()">
+          <a
+            routerLink="/boletins"
+            class="nav-link"
+            [class.active]="isActive('/boletins')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+          >
             <span>Boletins</span>
           </a>
-          <a routerLink="/contact" class="nav-link" [class.active]="isActive('/contact')" (mouseenter)="setHoverPos($event)" (mouseleave)="clearHoverPos()">
+          <a
+            routerLink="/contact"
+            class="nav-link"
+            [class.active]="isActive('/contact')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+          >
             <span>Contato</span>
           </a>
-          <div class="nav-indicator" [style.transform]="indicatorTransform" [style.opacity]="indicatorOpacity"></div>
+          <div
+            class="nav-indicator"
+            [style.transform]="indicatorTransform"
+            [style.opacity]="indicatorOpacity"
+          ></div>
         </div>
 
         <div class="nav-actions">
-          <button class="theme-toggle" (click)="toggleTheme()" aria-label="Alternar tema">
+          <button
+            class="theme-toggle"
+            (click)="toggleTheme()"
+            aria-label="Alternar tema"
+          >
             <span class="theme-icon">{{ isDarkTheme ? '🔆' : '🌙' }}</span>
           </button>
-          
+
           <ng-container *ngIf="!isAuthenticated; else userMenu">
             <a routerLink="/boletins/login" class="btn btn-primary login-btn">
-               Acesso
+              Acesso
             </a>
           </ng-container>
-          
+
           <ng-template #userMenu>
             <div class="user-chip" routerLink="/boletins">
-               <span class="user-avatar">👤</span>
-               <span class="user-name-abbr">{{ userFirstLetter }}</span>
+              <span class="user-avatar">👤</span>
+              <span class="user-name-abbr">{{ userFirstLetter }}</span>
             </div>
           </ng-template>
         </div>
       </nav>
     </header>
   `,
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
@@ -93,23 +153,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sub.add(
       this.router.events
-        .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+        .pipe(
+          filter(
+            (event): event is NavigationEnd => event instanceof NavigationEnd
+          )
+        )
         .subscribe((event: NavigationEnd) => {
           this.currentRoute = event.urlAfterRedirects;
         })
     );
 
     this.sub.add(
-      this.themeService.currentTheme$.subscribe(theme => {
+      this.themeService.currentTheme$.subscribe((theme) => {
         this.isDarkTheme = theme === 'dark';
       })
     );
 
     this.sub.add(
-      this.authService.isAuthenticated$.subscribe(isAuth => {
+      this.authService.isAuthenticated$.subscribe((isAuth) => {
         this.isAuthenticated = isAuth;
         const user = this.authService.currentUser;
-        this.userFirstLetter = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
+        this.userFirstLetter = user?.name
+          ? user.name.charAt(0).toUpperCase()
+          : 'U';
       })
     );
   }
@@ -119,7 +185,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   isActive(route: string): boolean {
-    return this.currentRoute === route || (route !== '/' && this.currentRoute.startsWith(route));
+    return (
+      this.currentRoute === route ||
+      (route !== '/' && this.currentRoute.startsWith(route))
+    );
   }
 
   toggleTheme(): void {
