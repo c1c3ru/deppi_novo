@@ -20,13 +20,17 @@ declare global {
  * Authentication middleware
  * Verifies JWT token and adds user to request
  */
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
-        error: 'Token de autenticação não fornecido'
+        error: 'Token de autenticação não fornecido',
       });
     }
 
@@ -57,8 +61,13 @@ export const authorizeRoles = (...roles: string[]) => {
       return res.status(401).json({ error: 'Usuário não autenticado' });
     }
 
-    if (!req.user.roles || !roles.some(role => req.user!.roles.includes(role))) {
-      return res.status(403).json({ error: 'Acesso negado - Permissões insuficientes' });
+    if (
+      !req.user.roles ||
+      !roles.some((role) => req.user!.roles.includes(role))
+    ) {
+      return res
+        .status(403)
+        .json({ error: 'Acesso negado - Permissões insuficientes' });
     }
 
     next();
@@ -69,7 +78,11 @@ export const authorizeRoles = (...roles: string[]) => {
  * Optional authentication middleware
  * Adds user to request if token is present, but doesn't fail if not
  */
-export const optionalAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const optionalAuthMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const authHeader = req.headers.authorization;
 

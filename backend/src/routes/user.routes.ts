@@ -15,7 +15,11 @@ router.get('/profile', async (req: Request, res: Response) => {
 
     let roles = user.roles;
     if (typeof roles === 'string') {
-      try { roles = JSON.parse(roles); } catch { roles = ['user']; }
+      try {
+        roles = JSON.parse(roles);
+      } catch {
+        roles = ['user'];
+      }
     }
 
     const { password_hash: _, ...safeUser } = user;
@@ -42,7 +46,7 @@ router.put('/profile', async (req: Request, res: Response) => {
       .update({
         name: name.trim().substring(0, 255),
         email: email.trim().toLowerCase().substring(0, 255),
-        updated_at: new Date()
+        updated_at: new Date(),
       });
 
     const updated = await db('users').where({ id: req.user!.id }).first();

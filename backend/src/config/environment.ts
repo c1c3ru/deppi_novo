@@ -33,14 +33,26 @@ export const config = {
 
   jwt: {
     // Sem fallback inseguro em produção
-    secret: requireEnv('JWT_SECRET', process.env.NODE_ENV !== 'production' ? 'dev-only-insecure-jwt-secret' : ''),
-    refreshSecret: requireEnv('JWT_REFRESH_SECRET', process.env.NODE_ENV !== 'production' ? 'dev-only-insecure-refresh-secret' : ''),
+    secret: requireEnv(
+      'JWT_SECRET',
+      process.env.NODE_ENV !== 'production'
+        ? 'dev-only-insecure-jwt-secret'
+        : ''
+    ),
+    refreshSecret: requireEnv(
+      'JWT_REFRESH_SECRET',
+      process.env.NODE_ENV !== 'production'
+        ? 'dev-only-insecure-refresh-secret'
+        : ''
+    ),
     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
   },
 
   cors: {
-    allowedOrigins: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:4200'],
+    allowedOrigins: process.env.CORS_ORIGIN?.split(',') || [
+      'http://localhost:4200',
+    ],
   },
 
   sentry: {

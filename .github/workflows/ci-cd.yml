@@ -60,7 +60,7 @@ jobs:
         CYPRESS_baseUrl: http://localhost:4200
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: frontend-build
         path: dist/
@@ -324,7 +324,7 @@ jobs:
         artillery run performance-test-config.yml --target ${{ secrets.STAGING_URL }}
 
     - name: Upload performance results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-results
         path: artillery-report.html

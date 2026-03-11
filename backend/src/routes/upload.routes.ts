@@ -21,7 +21,10 @@ const ALLOWED = new Map<string, string[]>([
   ['video/mp4', ['.mp4']],
   ['video/webm', ['.webm']],
   ['application/msword', ['.doc']],
-  ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', ['.docx']],
+  [
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ['.docx'],
+  ],
 ]);
 
 const storage = multer.diskStorage({
@@ -30,11 +33,14 @@ const storage = multer.diskStorage({
   },
   filename: (_req, file, cb) => {
     // Use crypto random to avoid predictable filenames / path traversal
-    const ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    const ext = path
+      .extname(file.originalname)
+      .toLowerCase()
+      .replace(/[^a-z0-9.]/g, '');
     const safeExt = ext.length <= 5 ? ext : '';
     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExt}`;
     cb(null, uniqueName);
-  }
+  },
 });
 
 const upload = multer({
@@ -51,7 +57,7 @@ const upload = multer({
       return cb(null, true);
     }
     cb(new Error(`Tipo de arquivo não permitido: ${file.mimetype}`));
-  }
+  },
 });
 
 /**
@@ -67,7 +73,7 @@ router.post('/file', upload.single('file'), (req: Request, res: Response) => {
       filename: req.file.filename,
       originalName: req.file.originalname,
       size: req.file.size,
-      url: `/uploads/${req.file.filename}`
+      url: `/uploads/${req.file.filename}`,
     });
   } catch (error) {
     console.error('Upload error:', error);
@@ -78,29 +84,36 @@ router.post('/file', upload.single('file'), (req: Request, res: Response) => {
 /**
  * POST /upload/multiple – multiple files upload (requires auth, applied at route level in index.ts)
  */
-router.post('/multiple', upload.array('files', 10), (req: Request, res: Response) => {
-  try {
-    if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
-      return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
+router.post(
+  '/multiple',
+  upload.array('files', 10),
+  (req: Request, res: Response) => {
+    try {
+      if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+        return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
+      }
+
+      const files = (req.files as Express.Multer.File[]).map((file) => ({
+        filename: file.filename,
+        originalName: file.originalname,
+        size: file.size,
+        url: `/uploads/${file.filename}`,
+      }));
+
+      res.json({ files, count: files.length });
+    } catch (error) {
+      console.error('Multiple upload error:', error);
+      res.status(500).json({ error: 'Erro ao fazer upload dos arquivos' });
     }
-
-    const files = (req.files as Express.Multer.File[]).map(file => ({
-      filename: file.filename,
-      originalName: file.originalname,
-      size: file.size,
-      url: `/uploads/${file.filename}`
-    }));
-
-    res.json({ files, count: files.length });
-  } catch (error) {
-    console.error('Multiple upload error:', error);
-    res.status(500).json({ error: 'Erro ao fazer upload dos arquivos' });
   }
-});
+);
 
 // Multer error handler
 router.use((err: any, _req: Request, res: Response, next: any) => {
-  if (err instanceof multer.MulterError || err.message?.includes('não permitido')) {
+  if (
+    err instanceof multer.MulterError ||
+    err.message?.includes('não permitido')
+  ) {
     return res.status(400).json({ error: err.message });
   }
   next(err);
