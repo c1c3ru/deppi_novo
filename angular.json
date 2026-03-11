@@ -119,19 +119,6 @@
             "scripts": []
           }
         },
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "cypressConfig": "cypress.config.js",
-            "devServerTarget": "deppi:serve:development",
-            "watch": false
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "deppi:serve:production"
-            }
-          }
-        },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
@@ -148,7 +135,6 @@
     "analytics": false,
     "schematicCollections": [
       "@angular-eslint/schematics",
-      "@cypress/schematic",
       "@schematics/angular"
     ]
   }
