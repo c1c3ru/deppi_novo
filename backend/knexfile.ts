@@ -31,7 +31,7 @@ const knexConfig: { [key: string]: Knex.Config } = {
 
   test: {
     client: 'postgresql',
-    connection: {
+    connection: process.env.DATABASE_URL || {
       host: config.database.host,
       port: config.database.port,
       database: `${config.database.name}_test`,
