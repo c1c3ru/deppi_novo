@@ -120,7 +120,7 @@
           }
         },
         "e2e": {
-          "builder": "@angular-devkit/build-angular:cypress",
+          "builder": "@cypress/schematic:cypress",
           "options": {
             "cypressConfig": "cypress.config.ts",
             "devServerTarget": "deppi:serve:development",
