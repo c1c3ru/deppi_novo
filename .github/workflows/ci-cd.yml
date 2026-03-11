@@ -46,9 +46,9 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
-          file: ./coverage/lcov.info
+          files: ./coverage/lcov.info
           flags: frontend
           name: frontend-coverage
 
@@ -103,7 +103,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          # Temporarily disable cache to fix sync issues
+          cache: ""
           cache-dependency-path: "./backend/package-lock.json"
 
       - name: Install dependencies
@@ -132,9 +133,9 @@ jobs:
           REDIS_URL: redis://localhost:6379
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
-          file: ./backend/coverage/lcov.info
+          files: ./backend/coverage/lcov.info
           flags: backend
           name: backend-coverage
 
@@ -207,7 +208,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
@@ -229,7 +230,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to staging
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.STAGING_USER }}
@@ -246,7 +247,7 @@ jobs:
           curl -f ${{ secrets.STAGING_URL }}/health || exit 1
 
       - name: Notify Slack
-        uses: 8398a7/action-slack@v3
+        uses: 8398a7/action-slack@v3.16.2
         with:
           status: ${{ job.status }}
           channel: "#deployments"
@@ -266,7 +267,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to production
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.PRODUCTION_HOST }}
           username: ${{ secrets.PRODUCTION_USER }}
@@ -288,7 +289,7 @@ jobs:
           curl -f ${{ secrets.PRODUCTION_URL }}/
 
       - name: Notify Slack
-        uses: 8398a7/action-slack@v3
+        uses: 8398a7/action-slack@v3.16.2
         with:
           status: ${{ job.status }}
           channel: "#deployments"
@@ -357,7 +358,7 @@ jobs:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
 
       - name: Notify migration status
-        uses: 8398a7/action-slack@v3
+        uses: 8398a7/action-slack@v3.16.2
         with:
           status: ${{ job.status }}
           channel: "#deployments"
