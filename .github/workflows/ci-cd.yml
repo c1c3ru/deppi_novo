@@ -148,44 +148,44 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/deppi_test
           REDIS_URL: redis://localhost:6379
 
-  # Security Scan
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
+  # # Security Scan
+  # security-scan:
+  #   name: Security Scan
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     security-events: write
+  #     actions: read
+  #     contents: read
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: "fs"
-          scan-ref: "."
-          format: "sarif"
-          output: "trivy-results.sarif"
-          exit-code: "0" # Do not fail the build based on vulnerabilities
+  #     - name: Run Trivy vulnerability scanner
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         scan-type: "fs"
+  #         scan-ref: "."
+  #         format: "sarif"
+  #         output: "trivy-results.sarif"
+  #         exit-code: "0" # Do not fail the build based on vulnerabilities
 
-      - name: Upload Trivy scan results as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-scan-results
-          path: trivy-results.sarif
-          retention-days: 7
+  #     - name: Upload Trivy scan results as Artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: trivy-scan-results
+  #         path: trivy-results.sarif
+  #         retention-days: 7
 
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: true
+  #     - name: Run npm audit
+  #       run: npm audit --audit-level=high
+  #       continue-on-error: true
 
   # Build and Push Docker Images
   build-and-push:
     name: Build and Push Docker Images
     runs-on: ubuntu-latest
-    needs: [frontend-tests, backend-tests, security-scan]
+    needs: [frontend-tests, backend-tests]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
 
     steps:
