@@ -1,5 +1,5 @@
 # Multi-stage build for optimized production image
-FROM node:18-alpine AS base
+FROM node:22-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -62,6 +62,10 @@ RUN mkdir -p /var/cache/nginx /var/log/nginx /var/run
 # Set correct permissions
 RUN chown -R nextjs:nodejs /var/cache/nginx /var/log/nginx /var/run
 
+# Copy and set permissions on entrypoint BEFORE switching to non-root user
+COPY --from=builder --chown=nextjs:nodejs /app/docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Switch to non-root user
 USER nextjs
 
@@ -71,10 +75,6 @@ EXPOSE 80 3000
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/api/health || exit 1
-
-# Start script
-COPY --from=builder /app/docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["npm", "run", "start"]
