@@ -70,9 +70,6 @@ jobs:
     services:
       postgres:
         image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: deppi_test
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 10s
@@ -94,6 +91,9 @@ jobs:
     defaults:
       run:
         working-directory: ./backend
+    env:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: deppi_test
 
     steps:
       - name: Checkout code
@@ -148,38 +148,33 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/deppi_test
           REDIS_URL: redis://localhost:6379
 
-  # # Security Scan
-  # security-scan:
-  #   name: Security Scan
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     security-events: write
-  #     actions: read
-  #     contents: read
+  # Security Scan
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # Permissão fundamental para o upload-sarif funcionar
+      actions: read
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Run Trivy vulnerability scanner
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-  #         scan-type: "fs"
-  #         scan-ref: "."
-  #         format: "sarif"
-  #         output: "trivy-results.sarif"
-  #         exit-code: "0" # Do not fail the build based on vulnerabilities
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+          exit-code: "0" # Mantém em 0 para não travar o build inteiro só por achar vulnerabilidade
 
-  #     - name: Upload Trivy scan results as Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: trivy-scan-results
-  #         path: trivy-results.sarif
-  #         retention-days: 7
-
-  #     - name: Run npm audit
-  #       run: npm audit --audit-level=high
-  #       continue-on-error: true
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: "trivy-results.sarif"
+          category: "trivy-vulnerability-scanner"
 
   # Build and Push Docker Images
   build-and-push:
