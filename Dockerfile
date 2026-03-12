@@ -10,7 +10,7 @@ COPY package*.json ./
 COPY backend/package*.json ./backend/
 
 # Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --only=production --ignore-scripts && npm cache clean --force
 
 # Build stage
 FROM base AS builder
@@ -20,7 +20,7 @@ WORKDIR /app
 COPY . .
 
 # Install all dependencies (including dev)
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Build Angular application
 RUN npm run build:prod
