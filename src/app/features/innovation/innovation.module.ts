@@ -33,7 +33,7 @@ import { Component } from '@angular/core';
       <section class="obligations-section">
         <div class="obligations-header">
           <h2>Obrigações contratuais</h2>
-          <p>Segundo a <a href="#">RESOLUÇÃO Nº 129</a> -</p>
+          <p>Segundo a <a href="https://acervo.ifce.edu.br/instituto/documentos-institucionais/resolucoes/2018/resolucao-no-129.pdf/@@download/file/RESOLU%C3%87%C3%83O%20N%C2%BA%20129.pdf" target="_blank">RESOLUÇÃO Nº 129</a> -</p>
         </div>
 
         <div class="article-block">
@@ -117,8 +117,8 @@ import { Component } from '@angular/core';
         </div>
 
         <div class="actions">
-          <a href="#" class="btn-solid">Ver Resolução 129</a>
-          <a href="#" class="btn-solid">Outros documentos</a>
+          <a href="https://acervo.ifce.edu.br/instituto/documentos-institucionais/resolucoes/2018/resolucao-no-129.pdf/@@download/file/RESOLU%C3%87%C3%83O%20N%C2%BA%20129.pdf" target="_blank" class="btn-solid">Ver Resolução 129</a>
+          <a href="https://acervo.ifce.edu.br/instituto/documentos-institucionais" target="_blank" class="btn-solid">Outros documentos</a>
         </div>
       </section>
     </main>
@@ -274,7 +274,7 @@ import { Component } from '@angular/core';
     `,
   ],
 })
-export class InnovationComponent {}
+export class InnovationComponent { }
 
 const routes: Routes = [{ path: '', component: InnovationComponent }];
 
@@ -282,4 +282,4 @@ const routes: Routes = [{ path: '', component: InnovationComponent }];
   declarations: [InnovationComponent],
   imports: [CommonModule, RouterModule.forChild(routes), SharedModule],
 })
-export class InnovationModule {}
+export class InnovationModule { }
