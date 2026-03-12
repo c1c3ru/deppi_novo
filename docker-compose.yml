@@ -47,8 +47,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
     networks:
       - deppi-network
     healthcheck:
@@ -81,8 +79,6 @@ services:
       --save 60 10000
     volumes:
       - redis_data:/data
-    ports:
-      - "6379:6379"
     networks:
       - deppi-network
     healthcheck:
