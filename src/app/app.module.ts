@@ -172,6 +172,13 @@ import { AuthGuard } from './core/guards/auth.guard';
             ),
         },
         {
+          path: 'laboratorios',
+          loadChildren: () =>
+            import('./features/laboratorios/laboratorios.module').then(
+              (m) => m.LaboratoriosModule
+            ),
+        },
+        {
           path: 'pit-rit',
           loadChildren: () =>
             import('./features/pit-rit/pit-rit.module').then(
