@@ -6,7 +6,8 @@ import { LaboratoriosService } from '../../services/laboratorios.service';
 @Component({
   selector: 'app-lab-form',
   standalone: false,
-  templateUrl: './lab-form.component.html'
+  templateUrl: './lab-form.component.html',
+  styleUrls: ['./lab-form.component.scss']
 })
 export class LabFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -31,9 +32,13 @@ export class LabFormComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      if (id) {
+      if (id && id !== 'novo') {
         this.labId = id;
         this.loadLab();
+      } else {
+        this.loading = false;
+        // Optionally add a row if empty
+        if (this.productions.length === 0) this.addProduction();
       }
     });
   }
@@ -100,10 +105,17 @@ export class LabFormComponent implements OnInit {
     if (this.labForm.invalid) return;
     
     this.saving = true;
-    this.labsService.update(this.labId, this.labForm.value).subscribe({
-      next: () => {
+    const labData = this.labForm.value;
+    
+    const request = this.labId 
+      ? this.labsService.update(this.labId, labData)
+      : this.labsService.create(labData);
+
+    request.subscribe({
+      next: (res: any) => {
         this.saving = false;
-        this.router.navigate(['/laboratorios', this.labId]);
+        const targetId = this.labId || res.id;
+        this.router.navigate(['/laboratorios', targetId]);
       },
       error: () => {
         this.saving = false;

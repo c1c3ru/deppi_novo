@@ -1,69 +1,137 @@
-<div class="container" style="padding-top: 120px; padding-bottom: 50px;">
-  <a [routerLink]="['/laboratorios', labId]" style="color: var(--color-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;">
-    <span>&larr;</span> Voltar para Laboratório
-  </a>
+<div class="lab-form-container">
+  <div class="container">
+    <a [routerLink]="['/laboratorios', labId]" class="back-link" aria-label="Voltar para a página do laboratório">
+      <span>&larr;</span> Voltar para Laboratório
+    </a>
 
-  <div class="surface reveal-up">
-    <h1 class="font-display">Editar Laboratório</h1>
-    
-    <ng-container *ngIf="loading">
-      <div style="text-align: center; padding: 3rem;">Carregando dados...</div>
-    </ng-container>
-
-    <form *ngIf="!loading" [formGroup]="labForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label>Nome do Laboratório</label>
-        <input type="text" formControlName="name" style="width: 100%;">
-      </div>
+    <div class="surface reveal-up form-surface">
+      <h1 class="font-display form-header">{{ labId ? 'Editar Laboratório' : 'Novo Laboratório' }}</h1>
       
-      <div class="form-group">
-        <label>Descrição</label>
-        <textarea formControlName="description" rows="4" style="width: 100%;"></textarea>
-      </div>
+      <ng-container *ngIf="loading && labId">
+        <div class="loading-state glass" style="text-align: center; padding: 3rem; border-radius: 12px;">
+          <div class="spinner"></div> <!-- Assuming a spinner component or CSS exists -->
+          <p style="margin-top: 1rem; color: var(--color-text-secondary);">Carregando dados do laboratório...</p>
+        </div>
+      </ng-container>
 
-      <hr style="border: none; border-top: 1px solid var(--color-border); margin: 2rem 0;">
-      
-      <h3 class="font-display">Produções</h3>
-      <div formArrayName="productions">
-        <div *ngFor="let prod of productions.controls; let i=index" [formGroupName]="i" class="glass" style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <b>Produção {{i + 1}}</b>
-            <button type="button" (click)="removeProduction(i)" class="btn btn-glass" style="padding: 0.3rem 0.6rem; color: #ff4d4f;">Remover</button>
-          </div>
-          <div class="innovative-grid">
-            <div class="form-group"><label>Título</label><input type="text" formControlName="title" style="width: 100%;"></div>
-            <div class="form-group"><label>Tipo (Artigo, TCC, etc)</label><input type="text" formControlName="type" style="width: 100%;"></div>
-            <div class="form-group"><label>Ano</label><input type="text" formControlName="year" style="width: 100%;"></div>
-            <div class="form-group"><label>Link</label><input type="text" formControlName="link" style="width: 100%;"></div>
+      <form *ngIf="!loading || !labId" [formGroup]="labForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="labName">Nome do Laboratório</label>
+          <input 
+            id="labName"
+            type="text" 
+            formControlName="name" 
+            placeholder="Ex: Laboratório de Inovação Tecnológica (LIT)"
+            aria-required="true">
+        </div>
+        
+        <div class="form-group">
+          <label for="labDescription">Descrição Detalhada</label>
+          <textarea 
+            id="labDescription"
+            formControlName="description" 
+            rows="6" 
+            placeholder="Descreva os objetivos, infraestrutura e principais atividades do laboratório..."
+            aria-required="true"></textarea>
+        </div>
+
+        <hr class="section-divider">
+        
+        <h3 class="font-display section-title">Linhas de Pesquisa & Produções</h3>
+        <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+          Liste as principais conquistas, artigos e projetos do laboratório.
+        </p>
+
+        <div formArrayName="productions">
+          <div *ngFor="let prod of productions.controls; let i=index" [formGroupName]="i" class="glass item-card reveal-up">
+            <div class="item-header">
+              <b>Produção #{{i + 1}}</b>
+              <button 
+                type="button" 
+                (click)="removeProduction(i)" 
+                class="btn btn-glass" 
+                style="color: var(--color-error, #ff4d4f);"
+                [attr.aria-label]="'Remover produção ' + (i + 1)">
+                <span>&times;</span> Remover
+              </button>
+            </div>
+            
+            <div class="innovative-grid">
+              <div class="form-group">
+                <label [for]="'prodTitle' + i">Título / Nome</label>
+                <input [id]="'prodTitle' + i" type="text" formControlName="title" placeholder="Título da produção">
+              </div>
+              <div class="form-group">
+                <label [for]="'prodType' + i">Tipo</label>
+                <input [id]="'prodType' + i" type="text" formControlName="type" placeholder="Artigo, Patente, TCC...">
+              </div>
+              <div class="form-group">
+                <label [for]="'prodYear' + i">Ano</label>
+                <input [id]="'prodYear' + i" type="text" formControlName="year" placeholder="AAAA">
+              </div>
+              <div class="form-group">
+                <label [for]="'prodLink' + i">Link (Opcional)</label>
+                <input [id]="'prodLink' + i" type="text" formControlName="link" placeholder="https://...">
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <button type="button" class="btn btn-glass" (click)="addProduction()" style="margin-bottom: 2rem;">+ Adicionar Produção</button>
-
-      <hr style="border: none; border-top: 1px solid var(--color-border); margin: 2rem 0;">
-      
-      <h3 class="font-display">Serviços</h3>
-      <div formArrayName="services">
-        <div *ngFor="let serv of services.controls; let i=index" [formGroupName]="i" class="glass" style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <b>Serviço {{i + 1}}</b>
-            <button type="button" (click)="removeService(i)" class="btn btn-glass" style="padding: 0.3rem 0.6rem; color: #ff4d4f;">Remover</button>
-          </div>
-          <div class="innovative-grid">
-            <div class="form-group"><label>Nome do Serviço</label><input type="text" formControlName="name" style="width: 100%;"></div>
-            <div class="form-group"><label>Tipo</label><input type="text" formControlName="type" style="width: 100%;"></div>
-          </div>
-          <div class="form-group"><label>Descrição do Serviço</label><textarea formControlName="description" rows="2" style="width: 100%;"></textarea></div>
-        </div>
-      </div>
-      <button type="button" class="btn btn-glass" (click)="addService()" style="margin-bottom: 2rem;">+ Adicionar Serviço</button>
-
-      <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
-        <a [routerLink]="['/laboratorios', labId]" class="btn btn-glass">Cancelar</a>
-        <button type="submit" class="btn btn-primary" [disabled]="saving || labForm.invalid">
-          {{ saving ? 'Salvando...' : 'Salvar Laboratório' }}
+        <button type="button" class="btn btn-glass" (click)="addProduction()" style="width: 100%; border-style: dashed;">
+          + Adicionar Produção
         </button>
-      </div>
-    </form>
+
+        <hr class="section-divider">
+        
+        <h3 class="font-display section-title">Serviços Oferecidos</h3>
+        <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+          Descreva os serviços prestados pelo laboratório à comunidade ou empresas.
+        </p>
+
+        <div formArrayName="services">
+          <div *ngFor="let serv of services.controls; let i=index" [formGroupName]="i" class="glass item-card reveal-up">
+            <div class="item-header">
+              <b>Serviço #{{i + 1}}</b>
+              <button 
+                type="button" 
+                (click)="removeService(i)" 
+                class="btn btn-glass" 
+                style="color: var(--color-error, #ff4d4f);"
+                [attr.aria-label]="'Remover serviço ' + (i + 1)">
+                <span>&times;</span> Remover
+              </button>
+            </div>
+            
+            <div class="innovative-grid">
+              <div class="form-group">
+                <label [for]="'servName' + i">Nome do Serviço</label>
+                <input [id]="'servName' + i" type="text" formControlName="name" placeholder="Nome do serviço">
+              </div>
+              <div class="form-group">
+                <label [for]="'servType' + i">Tipo/Categoria</label>
+                <input [id]="'servType' + i" type="text" formControlName="type" placeholder="Ex: Consultoria, Ensaio...">
+              </div>
+            </div>
+            <div class="form-group">
+              <label [for]="'servDesc' + i">Descrição Curta</label>
+              <textarea [id]="'servDesc' + i" formControlName="description" rows="2" placeholder="Descreva brevemente o serviço oferecido..."></textarea>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-glass" (click)="addService()" style="width: 100%; border-style: dashed;">
+          + Adicionar Serviço
+        </button>
+
+        <div class="form-actions">
+          <a [routerLink]="['/laboratorios', labId]" class="btn btn-glass">Cancelar</a>
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="saving || labForm.invalid">
+            <span *ngIf="saving" class="spinner-small"></span>
+            {{ saving ? 'Salvando...' : 'Confirmar Alterações' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

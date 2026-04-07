@@ -1,7 +1,7 @@
-# Task Tracker - Remover Testes E2E do Workflow
-
-| Task | Status | Description |
-| :--- | :--- | :--- |
-| Task 1: Remover passos E2E do Workflow | DONE | Passo removido do `ci-cd.yml` |
-| Task 2: Remover arquivos de configuração do Cypress | DONE | `cypress.config.js` e diretório `cypress/` excluídos |
-| Task 3: Limpeza de dependências e angular.json | DONE | Uninstalled cypress e removido configs do `angular.json` |
+| Task | Status | description |
+| ---- | ------ | ----------- |
+| Task 1 | done | Criar Migração e Seed do Banco (Backend) |
+| Task 2 | done | Backend Controller |
+| Task 3 | done | Backend Routes & Index |
+| Task 4 | done | Frontend - Service & Module |
+| Task 5 | done | Frontend - UI (Interface) |

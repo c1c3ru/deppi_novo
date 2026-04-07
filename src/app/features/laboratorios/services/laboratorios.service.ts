@@ -27,4 +27,8 @@ export class LaboratoriosService {
   update(id: string, lab: Partial<Laboratorio>): Observable<Laboratorio> {
     return this.http.put<Laboratorio>(`${this.apiUrl}/${id}`, lab);
   }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

@@ -8,5 +8,6 @@ router.get('/', laboratorioController.getAll);
 router.get('/:id', laboratorioController.getById);
 router.post('/', authMiddleware, laboratorioController.create);
 router.put('/:id', authMiddleware, laboratorioController.update);
+router.delete('/:id', authMiddleware, laboratorioController.delete);
 
 export default router;

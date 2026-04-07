@@ -1,29 +1,49 @@
-<div class="container" style="padding-top: 120px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <h1 class="font-display">Vitrine Tecnológica: Laboratórios</h1>
-  </div>
-  
-  <ng-container *ngIf="loading">
-    <div style="text-align: center; padding: 3rem;">Carregando laboratórios...</div>
-  </ng-container>
+<div class="lab-list-container">
+  <div class="container">
+    <header class="header-section reveal-up">
+      <h1 class="font-display">Vitrine Tecnológica</h1>
+      <p>Conheça os laboratórios do IFCE Campus Maracanaú, explorando inovações, pesquisas e serviços especializados.</p>
+    </header>
 
-  <div class="innovative-grid" *ngIf="!loading">
-    <div class="glass-card reveal-up" *ngFor="let lab of laboratorios">
-      <h3 style="margin-bottom: 0.5rem;">{{ lab.name }}</h3>
-      <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">{{ lab.description }}</p>
-      
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <a [routerLink]="['/laboratorios', lab.id]" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
-          Ver Detalhes
-        </a>
-        <a *ngIf="isAdmin$ | async" [routerLink]="['/laboratorios', lab.id, 'editar']" class="btn btn-glass" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
-          Editar
-        </a>
+    <div class="admin-bar reveal-up" *ngIf="isAdmin$ | async">
+      <!-- Create route isn't defined yet, but we'll link it to a future 'novo' route -->
+      <button class="btn btn-primary" routerLink="/laboratorios/novo">
+        <i class="icon-plus"></i> Adicionar Laboratório
+      </button>
+    </div>
+
+    <div *ngIf="loading" style="text-align: center; padding: 5rem;">
+      <p class="reveal-up" style="color: var(--color-text-secondary);">Carregando vitrine...</p>
+    </div>
+
+    <div class="labs-grid" *ngIf="!loading">
+      <article 
+        *ngFor="let lab of laboratorios; let i = index" 
+        class="glass lab-card reveal-up"
+        [style.animation-delay]="(i * 0.1) + 's'"
+        [routerLink]="['/laboratorios', lab.id]">
+        
+        <h3 class="font-display">{{ lab.name }}</h3>
+        
+        <p class="description-preview">{{ lab.description }}</p>
+
+        <div class="card-footer">
+          <div class="badges">
+            <span class="btn btn-glass" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">
+              {{ lab.productions?.length || 0 }} Produções
+            </span>
+          </div>
+          <span class="btn btn-primary" style="padding: 0.5rem 1rem;">
+            Ver Detalhes
+          </span>
+        </div>
+      </article>
+    </div>
+
+    <div *ngIf="!loading && laboratorios.length === 0" style="text-align: center; padding: 5rem;">
+      <div class="reveal-up surface" style="padding: 3rem;">
+        <p style="color: var(--color-text-secondary);">Nenhum laboratório cadastrado na vitrine ainda.</p>
       </div>
     </div>
-  </div>
-  
-  <div *ngIf="!loading && laboratorios.length === 0" style="text-align: center; padding: 3rem;">
-    <p>Nenhum laboratório cadastrado.</p>
   </div>
 </div>

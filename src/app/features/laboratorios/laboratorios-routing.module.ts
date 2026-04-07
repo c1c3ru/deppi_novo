@@ -7,6 +7,7 @@ import { AuthGuard } from '../../core/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', component: LabListComponent },
+  { path: 'novo', component: LabFormComponent, canActivate: [AuthGuard] },
   { path: ':id', component: LabDetailComponent },
   { path: ':id/editar', component: LabFormComponent, canActivate: [AuthGuard] },
 ];

@@ -7,7 +7,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 @Component({
   selector: 'app-lab-list',
   standalone: false,
-  templateUrl: './lab-list.component.html'
+  templateUrl: './lab-list.component.html',
+  styleUrls: ['./lab-list.component.scss']
 })
 export class LabListComponent implements OnInit {
   private labsService = inject(LaboratoriosService);
