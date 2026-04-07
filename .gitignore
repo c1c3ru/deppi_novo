@@ -69,4 +69,18 @@ Thumbs.db
 *.tar.bz2
 *.tar.xz
 *.tar.zst
+
+# Angular and Build Cache
+.angular/
+
+# AI Agent Instructions and Workflows
+.agents/
+.agent/
+
+# Linter and hints
+.hintrc
+
+# Old bootstrap maps and system noise
+cargahoraria/bootstrap/**/*.map
+cargahoraria/favicon.ico
 ```

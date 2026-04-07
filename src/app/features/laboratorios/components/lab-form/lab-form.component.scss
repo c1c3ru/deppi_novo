@@ -85,6 +85,32 @@
         color: var(--color-primary);
       }
     }
+
+    .btn-remove {
+      color: var(--color-error, #ff4d4f);
+      
+      &:hover {
+        background: rgba(255, 77, 79, 0.1);
+        border-color: #ff4d4f;
+      }
+    }
+  }
+
+  .add-btn {
+    width: 100%;
+    border-style: dashed;
+    margin-bottom: 2rem;
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 3rem;
+    border-radius: 12px;
+
+    .loading-text {
+      margin-top: 1rem;
+      color: var(--color-text-secondary);
+    }
   }
 
   .form-actions {

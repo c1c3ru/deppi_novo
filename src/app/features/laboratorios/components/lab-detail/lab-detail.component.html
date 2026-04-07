@@ -27,7 +27,7 @@
               <span class="badge" *ngIf="prod.type">{{ prod.type }}</span>
               <span class="badge" *ngIf="prod.year">{{ prod.year }}</span>
               <h4>{{ prod.title }}</h4>
-              <a *ngIf="prod.link" [href]="prod.link" target="_blank" class="btn btn-link" style="padding: 0; font-size: 0.85rem;">
+              <a *ngIf="prod.link" [href]="prod.link" target="_blank" class="btn btn-link btn-more">
                 Ver mais &rarr;
               </a>
             </div>
@@ -49,17 +49,17 @@
 
       <div class="sidebar reveal-up">
         <div class="glass contact-card">
-          <h3 class="font-display" style="margin-bottom: 1rem;">Interessado?</h3>
-          <p style="color: var(--color-text-secondary); margin-bottom: 2rem;">
+          <h3 class="font-display contact-title">Interessado?</h3>
+          <p class="contact-text">
             Entre em contato com o DEPPI para saber como colaborar com este laboratório ou solicitar serviços.
           </p>
-          <a routerLink="/contact" class="btn btn-primary" style="width: 100%;">Falar Conosco</a>
+          <a routerLink="/contact" class="btn btn-primary btn-contact">Falar Conosco</a>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="loading" class="container" style="padding-top: 150px; text-align: center;">
-  <p class="reveal-up" style="color: var(--color-text-secondary);">Carregando laboratório...</p>
+<div *ngIf="loading" class="container loading-container">
+  <p class="reveal-up loading-msg">Carregando laboratório...</p>
 </div>

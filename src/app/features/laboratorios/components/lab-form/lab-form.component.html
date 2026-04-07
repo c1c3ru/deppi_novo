@@ -8,9 +8,9 @@
       <h1 class="font-display form-header">{{ labId ? 'Editar Laboratório' : 'Novo Laboratório' }}</h1>
       
       <ng-container *ngIf="loading && labId">
-        <div class="loading-state glass" style="text-align: center; padding: 3rem; border-radius: 12px;">
-          <div class="spinner"></div> <!-- Assuming a spinner component or CSS exists -->
-          <p style="margin-top: 1rem; color: var(--color-text-secondary);">Carregando dados do laboratório...</p>
+        <div class="loading-state glass">
+          <div class="spinner"></div>
+          <p class="loading-text">Carregando dados do laboratório...</p>
         </div>
       </ng-container>
 
@@ -49,8 +49,7 @@
               <button 
                 type="button" 
                 (click)="removeProduction(i)" 
-                class="btn btn-glass" 
-                style="color: var(--color-error, #ff4d4f);"
+                class="btn btn-glass btn-remove" 
                 [attr.aria-label]="'Remover produção ' + (i + 1)">
                 <span>&times;</span> Remover
               </button>
@@ -76,7 +75,7 @@
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-glass" (click)="addProduction()" style="width: 100%; border-style: dashed;">
+        <button type="button" class="btn btn-glass add-btn" (click)="addProduction()">
           + Adicionar Produção
         </button>
 
@@ -94,8 +93,7 @@
               <button 
                 type="button" 
                 (click)="removeService(i)" 
-                class="btn btn-glass" 
-                style="color: var(--color-error, #ff4d4f);"
+                class="btn btn-glass btn-remove" 
                 [attr.aria-label]="'Remover serviço ' + (i + 1)">
                 <span>&times;</span> Remover
               </button>
@@ -117,7 +115,7 @@
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-glass" (click)="addService()" style="width: 100%; border-style: dashed;">
+        <button type="button" class="btn btn-glass add-btn" (click)="addService()">
           + Adicionar Serviço
         </button>
 
