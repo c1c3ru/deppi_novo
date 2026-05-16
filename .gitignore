@@ -81,6 +81,7 @@ Thumbs.db
 .hintrc
 
 # Old bootstrap maps and system noise
+cargahoraria/**
 cargahoraria/bootstrap/**/*.map
 cargahoraria/favicon.ico
 ```

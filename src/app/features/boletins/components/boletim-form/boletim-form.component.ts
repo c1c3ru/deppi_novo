@@ -526,7 +526,7 @@ import { Boletim } from '../../../../shared/models';
 
       .attachment-item:hover {
         border-color: var(--color-primary);
-        transform: translateY(-2px);
+        /* Sem translateY para evitar flickering — o deslocamento causa saída e re-entrada do cursor */
         box-shadow: var(--shadow-sm);
       }
 

@@ -481,7 +481,7 @@ import { CommonModule } from '@angular/common';
 
       .attachment-card:hover {
         border-color: var(--color-primary);
-        transform: translateY(-3px);
+        /* Sem translateY para evitar flickering */
         box-shadow: var(--shadow-md);
       }
 

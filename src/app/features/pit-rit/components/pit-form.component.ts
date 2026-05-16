@@ -372,6 +372,8 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         background: var(--color-background-secondary);
         color: var(--color-text);
         cursor: text;
+        /* Sem transition no hover para evitar flickering entre estados */
+        transition: border-color 0.2s ease;
       }
       .form-select {
         padding: 0.75rem 1rem;
@@ -381,6 +383,8 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         background: var(--color-background-secondary);
         color: var(--color-text);
         cursor: pointer;
+        /* Sem transition que cause layout recalculation */
+        transition: border-color 0.2s ease;
       }
 
       .spreadsheet-table {
@@ -750,6 +754,40 @@ export class PitFormComponent {
       );
       return;
     }
+
+    // Validação estrita: CH total deve ser exatamente igual ao limite do regime
+    const totalAtual = this.getGrandTotal();
+    const maxPermitido = this.getMaxCH();
+    const regime = this.data?.identificacao?.regime || '40h D.E.';
+
+    if (totalAtual > maxPermitido) {
+      this.notificationService.showError(
+        `A carga horária total (${totalAtual.toFixed(1)}h) excede o limite do regime ${regime} (${maxPermitido}h). Reduza as atividades antes de gerar o PDF.`
+      );
+      return;
+    }
+
+    if (regime === '20h' && totalAtual < maxPermitido) {
+      this.notificationService.showError(
+        `Regime 20h: a carga horária deve ser exatamente ${maxPermitido}h. Atual: ${totalAtual.toFixed(1)}h. Ajuste as atividades.`
+      );
+      return;
+    }
+
+    if (regime === '30h' && totalAtual < maxPermitido) {
+      this.notificationService.showError(
+        `Regime 30h: a carga horária deve ser exatamente ${maxPermitido}h. Atual: ${totalAtual.toFixed(1)}h. Ajuste as atividades.`
+      );
+      return;
+    }
+
+    if ((regime === '40h' || regime === '40h D.E.') && totalAtual < maxPermitido) {
+      this.notificationService.showError(
+        `Regime ${regime}: a carga horária deve ser exatamente ${maxPermitido}h. Atual: ${totalAtual.toFixed(1)}h. Ajuste as atividades.`
+      );
+      return;
+    }
+
     this.pdfService.generatePitPdf(this.data);
     this.notificationService.showSuccess('PDF do PIT gerado com sucesso!');
   }

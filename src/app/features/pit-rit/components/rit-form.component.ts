@@ -392,7 +392,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
         border: 2px solid var(--color-border);
         border-radius: 8px;
         font-size: 0.95rem;
-        transition: all 0.2s ease;
+        /* Apenas border-color na transition para evitar re-layout e flickering */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
         background: var(--color-background-secondary);
         color: var(--color-text);
       }
