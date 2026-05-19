@@ -249,12 +249,13 @@ jobs:
       - name: Create .env file
         run: |
           # Banco de Dados
+          URL_PASS=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "${{ secrets.DB_PASSWORD }}")
           echo "DB_USER=deppi" > .env
           echo "DB_NAME=deppi" >> .env
           echo "DB_HOST=postgres" >> .env
           echo "DB_PORT=5432" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DATABASE_URL=postgresql://deppi:d3pp1%402026@postgres:5432/deppi" >> .env
+          echo "DATABASE_URL=postgresql://deppi:${URL_PASS}@postgres:5432/deppi" >> .env
           echo "POSTGRES_USER=deppi" >> .env
           echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "POSTGRES_DB=deppi" >> .env
@@ -364,14 +365,16 @@ jobs:
           safe() { printf '%s' "${!1}" | tr -d '\n\r'; }
 
           # Banco de Dados
+          RAW_PASS=$(safe DB_PASSWORD)
+          URL_PASS=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$RAW_PASS")
           echo "DB_USER=deppi" > .env
           echo "DB_NAME=deppi" >> .env
           echo "DB_HOST=postgres" >> .env
           echo "DB_PORT=5432" >> .env
-          echo "DB_PASSWORD=$(safe DB_PASSWORD)" >> .env
-          echo "DATABASE_URL=postgresql://deppi:$(safe DB_PASSWORD)@postgres:5432/deppi" >> .env
+          echo "DB_PASSWORD=$RAW_PASS" >> .env
+          echo "DATABASE_URL=postgresql://deppi:${URL_PASS}@postgres:5432/deppi" >> .env
           echo "POSTGRES_USER=deppi" >> .env
-          echo "POSTGRES_PASSWORD=$(safe DB_PASSWORD)" >> .env
+          echo "POSTGRES_PASSWORD=$RAW_PASS" >> .env
           echo "POSTGRES_DB=deppi" >> .env
 
           # Redis
