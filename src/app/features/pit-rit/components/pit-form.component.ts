@@ -371,7 +371,6 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-size: 0.95rem;
         background: var(--color-background-secondary);
         color: var(--color-text);
-        cursor: default;
         /* Sem transition no hover para evitar flickering entre estados */
         transition: border-color 0.2s ease;
       }
@@ -382,7 +381,6 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-size: 0.95rem;
         background: var(--color-background-secondary);
         color: var(--color-text);
-        cursor: default;
         /* Sem transition que cause layout recalculation */
         transition: border-color 0.2s ease;
       }
@@ -428,13 +426,11 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
       .input-cell {
         padding: 0 !important;
         background: rgba(var(--color-primary-rgb), 0.1);
-        cursor: default;
       }
       .readonly-cell {
         background: rgba(0, 0, 0, 0.02);
         text-align: center;
         color: var(--color-text-muted);
-        cursor: default;
       }
       .input-cell input {
         width: 100%;
@@ -446,7 +442,6 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-weight: bold;
         color: var(--color-text);
         min-height: 28px;
-        cursor: default;
       }
       .input-cell input:focus {
         outline: 2px solid #2e7d32;
@@ -484,7 +479,6 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         text-align: center;
         color: var(--color-primary);
         border-radius: 4px;
-        cursor: default;
       }
       .slot-select {
         padding: 0.4rem;
@@ -494,7 +488,6 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         border: 1px solid #ddd;
         border-radius: 4px;
         transition: background-color 0.3s;
-        cursor: default;
       }
       .btn-primary, .btn-secondary {
         cursor: pointer !important;
@@ -503,7 +496,6 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         pointer-events: none;
       }
       .table-input {
-        cursor: default;
       }
       .slot-select[data-activity='Aula'] {
         background-color: var(--slot-bg-Aula);

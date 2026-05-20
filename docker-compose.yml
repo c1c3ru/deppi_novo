@@ -36,7 +36,6 @@ services:
       - SMTP_PASS=${SMTP_PASS}
       - EMAIL_FROM=${EMAIL_FROM}
       - EMAIL_FROM_NAME=${EMAIL_FROM_NAME}
-    entrypoint: ["tail", "-f", "/dev/null"]
     depends_on:
       - postgres
       - redis
