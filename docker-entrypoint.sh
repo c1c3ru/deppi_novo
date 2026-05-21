@@ -17,7 +17,7 @@ echo "PostgreSQL is up!"
 # Run migrations and start backend
 echo "Running Database Migrations..."
 cd /app/backend
-npm run migrate
+npm run migrate || echo "Migrations failed, continuing anyway for debugging..."
 
 echo "Starting Backend API..."
 npm run start &

@@ -16,7 +16,7 @@ services:
     environment:
       - NODE_ENV=production
       - CORS_ORIGIN=https://deppi.maracanau.ifce.edu.br,http://localhost:4200
-      - DATABASE_URL=postgresql://deppi:${DB_PASSWORD}@postgres:5432/deppi
+      - DATABASE_URL=${DATABASE_URL}
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=deppi
