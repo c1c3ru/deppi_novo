@@ -371,8 +371,8 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-size: 0.95rem;
         background: var(--color-background-secondary);
         color: var(--color-text);
-        /* Sem transition no hover para evitar flickering entre estados */
         transition: border-color 0.2s ease;
+        cursor: default !important;
       }
       .form-select {
         padding: 0.75rem 1rem;
@@ -381,8 +381,8 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-size: 0.95rem;
         background: var(--color-background-secondary);
         color: var(--color-text);
-        /* Sem transition que cause layout recalculation */
         transition: border-color 0.2s ease;
+        cursor: default !important;
       }
 
       .spreadsheet-table {
@@ -488,6 +488,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         border: 1px solid #ddd;
         border-radius: 4px;
         transition: background-color 0.3s;
+        cursor: default !important;
       }
       .btn-primary, .btn-secondary {
         cursor: pointer !important;
@@ -496,6 +497,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         pointer-events: none;
       }
       .table-input {
+        cursor: default !important;
       }
       .slot-select[data-activity='Aula'] {
         background-color: var(--slot-bg-Aula);

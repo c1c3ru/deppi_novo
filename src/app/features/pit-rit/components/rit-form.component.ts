@@ -399,8 +399,10 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
       }
       .form-input,
       .form-textarea {
+        cursor: default !important;
       }
       .form-select {
+        cursor: default !important;
       }
       .form-textarea {
         resize: vertical;
