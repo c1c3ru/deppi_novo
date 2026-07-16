@@ -3,6 +3,7 @@ import json
 import urllib.request
 import re
 import os
+import time
 from io import StringIO
 import hashlib
 
@@ -39,11 +40,36 @@ def extract_drive_id(url):
     if match: return match.group(1)
     return None
 
+def fetch_with_retry(url, max_retries=5, backoff=3):
+    """Faz download com User-Agent de browser e retry com backoff exponencial."""
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/125.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+    }
+    for attempt in range(1, max_retries + 1):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=30) as response:
+                return response.read().decode('utf-8')
+        except Exception as e:
+            wait = backoff * (2 ** (attempt - 1))
+            print(f"  ⚠️  Tentativa {attempt}/{max_retries} falhou: {e}")
+            if attempt < max_retries:
+                print(f"     Aguardando {wait}s antes de tentar novamente...")
+                time.sleep(wait)
+            else:
+                raise RuntimeError(
+                    f"Falha ao baixar dados após {max_retries} tentativas: {e}"
+                ) from e
+
 def main():
     print("Baixando dados do Google Sheets...")
-    req = urllib.request.Request(CSV_URL)
-    with urllib.request.urlopen(req) as response:
-        content = response.read().decode('utf-8')
+    content = fetch_with_retry(CSV_URL)
     
     reader = csv.DictReader(StringIO(content))
     talentos = []
