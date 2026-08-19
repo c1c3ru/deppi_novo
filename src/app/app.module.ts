@@ -187,6 +187,13 @@ import { AuthGuard } from './core/guards/auth.guard';
             ),
         },
         {
+          path: 'visitas',
+          loadChildren: () =>
+            import('./features/visitas/visitas.module').then(
+              (m) => m.VisitasModule
+            ),
+        },
+        {
           path: '**',
           redirectTo: 'home',
         },
