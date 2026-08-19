@@ -93,6 +93,64 @@ class EmailService {
       throw new Error('Falha ao enviar e-mail com a senha');
     }
   }
+
+  public async sendVisitPendingEmail(to: string, schoolName: string, targetDate: string): Promise<void> {
+    try {
+      const mailOptions = {
+        from: `"${config.email.fromName}" <${config.email.from}>`,
+        to: to,
+        subject: 'Sua solicitação de visita foi recebida - DEPPI IFCE',
+        html: `
+          <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; padding: 20px;">
+            <h2 style="color: #2f8132; text-align: center;">Portal DEPPI - IFCE Maracanaú</h2>
+            <p>Olá, representante da <strong>${schoolName}</strong>!</p>
+            <p>Recebemos sua solicitação de visita para a data <strong>${targetDate}</strong>.</p>
+            <p>Sua solicitação está <strong>pendente de confirmação</strong>. Os coordenadores dos laboratórios estão analisando a disponibilidade.</p>
+            <p>Em breve você receberá um novo e-mail confirmando ou reagendando a visita.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="font-size: 0.8rem; color: #999; text-align: center;">Este é um e-mail automático, por favor não responda.</p>
+          </div>
+        `,
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      logger.info(`Visit pending email sent successfully to ${to}`);
+    } catch (error) {
+      logger.error('Error sending visit pending email:', error);
+      throw new Error('Falha ao enviar e-mail de confirmação de recebimento');
+    }
+  }
+
+  public async sendVisitConfirmationEmail(to: string, schoolName: string, targetDate: string, labs: string[]): Promise<void> {
+    try {
+      const labsList = labs.map(lab => `<li>${lab}</li>`).join('');
+      const mailOptions = {
+        from: `"${config.email.fromName}" <${config.email.from}>`,
+        to: to,
+        subject: 'Visita Confirmada! - DEPPI IFCE',
+        html: `
+          <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; padding: 20px;">
+            <h2 style="color: #2f8132; text-align: center;">Portal DEPPI - IFCE Maracanaú</h2>
+            <p>Olá, representante da <strong>${schoolName}</strong>!</p>
+            <p>Sua visita para a data <strong>${targetDate}</strong> foi <strong>CONFIRMADA</strong>.</p>
+            <p>Os seguintes laboratórios estão preparados para recebê-los:</p>
+            <ul>
+              ${labsList}
+            </ul>
+            <p>Por favor, cheguem com 15 minutos de antecedência.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="font-size: 0.8rem; color: #999; text-align: center;">Este é um e-mail automático, por favor não responda.</p>
+          </div>
+        `,
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      logger.info(`Visit confirmation email sent successfully to ${to}`);
+    } catch (error) {
+      logger.error('Error sending visit confirmation email:', error);
+      throw new Error('Falha ao enviar e-mail de confirmação de visita');
+    }
+  }
 }
 
 export const emailService = new EmailService();
