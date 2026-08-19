@@ -10,7 +10,7 @@ COPY package*.json ./
 COPY backend/package*.json ./backend/
 
 # Install dependencies
-RUN npm ci --only=production --ignore-scripts && npm cache clean --force
+RUN npm ci --only=production --ignore-scripts --legacy-peer-deps && npm cache clean --force
 
 # Build stage
 FROM base AS builder
@@ -20,7 +20,7 @@ WORKDIR /app
 COPY . .
 
 # Install all dependencies (including dev)
-RUN npm ci --ignore-scripts
+RUN npm ci --ignore-scripts --legacy-peer-deps
 
 # Build Angular application
 # 1. Remova a pasta dist antiga para não ter lixo
@@ -32,7 +32,7 @@ RUN npx ng build --configuration production --service-worker=true
 
 # Build backend
 WORKDIR /app/backend
-RUN npm ci && npm run build
+RUN npm ci --legacy-peer-deps && npm run build
 
 # Production stage
 FROM base AS runner
