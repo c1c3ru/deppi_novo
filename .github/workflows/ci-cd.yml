@@ -68,6 +68,8 @@ jobs:
           name: frontend-coverage
 
       - name: Build application
+        env:
+          NODE_OPTIONS: "--max-old-space-size=1536"
         run: |
           # 1. Remova a pasta dist antiga para não ter lixo
           rm -rf dist/
@@ -154,6 +156,8 @@ jobs:
         run: npm run format:check
 
       - name: Build application
+        env:
+          NODE_OPTIONS: "--max-old-space-size=1536"
         run: npm run build
 
       - name: Setup test database
