@@ -3,6 +3,7 @@ import { VisitasService } from '../services/visitas.service';
 import { SchoolVisit } from '../../../shared/models/visitas.model';
 
 @Component({
+  standalone: false,
   selector: 'app-visitas-admin',
   templateUrl: './visitas-admin.component.html',
   styleUrls: ['./visitas-admin.component.scss']
