@@ -40,7 +40,7 @@ jobs:
         run: python3 bin/sync_talentos.py
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run ESLint (Auto-fix)
         run: npm run lint:fix || true
@@ -138,7 +138,7 @@ jobs:
           cache-dependency-path: "./backend/package-lock.json"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run ESLint (Auto-fix)
         run: npm run lint:fix || true
