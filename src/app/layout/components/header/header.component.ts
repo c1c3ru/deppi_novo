@@ -124,6 +124,16 @@ import { CommonModule } from '@angular/common';
             <span>Hub de Talentos</span>
           </a>
           <a
+            routerLink="/visitas"
+            class="nav-link"
+            [class.active]="isActive('/visitas')"
+            (mouseenter)="setHoverPos($event)"
+            (mouseleave)="clearHoverPos()"
+            (click)="closeMenu()"
+          >
+            <span>Agendar Visita</span>
+          </a>
+          <a
             routerLink="/contact"
             class="nav-link"
             [class.active]="isActive('/contact')"
