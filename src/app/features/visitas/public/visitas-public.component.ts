@@ -4,6 +4,7 @@ import { VisitasService } from '../services/visitas.service';
 import { SchoolVisit } from '../../../shared/models/visitas.model';
 
 @Component({
+  standalone: false,
   selector: 'app-visitas-public',
   templateUrl: './visitas-public.component.html',
   styleUrls: ['./visitas-public.component.scss']
