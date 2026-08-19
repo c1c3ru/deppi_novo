@@ -205,15 +205,17 @@ import { NotificationService } from '../../core/services/notification.service';
       }
       .page-title {
         font-size: clamp(2.5rem, 5vw, 3.5rem);
-        color: var(--color-text);
+        color: #1a1a1a;
         margin: 0 0 1.5rem;
         font-family: var(--font-display);
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
       }
       .page-subtitle {
         font-size: 1.25rem;
-        color: var(--color-text-secondary);
+        color: #333333;
         max-width: 700px;
         margin: 0 auto;
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
       }
       .content-area {
         max-width: var(--container-max-width);
