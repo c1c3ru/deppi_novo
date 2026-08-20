@@ -93,56 +93,21 @@ import { CommonModule } from '@angular/common';
           >
             <span>Vitrine</span>
           </a>
-          <a
-            routerLink="/boletins"
-            class="nav-link"
-            [class.active]="isActive('/boletins')"
-            (mouseenter)="setHoverPos($event)"
-            (mouseleave)="clearHoverPos()"
-            (click)="closeMenu()"
-          >
-            <span>Boletins</span>
-          </a>
-          <a
-            routerLink="/pit-rit"
-            class="nav-link"
-            [class.active]="isActive('/pit-rit')"
-            (mouseenter)="setHoverPos($event)"
-            (mouseleave)="clearHoverPos()"
-            (click)="closeMenu()"
-          >
-            <span>PIT/RIT</span>
-          </a>
-          <a
-            routerLink="/talentos"
-            class="nav-link"
-            [class.active]="isActive('/talentos')"
-            (mouseenter)="setHoverPos($event)"
-            (mouseleave)="clearHoverPos()"
-            (click)="closeMenu()"
-          >
-            <span>Hub de Talentos</span>
-          </a>
-          <a
-            routerLink="/visitas"
-            class="nav-link"
-            [class.active]="isActive('/visitas')"
-            (mouseenter)="setHoverPos($event)"
-            (mouseleave)="clearHoverPos()"
-            (click)="closeMenu()"
-          >
-            <span>Agendar Visita</span>
-          </a>
-          <a
-            routerLink="/contact"
-            class="nav-link"
-            [class.active]="isActive('/contact')"
-            (mouseenter)="setHoverPos($event)"
-            (mouseleave)="clearHoverPos()"
-            (click)="closeMenu()"
-          >
-            <span>Contato</span>
-          </a>
+
+          <!-- Dropdown Mais -->
+          <div class="dropdown-container" (mouseenter)="isDropdownOpen = true; setHoverPos($event)" (mouseleave)="isDropdownOpen = false; clearHoverPos()">
+            <button class="nav-link dropdown-toggle" [class.active]="isDropdownActive()">
+              <span>Mais</span>
+              <span class="dropdown-arrow" [class.open]="isDropdownOpen">▼</span>
+            </button>
+            <div class="dropdown-menu glass" [class.show]="isDropdownOpen">
+              <a routerLink="/boletins" class="dropdown-item" [class.active]="isActive('/boletins')" (click)="closeMenu()">Boletins</a>
+              <a routerLink="/pit-rit" class="dropdown-item" [class.active]="isActive('/pit-rit')" (click)="closeMenu()">PIT/RIT</a>
+              <a routerLink="/talentos" class="dropdown-item" [class.active]="isActive('/talentos')" (click)="closeMenu()">Hub de Talentos</a>
+              <a routerLink="/visitas" class="dropdown-item" [class.active]="isActive('/visitas')" (click)="closeMenu()">Agendar Visita</a>
+              <a routerLink="/contact" class="dropdown-item" [class.active]="isActive('/contact')" (click)="closeMenu()">Contato</a>
+            </div>
+          </div>
           <div
             class="nav-indicator"
             [style.transform]="indicatorTransform"
@@ -204,6 +169,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   headerClass = '';
   isScrolled = false;
   isMenuOpen = false;
+  isDropdownOpen = false;
   indicatorTransform = 'scaleX(0)';
   indicatorOpacity = '0';
 
@@ -272,7 +238,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   closeMenu(): void {
     this.isMenuOpen = false;
+    this.isDropdownOpen = false;
     document.body.style.overflow = '';
+  }
+
+  isDropdownActive(): boolean {
+    return this.isActive('/boletins') || this.isActive('/pit-rit') || this.isActive('/talentos') || this.isActive('/visitas') || this.isActive('/contact');
   }
 
   setHoverPos(event: MouseEvent): void {
