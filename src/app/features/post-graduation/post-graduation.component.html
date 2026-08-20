@@ -1,0 +1,35 @@
+<div class="page-container glass fade-in">
+  <div class="page-header">
+    <div class="header-icon">
+      <span>🎓</span>
+    </div>
+    <div class="header-content">
+      <h1 class="page-title gradient-text">Pós-Graduação</h1>
+      <p class="page-subtitle">
+        Informações sobre pesquisa e capacitação em nível superior no IFCE
+      </p>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <p class="description-text">
+      De acordo com a lei de criação dos institutos federais, Lei nº 11.892, de 29 de dezembro de 2008, o IFCE tem como um dos seus objetivos, ministrar em nível de educação superior, cursos de pós-graduação <em>lato sensu</em> de aperfeiçoamento e especialização, visando à formação de especialistas nas diferentes áreas do conhecimento e cursos de pós-graduação <em>stricto sensu</em> de mestrado e doutorado, que contribuam para promover o estabelecimento de bases sólidas em educação, ciência e tecnologia, com vistas no processo de geração e inovação tecnológica.
+    </p>
+    <p class="description-text">
+      Além da oferta de cursos de pós-graduação, o IFCE incentiva a capacitação de servidores nesse nível de ensino, objetivo previsto em seu Plano de Desenvolvimento Institucional (PDI).
+    </p>
+  </div>
+
+  <div class="cards-grid">
+    <a *ngFor="let card of cards" [href]="card.link" target="_blank" rel="noopener noreferrer" class="resource-card glass-hover">
+      <div class="card-icon">🔗</div>
+      <div class="card-content">
+        <h3>{{ card.title }}</h3>
+        <p>{{ card.description }}</p>
+      </div>
+      <div class="card-arrow">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+  </div>
+</div>

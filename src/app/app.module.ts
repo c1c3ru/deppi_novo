@@ -143,7 +143,13 @@ import { AuthGuard } from './core/guards/auth.guard';
               (m) => m.InnovationModule
             ),
         },
-
+        {
+          path: 'post-graduation',
+          loadChildren: () =>
+            import('./features/post-graduation/post-graduation.module').then(
+              (m) => m.PostGraduationModule
+            ),
+        },
         {
           path: 'boletins',
           loadChildren: () =>
