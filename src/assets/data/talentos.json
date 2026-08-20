@@ -82,5 +82,33 @@
     "experiencia": "Sim, formal (registrada)",
     "curriculo": "https://drive.google.com/file/d/12SVJRJJBbW9DxIr9dGeBXttoy6ffBzAf/view?usp=sharing",
     "autorizado": true
+  },
+  {
+    "id": "c76fe37d",
+    "nome": "Juan Lucas Bezerra Insaurralde",
+    "curso": "Bacharelado em Ciência da Computação",
+    "semestre": "6º Semestre",
+    "superpoder": "Programação e Desenvolvimento (Front-...",
+    "bio": "Python, C, banco de dados, visão computacional, redes, suporte técnico, Excel (tabelas dinâmicas, gráficos), Power BI, comunicação, trabalho em equ...",
+    "skills": [
+      "Programação e Desenvolvimento (Front-end/Back-end/Mobile)",
+      "Redes de Computadores e Segurança",
+      "Análise e Qualidade de Software",
+      "Manutenção Eletroeletrônica"
+    ],
+    "github": null,
+    "linkedin": null,
+    "avatar_seed": "juan-lucas-bezerra-insaurralde",
+    "foto": "https://lh3.googleusercontent.com/d/1N4IQNsDU-hv13yJxvYdVXHqsAWCO9TEC",
+    "turno": "Diurno (Manhã e/ou Tarde)",
+    "disponibilidade": "Flexível (A definir)",
+    "idiomas": [
+      "Inglês: Avançado",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, informal (projetos, voluntariado)",
+    "curriculo": "https://drive.google.com/file/d/1ja1EKxofMbAXwdnua9V8XDpPyPrcXoc0/view?usp=drivesdk",
+    "autorizado": true
   }
 ]
