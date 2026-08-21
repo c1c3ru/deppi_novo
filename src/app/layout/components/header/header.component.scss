@@ -169,6 +169,16 @@
       pointer-events: auto;
     }
 
+    /* Ponte invisível para o hover não se perder no gap de 0.5rem */
+    &::before {
+      content: '';
+      position: absolute;
+      top: -1rem;
+      left: 0;
+      right: 0;
+      height: 1rem;
+    }
+
     .dropdown-item {
       padding: 0.6rem 1rem;
       color: var(--color-text);
