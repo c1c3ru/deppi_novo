@@ -16,6 +16,7 @@ export class VisitasPublicComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
   
+<<<<<<< HEAD
   // Laboratórios disponíveis com sigla, nome completo e descrição resumida
   laboratorios = [
     {
@@ -60,6 +61,17 @@ export class VisitasPublicComponent implements OnInit {
       nome: 'Laboratório de Sistemas e Computação',
       descricao: 'Desenvolvimento de software, redes de computadores, segurança da informação e sistemas embarcados.'
     },
+=======
+  // Hardcoded for MVP, should be fetched from lab service ideally
+  availableLabs = [
+    { id: '1', name: 'LAQAMB' },
+    { id: '2', name: 'LAPP' },
+    { id: '3', name: 'MAKER' },
+    { id: '4', name: 'OFICINA' },
+    { id: '5', name: 'LQOI' },
+    { id: '6', name: 'LABVICIA' },
+    { id: '7', name: 'LASIC' },
+>>>>>>> 5e00755595ef486c238b6905c7cb2e45a93131a8
   ];
 
   constructor(
@@ -108,6 +120,7 @@ export class VisitasPublicComponent implements OnInit {
     }
   }
 
+<<<<<<< HEAD
   // Alterna a seleção de um laboratório pelo card
   toggleLab(labId: string): void {
     const labIds = this.visitForm.get('lab_ids')?.value as string[];
@@ -124,5 +137,18 @@ export class VisitasPublicComponent implements OnInit {
   isLabSelected(labId: string): boolean {
     const labIds = this.visitForm.get('lab_ids')?.value as string[];
     return labIds.includes(labId);
+=======
+  onLabChange(event: any, labId: string) {
+    const labIds = this.visitForm.get('lab_ids')?.value as string[];
+    if (event.target.checked) {
+      labIds.push(labId);
+    } else {
+      const index = labIds.indexOf(labId);
+      if (index >= 0) {
+        labIds.splice(index, 1);
+      }
+    }
+    this.visitForm.get('lab_ids')?.setValue(labIds);
+>>>>>>> 5e00755595ef486c238b6905c7cb2e45a93131a8
   }
 }
