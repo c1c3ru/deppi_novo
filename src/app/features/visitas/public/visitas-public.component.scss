@@ -1,3 +1,411 @@
-.list-group-item {
-  border-left: 4px solid #28a745;
+// =============================================================================
+// Visitas Public — Estilos do componente de agendamento de visitas
+// Design system: segue tokens.css e main.scss do projeto
+// =============================================================================
+
+// Layout principal: 2 colunas lado a lado
+.pagina-visitas {
+  min-height: 100vh;
+  padding: 120px var(--spacing-md) var(--spacing-2xl);
+  background: var(--color-background);
+}
+
+.visitas-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================================================
+// CABECALHOS DAS COLUNAS
+// =============================================================================
+
+.formulario-cabecalho,
+.calendario-cabecalho {
+  margin-bottom: var(--spacing-xl);
+}
+
+.formulario-rotulo {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.formulario-titulo {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.formulario-descricao {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+
+  strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+}
+
+// =============================================================================
+// ALERTAS DE FEEDBACK
+// =============================================================================
+
+.alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-bottom: var(--spacing-lg);
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+.alerta-sucesso {
+  background: rgba(16, 185, 129, 0.1);
+  color: #065f46;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.alerta-erro {
+  background: rgba(239, 68, 68, 0.08);
+  color: #7f1d1d;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+// =============================================================================
+// FORMULÁRIO — CAMPOS
+// =============================================================================
+
+.formulario-visita {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.campo-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+
+  &.required::after {
+    content: ' *';
+    color: var(--color-secondary);
+  }
+}
+
+.campo-hint {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.85em;
+}
+
+.campo-input {
+  width: 100%;
+  padding: 10px var(--spacing-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-background);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.12);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+}
+
+.campo-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  padding-right: var(--spacing-xl);
+}
+
+.campos-duplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.campos-triplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--spacing-md);
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// =============================================================================
+// CARDS DE LABORATÓRIOS
+// =============================================================================
+
+.labs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.lab-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--spacing-md);
+  background: var(--color-background);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  position: relative;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+
+  // Ícone de check — posicionado no canto superior direito
+  &__check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    background: var(--color-primary);
+    border-radius: var(--border-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    animation: aparecer 0.15s ease-out;
+  }
+
+  // Badge da sigla
+  &__sigla {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primary-dark);
+    background: rgba(var(--color-primary-rgb), 0.1);
+    padding: 3px 10px;
+    border-radius: var(--border-radius-full);
+  }
+
+  // Nome completo do laboratório
+  &__nome {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.3;
+    padding-right: 28px; // espaço para o check
+  }
+
+  // Descrição resumida
+  &__descricao {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  // Estados interativos
+  &:hover {
+    border-color: var(--color-primary);
+    background: rgba(var(--color-primary-rgb), 0.03);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2);
+  }
+
+  // Estado selecionado
+  &--selecionado {
+    border-color: var(--color-primary);
+    background: rgba(var(--color-primary-rgb), 0.06);
+    box-shadow: 0 0 0 1px rgba(var(--color-primary-rgb), 0.2);
+
+    .lab-card__sigla {
+      background: rgba(var(--color-primary-rgb), 0.18);
+      color: var(--color-primary);
+    }
+
+    .lab-card__nome {
+      color: var(--color-primary-dark);
+    }
+  }
+}
+
+// Resumo dos labs selecionados
+.labs-selecionados {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+// =============================================================================
+// BOTÃO DE ENVIO
+// =============================================================================
+
+.btn-envio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: 14px var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-top: var(--spacing-sm);
+}
+
+// =============================================================================
+// COLUNA DIREITA — LISTA DE VISITAS CONFIRMADAS
+// =============================================================================
+
+.visitas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.visita-vazia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--border-radius-lg);
+  text-align: center;
+  color: var(--color-text-muted);
+
+  svg {
+    opacity: 0.4;
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+  }
+}
+
+.visita-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  &__topo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+  }
+
+  &__escola {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  &__info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+
+      svg {
+        flex-shrink: 0;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// ANIMAÇÕES
+// =============================================================================
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
