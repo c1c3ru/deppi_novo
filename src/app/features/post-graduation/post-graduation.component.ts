@@ -48,7 +48,7 @@ export class PostGraduationComponent implements OnInit {
       title: 'Equipe',
       description: 'Da Pós-Graduação',
       link: 'https://portal.ifce.edu.br/institucional/pesquisa-pos-graduacao-e-inovacao/pos-graduacao/equipe/',
-    }
+    },
   ];
 
   constructor(private titleService: Title) {}

@@ -6,7 +6,7 @@ import { SchoolVisit } from '../../../shared/models/visitas.model';
   standalone: false,
   selector: 'app-visitas-admin',
   templateUrl: './visitas-admin.component.html',
-  styleUrls: ['./visitas-admin.component.scss']
+  styleUrls: ['./visitas-admin.component.scss'],
 })
 export class VisitasAdminComponent implements OnInit {
   visitas: SchoolVisit[] = [];
@@ -23,7 +23,7 @@ export class VisitasAdminComponent implements OnInit {
     this.visitasService.getAll().subscribe((data: SchoolVisit[]) => {
       this.visitas = data;
       // Load details for each visit to get lab availabilities
-      this.visitas.forEach(v => this.loadVisitDetails(v));
+      this.visitas.forEach((v) => this.loadVisitDetails(v));
     });
   }
 
@@ -34,12 +34,14 @@ export class VisitasAdminComponent implements OnInit {
   }
 
   updateLabStatus(visitId: string, labId: string, status: string) {
-    this.visitasService.updateLabAvailability(visitId, labId, status).subscribe(() => {
-      const visit = this.visitas.find(v => v.id === visitId);
-      if (visit) {
-        this.loadVisitDetails(visit);
-      }
-    });
+    this.visitasService
+      .updateLabAvailability(visitId, labId, status)
+      .subscribe(() => {
+        const visit = this.visitas.find((v) => v.id === visitId);
+        if (visit) {
+          this.loadVisitDetails(visit);
+        }
+      });
   }
 
   updateGlobalStatus(visitId: string, status: string) {
@@ -52,7 +54,7 @@ export class VisitasAdminComponent implements OnInit {
       },
       error: (err: any) => {
         this.errorMessage = err.error?.message || 'Erro ao atualizar visita.';
-      }
+      },
     });
   }
 }

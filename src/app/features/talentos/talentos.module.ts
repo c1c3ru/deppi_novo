@@ -4,7 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
-import { Component, OnInit, OnDestroy, inject, Renderer2, NgZone } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  Renderer2,
+  NgZone,
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
@@ -207,9 +214,16 @@ function diceBearUrl(seed: string): string {
           <div class="stat-pill">🎓 {{ talentos.length }} talentos</div>
           <div class="stat-pill">🌍 Todos os cursos</div>
           <div class="stat-pill">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="margin-right: 4px; vertical-align: -2px;">
-              <path d="M13 2L3 14h7v8l10-12h-7V2z"/>
-            </svg> Prontos pro mercado
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              width="14"
+              height="14"
+              style="margin-right: 4px; vertical-align: -2px;"
+            >
+              <path d="M13 2L3 14h7v8l10-12h-7V2z" />
+            </svg>
+            Prontos pro mercado
           </div>
         </div>
       </section>
@@ -275,13 +289,21 @@ function diceBearUrl(seed: string): string {
           [attr.aria-label]="'Ver perfil de ' + t.nome"
         >
           <!-- Overlay CONTATAR (swipe direita) -->
-          <div class="swipe-overlay swipe-yes"
-               [style.opacity]="swipingCardId === t.id && swipeDelta > 0 ? swipeDelta / 120 : 0">
+          <div
+            class="swipe-overlay swipe-yes"
+            [style.opacity]="
+              swipingCardId === t.id && swipeDelta > 0 ? swipeDelta / 120 : 0
+            "
+          >
             <span>🤝 CONTATAR</span>
           </div>
           <!-- Overlay PASSAR (swipe esquerda) -->
-          <div class="swipe-overlay swipe-no"
-               [style.opacity]="swipingCardId === t.id && swipeDelta < 0 ? -swipeDelta / 120 : 0">
+          <div
+            class="swipe-overlay swipe-no"
+            [style.opacity]="
+              swipingCardId === t.id && swipeDelta < 0 ? -swipeDelta / 120 : 0
+            "
+          >
             <span>↩ PASSAR</span>
           </div>
           <!-- Front -->
@@ -290,7 +312,9 @@ function diceBearUrl(seed: string): string {
             <img
               class="card-avatar"
               draggable="false"
-              [style.transform]="t.nome.includes('Mariana') ? 'rotate(180deg)' : 'none'"
+              [style.transform]="
+                t.nome.includes('Mariana') ? 'rotate(180deg)' : 'none'
+              "
               [src]="t.foto ? t.foto : diceBearUrl(t.avatar_seed)"
               (error)="handleImageError($event, t)"
               [alt]="'Avatar de ' + t.nome"
@@ -302,9 +326,16 @@ function diceBearUrl(seed: string): string {
                 class="market-badge"
                 *ngIf="t.experiencia && t.experiencia.includes('Sim')"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" style="margin-right: 2px; vertical-align: -1px;">
-                  <path d="M13 2L3 14h7v8l10-12h-7V2z"/>
-                </svg> Pronto pro mercado
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  width="12"
+                  height="12"
+                  style="margin-right: 2px; vertical-align: -1px;"
+                >
+                  <path d="M13 2L3 14h7v8l10-12h-7V2z" />
+                </svg>
+                Pronto pro mercado
               </div>
               <div class="card-power">
                 <span class="power-label">SUPERPODER</span>
@@ -314,12 +345,26 @@ function diceBearUrl(seed: string): string {
             </div>
             <div class="card-tap-hint">
               <span class="hint-swipe">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M19 12H5M5 12l7-7M5 12l7 7"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M19 12H5M5 12l7-7M5 12l7 7" />
                 </svg>
                 arrastar para contatar
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M5 12h14M14 5l7 7-7 7"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M14 5l7 7-7 7" />
                 </svg>
               </span>
               <span class="hint-tap">toque para ver skills ↗</span>
@@ -844,7 +889,7 @@ function diceBearUrl(seed: string): string {
         align-items: center;
         gap: 0.2rem;
         padding: 0.5rem 0.25rem 0.25rem;
-        border-top: 1px solid rgba(0,0,0,0.06);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
         margin-top: 0.5rem;
       }
       .hint-swipe {
@@ -865,8 +910,15 @@ function diceBearUrl(seed: string): string {
         animation-direction: reverse;
       }
       @keyframes swipe-pulse {
-        0%, 100% { transform: translateX(0); opacity: 0.5; }
-        50%       { transform: translateX(4px); opacity: 1; }
+        0%,
+        100% {
+          transform: translateX(0);
+          opacity: 0.5;
+        }
+        50% {
+          transform: translateX(4px);
+          opacity: 1;
+        }
       }
       .hint-tap {
         font-size: 0.65rem;
@@ -969,12 +1021,12 @@ function diceBearUrl(seed: string): string {
         box-shadow: 4px 4px 0px #1a1a1a;
         opacity: 1 !important;
       }
-      :host-context([data-theme="dark"]) .contact-btn {
+      :host-context([data-theme='dark']) .contact-btn {
         background-color: #7b6ae0;
         border: 2px solid #fff;
         box-shadow: 2px 2px 0px #fff;
       }
-      :host-context([data-theme="dark"]) .contact-btn:hover {
+      :host-context([data-theme='dark']) .contact-btn:hover {
         box-shadow: 4px 4px 0px #fff;
       }
       .github-btn {
@@ -1174,8 +1226,8 @@ export class TalentosComponent implements OnInit, OnDestroy {
   swipeStartX = 0;
   swipeStartY = 0;
   swipeActive = false;
-  swipeDelta = 0;         // delta X atual do arraste (-120 a +120 para opacidade)
-  swipingCardId: string | null = null;  // ID do card sendo arrastado
+  swipeDelta = 0; // delta X atual do arraste (-120 a +120 para opacidade)
+  swipingCardId: string | null = null; // ID do card sendo arrastado
   isSwiping = false;
   activeCardEl: HTMLElement | null = null;
   private pendingTalento: any = null;
@@ -1236,13 +1288,15 @@ export class TalentosComponent implements OnInit, OnDestroy {
 
   private getClientX(event: any): number {
     if (event.touches?.length > 0) return event.touches[0].clientX;
-    if (event.changedTouches?.length > 0) return event.changedTouches[0].clientX;
+    if (event.changedTouches?.length > 0)
+      return event.changedTouches[0].clientX;
     return event.clientX ?? 0;
   }
 
   private getClientY(event: any): number {
     if (event.touches?.length > 0) return event.touches[0].clientY;
-    if (event.changedTouches?.length > 0) return event.changedTouches[0].clientY;
+    if (event.changedTouches?.length > 0)
+      return event.changedTouches[0].clientY;
     return event.clientY ?? 0;
   }
 
@@ -1251,8 +1305,14 @@ export class TalentosComponent implements OnInit, OnDestroy {
   }
 
   private removeMouseListeners(): void {
-    if (this.mouseMoveUnsub) { this.mouseMoveUnsub(); this.mouseMoveUnsub = null; }
-    if (this.mouseUpUnsub)   { this.mouseUpUnsub();   this.mouseUpUnsub   = null; }
+    if (this.mouseMoveUnsub) {
+      this.mouseMoveUnsub();
+      this.mouseMoveUnsub = null;
+    }
+    if (this.mouseUpUnsub) {
+      this.mouseUpUnsub();
+      this.mouseUpUnsub = null;
+    }
   }
 
   onSwipeStart(event: any, talento?: Talento): void {
@@ -1276,8 +1336,14 @@ export class TalentosComponent implements OnInit, OnDestroy {
     if (event.type === 'mousedown') {
       event.preventDefault();
       this.ngZone.runOutsideAngular(() => {
-        this.mouseMoveUnsub = this.renderer.listen('document', 'mousemove', (e) => this.onSwipeMove(e));
-        this.mouseUpUnsub   = this.renderer.listen('document', 'mouseup',   (e) => this.onSwipeEnd(e));
+        this.mouseMoveUnsub = this.renderer.listen(
+          'document',
+          'mousemove',
+          (e) => this.onSwipeMove(e)
+        );
+        this.mouseUpUnsub = this.renderer.listen('document', 'mouseup', (e) =>
+          this.onSwipeEnd(e)
+        );
       });
     }
   }
@@ -1293,12 +1359,15 @@ export class TalentosComponent implements OnInit, OnDestroy {
     this.activeCardEl.style.transform = `translateX(${deltaX}px) rotate(${rotation}deg)`;
 
     // Força change detection para os overlays reagirem
-    this.ngZone.run(() => { this.swipeDelta = deltaX; });
+    this.ngZone.run(() => {
+      this.swipeDelta = deltaX;
+    });
   }
 
   onSwipeCancelled(): void {
     if (this.activeCardEl) {
-      this.activeCardEl.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      this.activeCardEl.style.transition =
+        'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
       this.activeCardEl.style.transform = '';
     }
     this.activeCardEl = null;
@@ -1329,7 +1398,8 @@ export class TalentosComponent implements OnInit, OnDestroy {
 
       if (elem) {
         // Voa para fora da tela (direita)
-        elem.style.transition = 'transform 0.45s cubic-bezier(0.6, 0, 1, 1), opacity 0.45s ease';
+        elem.style.transition =
+          'transform 0.45s cubic-bezier(0.6, 0, 1, 1), opacity 0.45s ease';
         elem.style.transform = `translateX(120vw) rotate(30deg)`;
         elem.style.opacity = '0';
 
@@ -1355,11 +1425,16 @@ export class TalentosComponent implements OnInit, OnDestroy {
       this.isSwiping = true;
       const elem = this.activeCardEl;
       if (elem) {
-        elem.style.transition = 'transform 0.45s cubic-bezier(0.6, 0, 1, 1), opacity 0.45s ease';
+        elem.style.transition =
+          'transform 0.45s cubic-bezier(0.6, 0, 1, 1), opacity 0.45s ease';
         elem.style.transform = `translateX(-120vw) rotate(-30deg)`;
         elem.style.opacity = '0';
         setTimeout(() => {
-          if (elem) { elem.style.transition = 'none'; elem.style.transform = ''; elem.style.opacity = ''; }
+          if (elem) {
+            elem.style.transition = 'none';
+            elem.style.transform = '';
+            elem.style.opacity = '';
+          }
           this.swipeDelta = 0;
           this.swipingCardId = null;
           this.activeCardEl = null;

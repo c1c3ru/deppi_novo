@@ -127,13 +127,13 @@
     cursor: pointer;
     font-family: inherit;
     font-size: var(--font-size-sm);
-    
+
     .dropdown-arrow {
       font-size: 0.7em;
       margin-left: 0.4em;
       transition: transform 0.3s ease;
       display: inline-block;
-      
+
       &.open {
         transform: rotate(180deg);
       }
@@ -158,7 +158,7 @@
     pointer-events: none;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 100;
-    
+
     /* Glassmorphism Effect */
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
@@ -177,8 +177,9 @@
       font-size: 0.9rem;
       font-weight: 500;
       transition: all 0.2s ease;
-      
-      &:hover, &.active {
+
+      &:hover,
+      &.active {
         background: rgba(var(--color-primary-rgb), 0.1);
         color: var(--color-primary);
         padding-left: 1.2rem;
@@ -186,7 +187,6 @@
     }
   }
 }
-
 
 .nav-actions {
   display: flex;

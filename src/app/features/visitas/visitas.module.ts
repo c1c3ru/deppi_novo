@@ -9,17 +9,14 @@ import { VisitasPublicComponent } from './public/visitas-public.component';
 import { VisitasAdminComponent } from './admin/visitas-admin.component';
 
 @NgModule({
-  declarations: [
-    VisitasPublicComponent,
-    VisitasAdminComponent
-  ],
+  declarations: [VisitasPublicComponent, VisitasAdminComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
     SharedModule,
-    VisitasRoutingModule
-  ]
+    VisitasRoutingModule,
+  ],
 })
-export class VisitasModule { }
+export class VisitasModule {}

@@ -95,17 +95,56 @@ import { CommonModule } from '@angular/common';
           </a>
 
           <!-- Dropdown Mais -->
-          <div class="dropdown-container" (mouseenter)="isDropdownOpen = true; setHoverPos($event)" (mouseleave)="isDropdownOpen = false; clearHoverPos()">
-            <button class="nav-link dropdown-toggle" [class.active]="isDropdownActive()">
+          <div
+            class="dropdown-container"
+            (mouseenter)="isDropdownOpen = true; setHoverPos($event)"
+            (mouseleave)="isDropdownOpen = false; clearHoverPos()"
+          >
+            <button
+              class="nav-link dropdown-toggle"
+              [class.active]="isDropdownActive()"
+            >
               <span>Mais</span>
-              <span class="dropdown-arrow" [class.open]="isDropdownOpen">▼</span>
+              <span class="dropdown-arrow" [class.open]="isDropdownOpen"
+                >▼</span
+              >
             </button>
             <div class="dropdown-menu glass" [class.show]="isDropdownOpen">
-              <a routerLink="/boletins" class="dropdown-item" [class.active]="isActive('/boletins')" (click)="closeMenu()">Boletins</a>
-              <a routerLink="/pit-rit" class="dropdown-item" [class.active]="isActive('/pit-rit')" (click)="closeMenu()">PIT/RIT</a>
-              <a routerLink="/talentos" class="dropdown-item" [class.active]="isActive('/talentos')" (click)="closeMenu()">Hub de Talentos</a>
-              <a routerLink="/visitas" class="dropdown-item" [class.active]="isActive('/visitas')" (click)="closeMenu()">Agendar Visita</a>
-              <a routerLink="/contact" class="dropdown-item" [class.active]="isActive('/contact')" (click)="closeMenu()">Contato</a>
+              <a
+                routerLink="/boletins"
+                class="dropdown-item"
+                [class.active]="isActive('/boletins')"
+                (click)="closeMenu()"
+                >Boletins</a
+              >
+              <a
+                routerLink="/pit-rit"
+                class="dropdown-item"
+                [class.active]="isActive('/pit-rit')"
+                (click)="closeMenu()"
+                >PIT/RIT</a
+              >
+              <a
+                routerLink="/talentos"
+                class="dropdown-item"
+                [class.active]="isActive('/talentos')"
+                (click)="closeMenu()"
+                >Hub de Talentos</a
+              >
+              <a
+                routerLink="/visitas"
+                class="dropdown-item"
+                [class.active]="isActive('/visitas')"
+                (click)="closeMenu()"
+                >Agendar Visita</a
+              >
+              <a
+                routerLink="/contact"
+                class="dropdown-item"
+                [class.active]="isActive('/contact')"
+                (click)="closeMenu()"
+                >Contato</a
+              >
             </div>
           </div>
           <div
@@ -243,7 +282,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   isDropdownActive(): boolean {
-    return this.isActive('/boletins') || this.isActive('/pit-rit') || this.isActive('/talentos') || this.isActive('/visitas') || this.isActive('/contact');
+    return (
+      this.isActive('/boletins') ||
+      this.isActive('/pit-rit') ||
+      this.isActive('/talentos') ||
+      this.isActive('/visitas') ||
+      this.isActive('/contact')
+    );
   }
 
   setHoverPos(event: MouseEvent): void {

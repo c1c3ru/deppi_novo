@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { SchoolVisit } from '../../../shared/models/visitas.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VisitasService {
   private apiUrl = `${environment.apiUrl}/visitas`;
@@ -20,15 +20,25 @@ export class VisitasService {
     return this.http.get<SchoolVisit>(`${this.apiUrl}/${id}`);
   }
 
-  create(visit: Partial<SchoolVisit> & { lab_ids: string[] }): Observable<SchoolVisit> {
+  create(
+    visit: Partial<SchoolVisit> & { lab_ids: string[] }
+  ): Observable<SchoolVisit> {
     return this.http.post<SchoolVisit>(this.apiUrl, visit);
   }
 
   updateStatus(id: string, status: string): Observable<SchoolVisit> {
-    return this.http.patch<SchoolVisit>(`${this.apiUrl}/${id}/status`, { status });
+    return this.http.patch<SchoolVisit>(`${this.apiUrl}/${id}/status`, {
+      status,
+    });
   }
 
-  updateLabAvailability(visitId: string, labId: string, status: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${visitId}/labs/${labId}`, { status });
+  updateLabAvailability(
+    visitId: string,
+    labId: string,
+    status: string
+  ): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${visitId}/labs/${labId}`, {
+      status,
+    });
   }
 }
