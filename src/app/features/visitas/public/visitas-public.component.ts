@@ -7,7 +7,7 @@ import { SchoolVisit } from '../../../shared/models/visitas.model';
   standalone: false,
   selector: 'app-visitas-public',
   templateUrl: './visitas-public.component.html',
-  styleUrls: ['./visitas-public.component.scss']
+  styleUrls: ['./visitas-public.component.scss'],
 })
 export class VisitasPublicComponent implements OnInit {
   visitas: SchoolVisit[] = [];
@@ -15,50 +15,57 @@ export class VisitasPublicComponent implements OnInit {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
-  
+
   // Laboratórios disponíveis com sigla, nome completo e descrição resumida
   laboratorios = [
     {
       id: '1',
       sigla: 'LAQAMB',
       nome: 'Laboratório de Qualidade Ambiental',
-      descricao: 'Análises ambientais, monitoramento de água, solo e ar, com foco em sustentabilidade e preservação do meio ambiente.'
+      descricao:
+        'Análises ambientais, monitoramento de água, solo e ar, com foco em sustentabilidade e preservação do meio ambiente.',
     },
     {
       id: '2',
       sigla: 'LAPP',
       nome: 'Laboratório de Práticas Pedagógicas',
-      descricao: 'Espaço dedicado à formação docente, metodologias de ensino e práticas pedagógicas inovadoras para professores e licenciandos.'
+      descricao:
+        'Espaço dedicado à formação docente, metodologias de ensino e práticas pedagógicas inovadoras para professores e licenciandos.',
     },
     {
       id: '3',
       sigla: 'MAKER',
       nome: 'Espaço Maker IFCE',
-      descricao: 'Espaço de prototipagem e fabricação digital com impressoras 3D, cortadora a laser e eletrônica embarcada.'
+      descricao:
+        'Espaço de prototipagem e fabricação digital com impressoras 3D, cortadora a laser e eletrônica embarcada.',
     },
     {
       id: '4',
       sigla: 'OFICINA',
       nome: 'Oficina Mecânica e Eletromecânica',
-      descricao: 'Laboratório de práticas mecânicas, usinagem, soldagem e manutenção eletromecânica industrial.'
+      descricao:
+        'Laboratório de práticas mecânicas, usinagem, soldagem e manutenção eletromecânica industrial.',
     },
     {
       id: '5',
       sigla: 'LQOI',
       nome: 'Laboratório de Química Orgânica e Inorgânica',
-      descricao: 'Experimentação química, síntese de compostos e análises instrumentais em química orgânica e inorgânica.'
+      descricao:
+        'Experimentação química, síntese de compostos e análises instrumentais em química orgânica e inorgânica.',
     },
     {
       id: '6',
       sigla: 'LABVICIA',
       nome: 'Laboratório de Visão Computacional e IA',
-      descricao: 'Projetos em inteligência artificial, visão computacional, machine learning e reconhecimento de padrões.'
+      descricao:
+        'Projetos em inteligência artificial, visão computacional, machine learning e reconhecimento de padrões.',
     },
     {
       id: '7',
       sigla: 'LASIC',
       nome: 'Laboratório de Sistemas e Computação',
-      descricao: 'Desenvolvimento de software, redes de computadores, segurança da informação e sistemas embarcados.'
+      descricao:
+        'Desenvolvimento de software, redes de computadores, segurança da informação e sistemas embarcados.',
     },
   ];
 
@@ -74,7 +81,7 @@ export class VisitasPublicComponent implements OnInit {
       students_count: ['', [Validators.required, Validators.max(30)]],
       target_date: ['', Validators.required],
       shift: ['M', Validators.required],
-      lab_ids: [[], Validators.required]
+      lab_ids: [[], Validators.required],
     });
   }
 
@@ -95,15 +102,18 @@ export class VisitasPublicComponent implements OnInit {
       this.errorMessage = '';
       this.visitasService.create(this.visitForm.value).subscribe({
         next: () => {
-          this.successMessage = 'Solicitação enviada com sucesso! Você receberá um e-mail com os detalhes.';
+          this.successMessage =
+            'Solicitação enviada com sucesso! Você receberá um e-mail com os detalhes.';
           this.visitForm.reset();
           this.isSubmitting = false;
         },
         error: (err: any) => {
           console.error(err);
-          this.errorMessage = err.error?.message || 'Ocorreu um erro ao processar sua solicitação.';
+          this.errorMessage =
+            err.error?.message ||
+            'Ocorreu um erro ao processar sua solicitação.';
           this.isSubmitting = false;
-        }
+        },
       });
     }
   }
