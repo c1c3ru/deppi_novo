@@ -2,6 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { VisitasService } from '../services/visitas.service';
 import { SchoolVisit } from '../../../shared/models/visitas.model';
+import { LaboratoriosService } from '../../laboratorios/services/laboratorios.service';
+import { Laboratorio } from '../../laboratorios/models/laboratorio.model';
+
+interface LabCard {
+  id: string;
+  sigla: string;
+  nome: string;
+  descricao: string;
+}
 
 @Component({
   standalone: false,
@@ -16,61 +25,12 @@ export class VisitasPublicComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  // Laboratórios disponíveis com sigla, nome completo e descrição resumida
-  laboratorios = [
-    {
-      id: '1',
-      sigla: 'LAQAMB',
-      nome: 'Laboratório de Qualidade Ambiental',
-      descricao:
-        'Análises ambientais, monitoramento de água, solo e ar, com foco em sustentabilidade e preservação do meio ambiente.',
-    },
-    {
-      id: '2',
-      sigla: 'LAPP',
-      nome: 'Laboratório de Práticas Pedagógicas',
-      descricao:
-        'Espaço dedicado à formação docente, metodologias de ensino e práticas pedagógicas inovadoras para professores e licenciandos.',
-    },
-    {
-      id: '3',
-      sigla: 'MAKER',
-      nome: 'Espaço Maker IFCE',
-      descricao:
-        'Espaço de prototipagem e fabricação digital com impressoras 3D, cortadora a laser e eletrônica embarcada.',
-    },
-    {
-      id: '4',
-      sigla: 'OFICINA',
-      nome: 'Oficina Mecânica e Eletromecânica',
-      descricao:
-        'Laboratório de práticas mecânicas, usinagem, soldagem e manutenção eletromecânica industrial.',
-    },
-    {
-      id: '5',
-      sigla: 'LQOI',
-      nome: 'Laboratório de Química Orgânica e Inorgânica',
-      descricao:
-        'Experimentação química, síntese de compostos e análises instrumentais em química orgânica e inorgânica.',
-    },
-    {
-      id: '6',
-      sigla: 'LABVICIA',
-      nome: 'Laboratório de Visão Computacional e IA',
-      descricao:
-        'Projetos em inteligência artificial, visão computacional, machine learning e reconhecimento de padrões.',
-    },
-    {
-      id: '7',
-      sigla: 'LASIC',
-      nome: 'Laboratório de Sistemas e Computação',
-      descricao:
-        'Desenvolvimento de software, redes de computadores, segurança da informação e sistemas embarcados.',
-    },
-  ];
+  // Laboratórios disponíveis, carregados a partir de /api/laboratorios
+  laboratorios: LabCard[] = [];
 
   constructor(
     private visitasService: VisitasService,
+    private laboratoriosService: LaboratoriosService,
     private fb: FormBuilder
   ) {
     this.visitForm = this.fb.group({
@@ -87,12 +47,42 @@ export class VisitasPublicComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadVisitas();
+    this.loadLaboratorios();
   }
 
   loadVisitas() {
     this.visitasService.getAll().subscribe((data: SchoolVisit[]) => {
       this.visitas = data.filter((v: SchoolVisit) => v.status === 'confirmed');
     });
+  }
+
+  loadLaboratorios() {
+    this.laboratoriosService.getAll().subscribe({
+      next: (data: Laboratorio[]) => {
+        this.laboratorios = data.map((lab) => this.toLabCard(lab));
+      },
+      error: () => {
+        // Seleção de laboratório é opcional na visita; falha silenciosa não
+        // deve bloquear o formulário de agendamento.
+        this.laboratorios = [];
+      },
+    });
+  }
+
+  // Nomes seguem o padrão "SIGLA - Nome completo" (ver seed de laboratorios)
+  private toLabCard(lab: Laboratorio): LabCard {
+    const separatorIndex = lab.name.indexOf(' - ');
+    const sigla =
+      separatorIndex > 0 ? lab.name.substring(0, separatorIndex) : lab.name;
+    const nome =
+      separatorIndex > 0 ? lab.name.substring(separatorIndex + 3) : lab.name;
+
+    return {
+      id: lab.id || '',
+      sigla,
+      nome,
+      descricao: lab.description,
+    };
   }
 
   onSubmit() {
