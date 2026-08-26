@@ -8,7 +8,7 @@ import { SchoolVisit } from '../../../shared/models/visitas.model';
   providedIn: 'root',
 })
 export class VisitasService {
-  private apiUrl = `${environment.apiUrl}/visitas`;
+  private apiUrl = `${environment.apiUrl}/api/visitas`;
 
   constructor(private http: HttpClient) {}
 
