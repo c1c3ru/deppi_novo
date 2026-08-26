@@ -118,6 +118,13 @@ import { CommonModule } from '@angular/common';
                 >Boletins</a
               >
               <a
+                routerLink="/revista"
+                class="dropdown-item"
+                [class.active]="isActive('/revista')"
+                (click)="closeMenu()"
+                >Revista DEPPI</a
+              >
+              <a
                 routerLink="/pit-rit"
                 class="dropdown-item"
                 [class.active]="isActive('/pit-rit')"
@@ -284,6 +291,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isDropdownActive(): boolean {
     return (
       this.isActive('/boletins') ||
+      this.isActive('/revista') ||
       this.isActive('/pit-rit') ||
       this.isActive('/talentos') ||
       this.isActive('/visitas') ||

@@ -19,6 +19,7 @@ import { authMiddleware } from './middleware/auth.middleware';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import boletimRoutes from './routes/boletim.routes';
+import revistaRoutes from './routes/revista.routes';
 import uploadRoutes from './routes/upload.routes';
 import healthRoutes from './routes/health.routes';
 import contactRoutes from './routes/contact.routes';
@@ -121,6 +122,7 @@ class Application {
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/users', authMiddleware, userRoutes);
     this.app.use('/api/boletins', boletimRoutes);
+    this.app.use('/api/revista', revistaRoutes);
     this.app.use('/api/upload', authMiddleware, uploadRoutes);
     this.app.use('/api/contact', contactRoutes);
     this.app.use('/api/laboratorios', laboratorioRoutes);
