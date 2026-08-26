@@ -19,7 +19,7 @@ export interface Attachment {
 })
 export class UploadService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/upload`;
+  private readonly apiUrl = `${environment.apiUrl}/upload`;
 
   /**
    * Faz upload de um único arquivo

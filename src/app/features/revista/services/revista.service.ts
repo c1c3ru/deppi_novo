@@ -7,7 +7,7 @@ import { ApiResponse, RevistaEdicao, RevistaArtigo } from '../../../shared/model
 @Injectable()
 export class RevistaService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/revista`;
+  private readonly apiUrl = `${environment.apiUrl}/revista`;
 
   getEdicoes(): Observable<ApiResponse<RevistaEdicao[]>> {
     return this.http.get<ApiResponse<RevistaEdicao[]>>(`${this.apiUrl}/edicoes`);
