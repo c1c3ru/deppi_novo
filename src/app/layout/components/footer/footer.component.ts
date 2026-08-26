@@ -130,6 +130,7 @@ import { Component } from '@angular/core';
               <li><a routerLink="/post-graduation">Pós-Graduação</a></li>
               <li><a routerLink="/pit-rit">PIT/RIT</a></li>
               <li><a routerLink="/boletins">Boletins Informativos</a></li>
+              <li><a routerLink="/revista">Revista DEPPI</a></li>
               <li><a routerLink="/contact">Fale Conosco</a></li>
               <li>
                 <a href="https://ifce.edu.br/maracanau" target="_blank"
