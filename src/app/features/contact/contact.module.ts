@@ -357,7 +357,7 @@ export class ContactComponent {
     this.isSubmitting = true;
 
     this.http
-      .post(`${environment.apiUrl}/api/contact`, this.form.value)
+      .post(`${environment.apiUrl}/contact`, this.form.value)
       .subscribe({
         next: () => {
           this.notificationService.showSuccess(
