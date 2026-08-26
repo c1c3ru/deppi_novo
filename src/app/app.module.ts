@@ -158,6 +158,13 @@ import { AuthGuard } from './core/guards/auth.guard';
             ),
         },
         {
+          path: 'revista',
+          loadChildren: () =>
+            import('./features/revista/revista.module').then(
+              (m) => m.RevistaModule
+            ),
+        },
+        {
           path: 'contact',
           loadChildren: () =>
             import('./features/contact/contact.module').then(
