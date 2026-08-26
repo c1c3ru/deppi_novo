@@ -125,6 +125,28 @@
           </div>
         </div>
 
+        <!-- ====== LABORATÓRIOS — SOMENTE EXIBIÇÃO ====== -->
+        <div class="campo-grupo" *ngIf="laboratorios.length > 0">
+          <label class="campo-label">
+            Laboratórios que recebem a visita
+            <span class="campo-hint"
+              >— sua turma poderá conhecer estes espaços</span
+            >
+          </label>
+
+          <div class="labs-grid">
+            <div
+              class="lab-card"
+              *ngFor="let lab of laboratorios; let i = index"
+              [style.animation-delay.ms]="i * 60"
+            >
+              <span class="lab-card__sigla">{{ lab.sigla }}</span>
+              <span class="lab-card__nome">{{ lab.nome }}</span>
+              <span class="lab-card__descricao">{{ lab.descricao }}</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Botão de envio -->
         <button
           type="submit"
