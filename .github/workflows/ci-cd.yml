@@ -214,6 +214,7 @@ jobs:
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true # Não trava o pipeline se Code scanning/GHAS não estiver habilitado no repositório
         with:
           sarif_file: "trivy-results.sarif"
           category: "trivy-vulnerability-scanner"
@@ -224,6 +225,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [frontend-tests, backend-tests]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
