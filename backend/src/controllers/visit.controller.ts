@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import db from '../database/db';
 import { emailService } from '../services/email.service';
+import { calendarService } from '../services/calendar.service';
 
 export class VisitController {
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -155,6 +156,16 @@ export class VisitController {
           updated.target_date,
           labNames
         );
+        await calendarService.createVisitEvent({
+          schoolName: updated.school_name,
+          responsibleName: updated.responsible_name,
+          contactEmail: updated.contact_email,
+          contactPhone: updated.contact_phone,
+          studentsCount: updated.students_count,
+          targetDate: updated.target_date,
+          shift: updated.shift,
+          labs: labNames,
+        });
       }
 
       res.json(updated);
