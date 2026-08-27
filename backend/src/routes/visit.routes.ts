@@ -1,16 +1,23 @@
 import { Router } from 'express';
 import { visitController } from '../controllers/visit.controller';
-import { authMiddleware } from '../middleware/auth.middleware';
+import {
+  authMiddleware,
+  optionalAuthMiddleware,
+} from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Public routes
-router.get('/', visitController.getAll);
+// Public routes (dados sensíveis são filtrados no controller para anônimos)
+router.get('/', optionalAuthMiddleware, visitController.getAll);
 router.post('/', visitController.create);
 
 // Protected routes
 router.get('/:id', authMiddleware, visitController.getById);
 router.patch('/:id/status', authMiddleware, visitController.updateStatus);
-router.patch('/:id/labs/:lab_id', authMiddleware, visitController.updateLabAvailability);
+router.patch(
+  '/:id/labs/:lab_id',
+  authMiddleware,
+  visitController.updateLabAvailability
+);
 
 export default router;

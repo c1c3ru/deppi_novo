@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { VisitasService } from '../services/visitas.service';
 import { SchoolVisit } from '../../../shared/models/visitas.model';
 import { LaboratoriosService } from '../../laboratorios/services/laboratorios.service';
 import { Laboratorio } from '../../laboratorios/models/laboratorio.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface LabCard {
   id: string;
@@ -18,7 +20,7 @@ interface LabCard {
   templateUrl: './visitas-public.component.html',
   styleUrls: ['./visitas-public.component.scss'],
 })
-export class VisitasPublicComponent implements OnInit {
+export class VisitasPublicComponent implements OnInit, OnDestroy {
   visitas: SchoolVisit[] = [];
   visitForm: FormGroup;
   isSubmitting = false;
@@ -28,9 +30,17 @@ export class VisitasPublicComponent implements OnInit {
   // Laboratórios exibidos apenas como informação — não são selecionáveis
   laboratorios: LabCard[] = [];
 
+  // ====== Visão do usuário/admin logado: gestão de solicitações ======
+  isAuthenticated = false;
+  pendingVisitas: SchoolVisit[] = [];
+  managementError = '';
+  managementSuccess = '';
+  private authSubscription?: Subscription;
+
   constructor(
     private visitasService: VisitasService,
     private laboratoriosService: LaboratoriosService,
+    private authService: AuthService,
     private fb: FormBuilder
   ) {
     this.visitForm = this.fb.group({
@@ -47,6 +57,21 @@ export class VisitasPublicComponent implements OnInit {
   ngOnInit(): void {
     this.loadVisitas();
     this.loadLaboratorios();
+
+    this.authSubscription = this.authService.isAuthenticated$.subscribe(
+      (isAuth) => {
+        this.isAuthenticated = isAuth;
+        if (isAuth) {
+          this.loadPendingVisitas();
+        } else {
+          this.pendingVisitas = [];
+        }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
   }
 
   loadVisitas() {
@@ -104,5 +129,61 @@ export class VisitasPublicComponent implements OnInit {
         },
       });
     }
+  }
+
+  // ====== Visão do usuário/admin logado: gestão de solicitações ======
+
+  loadPendingVisitas() {
+    this.visitasService.getAll().subscribe((data: SchoolVisit[]) => {
+      this.pendingVisitas = data.filter(
+        (v: SchoolVisit) => v.status === 'pending'
+      );
+      this.pendingVisitas.forEach((v) => this.loadVisitDetails(v));
+    });
+  }
+
+  private loadVisitDetails(visit: SchoolVisit) {
+    this.visitasService.getById(visit.id).subscribe((detail: SchoolVisit) => {
+      visit.labs = detail.labs;
+    });
+  }
+
+  hasAvailableLab(visit: SchoolVisit): boolean {
+    return !!visit.labs?.some((lab) => lab.status === 'available');
+  }
+
+  updateLabStatus(visitId: string, labId: string, status: string) {
+    this.visitasService
+      .updateLabAvailability(visitId, labId, status)
+      .subscribe(() => {
+        const visit = this.pendingVisitas.find((v) => v.id === visitId);
+        if (visit) {
+          this.loadVisitDetails(visit);
+        }
+      });
+  }
+
+  confirmVisit(visitId: string) {
+    this.setVisitStatus(visitId, 'confirmed', 'Visita confirmada com sucesso.');
+  }
+
+  rejectVisit(visitId: string) {
+    this.setVisitStatus(visitId, 'canceled', 'Visita recusada.');
+  }
+
+  private setVisitStatus(visitId: string, status: string, message: string) {
+    this.managementError = '';
+    this.managementSuccess = '';
+    this.visitasService.updateStatus(visitId, status).subscribe({
+      next: () => {
+        this.managementSuccess = message;
+        this.loadPendingVisitas();
+        this.loadVisitas();
+      },
+      error: (err: any) => {
+        this.managementError =
+          err.error?.message || 'Erro ao atualizar a visita.';
+      },
+    });
   }
 }

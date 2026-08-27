@@ -1,4 +1,112 @@
 <div class="pagina-visitas">
+  <!-- ======== GESTÃO DE SOLICITAÇÕES — visível apenas para usuário logado ======== -->
+  <div class="gestao-visitas" *ngIf="isAuthenticated">
+    <div class="calendario-cabecalho">
+      <span class="formulario-rotulo">Gestão</span>
+      <h2 class="formulario-titulo">Solicitações Pendentes</h2>
+      <p class="formulario-descricao">
+        Marque a disponibilidade de cada laboratório e confirme ou recuse a
+        visita. É necessário pelo menos um laboratório
+        <strong>disponível</strong> para confirmar.
+      </p>
+    </div>
+
+    <div *ngIf="managementSuccess" class="alerta alerta-sucesso">
+      {{ managementSuccess }}
+    </div>
+    <div *ngIf="managementError" class="alerta alerta-erro">
+      {{ managementError }}
+    </div>
+
+    <div class="visita-vazia" *ngIf="pendingVisitas.length === 0">
+      <p>Não há solicitações pendentes no momento.</p>
+    </div>
+
+    <div class="gestao-item" *ngFor="let visita of pendingVisitas">
+      <div class="visita-item__topo">
+        <h5 class="visita-item__escola">{{ visita.school_name }}</h5>
+        <span class="badge badge-warning">Pendente</span>
+      </div>
+      <div class="visita-item__info">
+        <span>
+          {{ visita.target_date | date: 'dd/MM/yyyy' }}
+          ({{
+            visita.shift === 'M'
+              ? 'Manhã'
+              : visita.shift === 'T'
+                ? 'Tarde'
+                : 'Noite'
+          }})
+        </span>
+        <span>{{ visita.responsible_name }}</span>
+        <span>{{ visita.students_count }} alunos</span>
+        <span>{{ visita.contact_email }} · {{ visita.contact_phone }}</span>
+      </div>
+
+      <div class="gestao-labs">
+        <div class="gestao-lab" *ngFor="let lab of visita.labs">
+          <span class="gestao-lab__nome">{{ lab.name }}</span>
+          <span
+            class="badge"
+            [ngClass]="{
+              'badge-warning': lab.status === 'pending',
+              'badge-success': lab.status === 'available',
+              'badge-danger': lab.status === 'unavailable',
+            }"
+          >
+            {{
+              lab.status === 'available'
+                ? 'Disponível'
+                : lab.status === 'unavailable'
+                  ? 'Indisponível'
+                  : 'Pendente'
+            }}
+          </span>
+          <div class="gestao-lab__acoes">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-success"
+              (click)="updateLabStatus(visita.id, lab.lab_id, 'available')"
+              [disabled]="lab.status === 'available'"
+            >
+              Disponível
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="updateLabStatus(visita.id, lab.lab_id, 'unavailable')"
+              [disabled]="lab.status === 'unavailable'"
+            >
+              Indisponível
+            </button>
+          </div>
+        </div>
+        <p *ngIf="!visita.labs || visita.labs.length === 0" class="campo-hint">
+          Carregando laboratórios...
+        </p>
+      </div>
+
+      <div class="gestao-acoes-finais">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="confirmVisit(visita.id)"
+          [disabled]="!hasAvailableLab(visita)"
+          title="É necessário pelo menos um laboratório disponível"
+        >
+          Confirmar Visita
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          (click)="rejectVisit(visita.id)"
+        >
+          Recusar Visita
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="visitas-layout">
     <!-- ======== COLUNA ESQUERDA: FORMULÁRIO ======== -->
     <div class="coluna-formulario">
