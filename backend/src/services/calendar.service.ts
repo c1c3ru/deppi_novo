@@ -28,6 +28,18 @@ function toDateOnly(value: string | Date): string {
   return value.slice(0, 10);
 }
 
+// America/Fortaleza não observa horário de verão (fixo em UTC-03:00),
+// então dá pra montar o timestamp com offset explícito sem consultar timezone.
+const UTC_OFFSET = '-03:00';
+
+function buildTimeRange(dateOnly: string, shift: 'M' | 'T' | 'N') {
+  const hours = SHIFT_HOURS[shift] || SHIFT_HOURS.M;
+  return {
+    start: `${dateOnly}T${hours.start}${UTC_OFFSET}`,
+    end: `${dateOnly}T${hours.end}${UTC_OFFSET}`,
+  };
+}
+
 class CalendarService {
   private readonly enabled: boolean;
   private readonly calendar;
@@ -45,6 +57,44 @@ class CalendarService {
       logger.warn(
         'Google Calendar não configurado (GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET/GOOGLE_REFRESH_TOKEN ausentes) — eventos de visita não serão sincronizados.'
       );
+    }
+  }
+
+  /**
+   * Verifica se já existe algum compromisso na agenda do DEPPI que se
+   * sobreponha à janela do turno pretendido. Retorna false (não bloqueia)
+   * se o Calendar não estiver configurado ou se a consulta falhar — a
+   * ausência de sincronização não deve travar a confirmação da visita.
+   */
+  public async isTimeSlotBusy(
+    targetDate: string | Date,
+    shift: 'M' | 'T' | 'N'
+  ): Promise<boolean> {
+    if (!this.enabled) {
+      return false;
+    }
+
+    try {
+      const dateOnly = toDateOnly(targetDate);
+      const { start, end } = buildTimeRange(dateOnly, shift);
+      const calendarId = config.googleCalendar.calendarId;
+
+      const response = await this.calendar.freebusy.query({
+        requestBody: {
+          timeMin: start,
+          timeMax: end,
+          items: [{ id: calendarId }],
+        },
+      });
+
+      const busy = response.data.calendars?.[calendarId]?.busy ?? [];
+      return busy.length > 0;
+    } catch (error) {
+      logger.error(
+        'Erro ao consultar disponibilidade no Google Calendar:',
+        error
+      );
+      return false;
     }
   }
 
