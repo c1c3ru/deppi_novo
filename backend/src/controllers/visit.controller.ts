@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import db from '../database/db';
 import { emailService } from '../services/email.service';
+import { calendarService } from '../services/calendar.service';
 
 export class VisitController {
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -142,6 +143,22 @@ export class VisitController {
           });
       }
 
+      // Invariante: Não deve ser possível confirmar sobre um horário já
+      // ocupado na agenda do DEPPI (evita conflito com outros compromissos,
+      // não só com outras visitas já cadastradas no sistema)
+      if (status === 'confirmed') {
+        const isBusy = await calendarService.isTimeSlotBusy(
+          visit.target_date,
+          visit.shift
+        );
+        if (isBusy) {
+          return res.status(409).json({
+            message:
+              'Já existe um compromisso na agenda do DEPPI nesse horário. Verifique a agenda antes de confirmar.',
+          });
+        }
+      }
+
       const [updated] = await db('school_visits')
         .where({ id })
         .update({ status, updated_at: db.fn.now() })
@@ -155,6 +172,16 @@ export class VisitController {
           updated.target_date,
           labNames
         );
+        await calendarService.createVisitEvent({
+          schoolName: updated.school_name,
+          responsibleName: updated.responsible_name,
+          contactEmail: updated.contact_email,
+          contactPhone: updated.contact_phone,
+          studentsCount: updated.students_count,
+          targetDate: updated.target_date,
+          shift: updated.shift,
+          labs: labNames,
+        });
       }
 
       res.json(updated);
