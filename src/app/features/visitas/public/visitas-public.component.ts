@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { VisitasService } from '../services/visitas.service';
 import { SchoolVisit } from '../../../shared/models/visitas.model';
 import { LaboratoriosService } from '../../laboratorios/services/laboratorios.service';
 import { Laboratorio } from '../../laboratorios/models/laboratorio.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface LabCard {
   id: string;
@@ -18,19 +20,27 @@ interface LabCard {
   templateUrl: './visitas-public.component.html',
   styleUrls: ['./visitas-public.component.scss'],
 })
-export class VisitasPublicComponent implements OnInit {
+export class VisitasPublicComponent implements OnInit, OnDestroy {
   visitas: SchoolVisit[] = [];
   visitForm: FormGroup;
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
 
-  // Laboratórios disponíveis, carregados a partir de /api/laboratorios
+  // Laboratórios exibidos apenas como informação — não são selecionáveis
   laboratorios: LabCard[] = [];
+
+  // ====== Visão do usuário/admin logado: gestão de solicitações ======
+  isAuthenticated = false;
+  pendingVisitas: SchoolVisit[] = [];
+  managementError = '';
+  managementSuccess = '';
+  private authSubscription?: Subscription;
 
   constructor(
     private visitasService: VisitasService,
     private laboratoriosService: LaboratoriosService,
+    private authService: AuthService,
     private fb: FormBuilder
   ) {
     this.visitForm = this.fb.group({
@@ -41,13 +51,27 @@ export class VisitasPublicComponent implements OnInit {
       students_count: ['', [Validators.required, Validators.max(30)]],
       target_date: ['', Validators.required],
       shift: ['M', Validators.required],
-      lab_ids: [[], Validators.required],
     });
   }
 
   ngOnInit(): void {
     this.loadVisitas();
     this.loadLaboratorios();
+
+    this.authSubscription = this.authService.isAuthenticated$.subscribe(
+      (isAuth) => {
+        this.isAuthenticated = isAuth;
+        if (isAuth) {
+          this.loadPendingVisitas();
+        } else {
+          this.pendingVisitas = [];
+        }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
   }
 
   loadVisitas() {
@@ -62,8 +86,7 @@ export class VisitasPublicComponent implements OnInit {
         this.laboratorios = data.map((lab) => this.toLabCard(lab));
       },
       error: () => {
-        // Seleção de laboratório é opcional na visita; falha silenciosa não
-        // deve bloquear o formulário de agendamento.
+        // Exibição informativa; falha ao carregar não deve bloquear o formulário
         this.laboratorios = [];
       },
     });
@@ -108,21 +131,96 @@ export class VisitasPublicComponent implements OnInit {
     }
   }
 
-  // Alterna a seleção de um laboratório pelo card
-  toggleLab(labId: string): void {
-    const labIds = this.visitForm.get('lab_ids')?.value as string[];
-    const indice = labIds.indexOf(labId);
-    if (indice >= 0) {
-      labIds.splice(indice, 1);
-    } else {
-      labIds.push(labId);
-    }
-    this.visitForm.get('lab_ids')?.setValue([...labIds]);
+  // ====== Visão do usuário/admin logado: gestão de solicitações ======
+
+  loadPendingVisitas() {
+    this.visitasService.getAll().subscribe((data: SchoolVisit[]) => {
+      this.pendingVisitas = data.filter(
+        (v: SchoolVisit) => v.status === 'pending'
+      );
+      this.pendingVisitas.forEach((v) => this.loadVisitDetails(v));
+    });
   }
 
-  // Verifica se um laboratório está selecionado
-  isLabSelected(labId: string): boolean {
-    const labIds = this.visitForm.get('lab_ids')?.value as string[];
-    return labIds.includes(labId);
+  private loadVisitDetails(visit: SchoolVisit) {
+    this.visitasService.getById(visit.id).subscribe((detail: SchoolVisit) => {
+      visit.labs = detail.labs;
+    });
+  }
+
+  hasAvailableLab(visit: SchoolVisit): boolean {
+    return !!visit.labs?.some((lab) => lab.status === 'available');
+  }
+
+  // Nomes seguem o padrão "SIGLA - Nome completo" (ver toLabCard)
+  labSigla(name: string | undefined): string {
+    if (!name) return '';
+    const separatorIndex = name.indexOf(' - ');
+    return separatorIndex > 0 ? name.substring(0, separatorIndex) : name;
+  }
+
+  labNome(name: string | undefined): string {
+    if (!name) return '';
+    const separatorIndex = name.indexOf(' - ');
+    return separatorIndex > 0 ? name.substring(separatorIndex + 3) : name;
+  }
+
+  updateLabStatus(visitId: string, labId: string, status: string) {
+    this.visitasService
+      .updateLabAvailability(visitId, labId, status)
+      .subscribe(() => {
+        const visit = this.pendingVisitas.find((v) => v.id === visitId);
+        if (visit) {
+          this.loadVisitDetails(visit);
+        }
+      });
+  }
+
+  // Laboratórios ainda não vinculados a esta visita (ex: cadastrados
+  // depois da visita ter sido criada) — disponíveis para adicionar.
+  labsDisponiveisParaAdicionar(visit: SchoolVisit): LabCard[] {
+    const vinculados = new Set((visit.labs || []).map((lab) => lab.lab_id));
+    return this.laboratorios.filter((lab) => !vinculados.has(lab.id));
+  }
+
+  addLabToVisit(visitId: string, labId: string) {
+    if (!labId) return;
+    this.managementError = '';
+    this.visitasService.addLab(visitId, labId).subscribe({
+      next: () => {
+        const visit = this.pendingVisitas.find((v) => v.id === visitId);
+        if (visit) {
+          this.loadVisitDetails(visit);
+        }
+      },
+      error: (err: any) => {
+        this.managementError =
+          err.error?.message || 'Erro ao adicionar laboratório à visita.';
+      },
+    });
+  }
+
+  confirmVisit(visitId: string) {
+    this.setVisitStatus(visitId, 'confirmed', 'Visita confirmada com sucesso.');
+  }
+
+  rejectVisit(visitId: string) {
+    this.setVisitStatus(visitId, 'canceled', 'Visita recusada.');
+  }
+
+  private setVisitStatus(visitId: string, status: string, message: string) {
+    this.managementError = '';
+    this.managementSuccess = '';
+    this.visitasService.updateStatus(visitId, status).subscribe({
+      next: () => {
+        this.managementSuccess = message;
+        this.loadPendingVisitas();
+        this.loadVisitas();
+      },
+      error: (err: any) => {
+        this.managementError =
+          err.error?.message || 'Erro ao atualizar a visita.';
+      },
+    });
   }
 }

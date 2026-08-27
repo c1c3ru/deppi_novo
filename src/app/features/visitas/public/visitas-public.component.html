@@ -1,7 +1,168 @@
 <div class="pagina-visitas">
+  <!-- ======== GESTÃO DE SOLICITAÇÕES — visível apenas para usuário logado ======== -->
+  <div class="gestao-visitas" *ngIf="isAuthenticated">
+    <div class="calendario-cabecalho">
+      <span class="formulario-rotulo">Gestão</span>
+      <h2 class="formulario-titulo">Solicitações Pendentes</h2>
+      <p class="formulario-descricao">
+        Marque a disponibilidade de cada laboratório e confirme ou recuse a
+        visita. É necessário pelo menos um laboratório
+        <strong>disponível</strong> para confirmar.
+      </p>
+    </div>
+
+    <!-- Cards dos laboratórios (Sigla, Nome, Descrição) — visão do usuário logado -->
+    <div class="labs-grid" data-testid="labs-grid-autenticado" *ngIf="laboratorios.length > 0">
+      <div
+        class="lab-card"
+        *ngFor="let lab of laboratorios; let i = index"
+        [style.animation-delay.ms]="i * 60"
+      >
+        <span class="lab-card__sigla">{{ lab.sigla }}</span>
+        <span class="lab-card__nome">{{ lab.nome }}</span>
+        <span class="lab-card__descricao">{{ lab.descricao }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="managementSuccess" class="alerta alerta-sucesso">
+      {{ managementSuccess }}
+    </div>
+    <div *ngIf="managementError" class="alerta alerta-erro">
+      {{ managementError }}
+    </div>
+
+    <div class="visita-vazia" *ngIf="pendingVisitas.length === 0">
+      <p>Não há solicitações pendentes no momento.</p>
+    </div>
+
+    <div class="gestao-item" *ngFor="let visita of pendingVisitas">
+      <div class="visita-item__topo">
+        <h5 class="visita-item__escola">{{ visita.school_name }}</h5>
+        <span class="badge badge-warning">Pendente</span>
+      </div>
+      <div class="visita-item__info">
+        <span>
+          {{ visita.target_date | date: 'dd/MM/yyyy' }}
+          ({{
+            visita.shift === 'M'
+              ? 'Manhã'
+              : visita.shift === 'T'
+                ? 'Tarde'
+                : 'Noite'
+          }})
+        </span>
+        <span>{{ visita.responsible_name }}</span>
+        <span>{{ visita.students_count }} alunos</span>
+        <span>{{ visita.contact_email }} · {{ visita.contact_phone }}</span>
+      </div>
+
+      <div class="gestao-labs">
+        <div class="gestao-lab" *ngFor="let lab of visita.labs">
+          <span class="gestao-lab__sigla">{{ labSigla(lab.name) }}</span>
+          <span class="gestao-lab__nome">{{ labNome(lab.name) }}</span>
+          <span
+            class="badge badge-disponibilidade"
+            data-testid="lab-availability-flag"
+            [class.badge-warning]="lab.status === 'pending'"
+            [class.badge-success]="lab.status === 'available'"
+            [class.badge-danger]="lab.status === 'unavailable'"
+          >
+            {{
+              lab.status === 'available'
+                ? 'Disponível'
+                : lab.status === 'unavailable'
+                  ? 'Não Disponível'
+                  : 'Pendente'
+            }}
+            · {{ visita.target_date | date: 'dd/MM/yyyy' }}
+            ({{
+              visita.shift === 'M'
+                ? 'Manhã'
+                : visita.shift === 'T'
+                  ? 'Tarde'
+                  : 'Noite'
+            }})
+          </span>
+          <div class="gestao-lab__acoes">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-success"
+              (click)="updateLabStatus(visita.id, lab.lab_id, 'available')"
+              [disabled]="lab.status === 'available'"
+            >
+              Disponível
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="updateLabStatus(visita.id, lab.lab_id, 'unavailable')"
+              [disabled]="lab.status === 'unavailable'"
+            >
+              Indisponível
+            </button>
+          </div>
+        </div>
+        <p *ngIf="!visita.labs || visita.labs.length === 0" class="campo-hint">
+          Carregando laboratórios...
+        </p>
+      </div>
+
+      <!-- ====== ADICIONAR MAIS LABORATÓRIOS — somente usuário logado ====== -->
+      <div
+        class="gestao-adicionar-lab"
+        data-testid="adicionar-lab"
+        *ngIf="labsDisponiveisParaAdicionar(visita).length > 0"
+      >
+        <label class="campo-label" [attr.for]="'add-lab-' + visita.id">
+          Adicionar laboratório
+        </label>
+        <div class="gestao-adicionar-lab__linha">
+          <select
+            class="campo-input campo-select"
+            [id]="'add-lab-' + visita.id"
+            #labSelect
+          >
+            <option
+              *ngFor="let lab of labsDisponiveisParaAdicionar(visita)"
+              [value]="lab.id"
+            >
+              {{ lab.sigla }} - {{ lab.nome }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-success"
+            (click)="addLabToVisit(visita.id, labSelect.value)"
+          >
+            Adicionar
+          </button>
+        </div>
+      </div>
+
+      <div class="gestao-acoes-finais">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-testid="confirmar-visita-btn"
+          (click)="confirmVisit(visita.id)"
+          title="Confirmar as visitas"
+        >
+          Confirmar as visitas
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          (click)="rejectVisit(visita.id)"
+        >
+          Recusar Visita
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="visitas-layout">
-    <!-- ======== COLUNA ESQUERDA: FORMULÁRIO ======== -->
-    <div class="coluna-formulario">
+    <!-- ======== COLUNA ESQUERDA: FORMULÁRIO (somente visitante não autenticado) ======== -->
+    <div class="coluna-formulario" *ngIf="!isAuthenticated" data-testid="coluna-formulario">
       <div class="formulario-cabecalho">
         <span class="formulario-rotulo">Caravana Escolar</span>
         <h2 class="formulario-titulo">Agendar Visita</h2>
@@ -125,69 +286,25 @@
           </div>
         </div>
 
-        <!-- ====== SEÇÃO DE LABORATÓRIOS — CARDS ====== -->
-        <div class="campo-grupo">
+        <!-- ====== LABORATÓRIOS — SOMENTE EXIBIÇÃO ====== -->
+        <div class="campo-grupo" *ngIf="laboratorios.length > 0">
           <label class="campo-label">
-            Laboratórios de Interesse
-            <span class="campo-hint">— clique para selecionar (opcional)</span>
+            Laboratórios que recebem a visita
+            <span class="campo-hint"
+              >— sua turma poderá conhecer estes espaços</span
+            >
           </label>
 
           <div class="labs-grid">
-            <button
-              type="button"
+            <div
               class="lab-card"
-              [class.lab-card--selecionado]="isLabSelected(lab.id)"
-              *ngFor="let lab of laboratorios"
-              (click)="toggleLab(lab.id)"
-              [attr.aria-pressed]="isLabSelected(lab.id)"
-              [id]="'lab_card_' + lab.id"
+              *ngFor="let lab of laboratorios; let i = index"
+              [style.animation-delay.ms]="i * 60"
             >
-              <!-- Ícone de check quando selecionado -->
-              <span class="lab-card__check" *ngIf="isLabSelected(lab.id)">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </span>
-
-              <!-- Badge com a sigla -->
               <span class="lab-card__sigla">{{ lab.sigla }}</span>
-
-              <!-- Nome completo -->
               <span class="lab-card__nome">{{ lab.nome }}</span>
-
-              <!-- Descrição resumida -->
               <span class="lab-card__descricao">{{ lab.descricao }}</span>
-            </button>
-          </div>
-
-          <!-- Resumo dos labs selecionados -->
-          <div
-            class="labs-selecionados"
-            *ngIf="visitForm.get('lab_ids')?.value?.length > 0"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            {{ visitForm.get('lab_ids')?.value?.length }}
-            {{
-              visitForm.get('lab_ids')?.value?.length === 1
-                ? 'laboratório selecionado'
-                : 'laboratórios selecionados'
-            }}
+            </div>
           </div>
         </div>
 

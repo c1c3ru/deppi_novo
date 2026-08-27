@@ -1,14 +1,41 @@
 import { Request, Response, NextFunction } from 'express';
 import db from '../database/db';
 import { emailService } from '../services/email.service';
+import { calendarService } from '../services/calendar.service';
 
 export class VisitController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const visits = await db('school_visits')
+      const isAuthenticated = !!(req as any).user;
+
+      // Visitantes anônimos só enxergam a agenda pública (visitas confirmadas),
+      // sem dados de contato. Solicitações pendentes/canceladas e dados de
+      // contato só são expostos para usuários autenticados (gestão).
+      const query = db('school_visits')
         .select('*')
         .orderBy('target_date', 'asc');
-      res.json(visits);
+
+      if (!isAuthenticated) {
+        query.where({ status: 'confirmed' });
+      }
+
+      const visits = await query;
+
+      if (isAuthenticated) {
+        return res.json(visits);
+      }
+
+      const publicVisits = visits.map((visit: any) => ({
+        id: visit.id,
+        school_name: visit.school_name,
+        responsible_name: visit.responsible_name,
+        students_count: visit.students_count,
+        target_date: visit.target_date,
+        shift: visit.shift,
+        status: visit.status,
+      }));
+
+      res.json(publicVisits);
     } catch (error) {
       next(error);
     }
@@ -52,7 +79,6 @@ export class VisitController {
         students_count,
         target_date,
         shift,
-        lab_ids,
       } = req.body;
 
       // Constraint: O limite de alunos por visita não deve ultrapassar ~30
@@ -68,14 +94,14 @@ export class VisitController {
         .whereIn('status', ['confirmed', 'pending']);
 
       if (existingVisits.length > 0) {
-        return res
-          .status(400)
-          .json({
-            message:
-              'Já existe uma solicitação ou visita confirmada para esta data e turno.',
-          });
+        return res.status(400).json({
+          message:
+            'Já existe uma solicitação ou visita confirmada para esta data e turno.',
+        });
       }
 
+      // Toda visita nasce como 'pending': a confirmação exige aprovação
+      // manual de um usuário autenticado (ver updateStatus).
       const [newVisit] = await db('school_visits')
         .insert({
           school_name,
@@ -85,13 +111,18 @@ export class VisitController {
           students_count,
           target_date,
           shift,
+          status: 'pending',
         })
         .returning('*');
 
-      if (lab_ids && lab_ids.length > 0) {
-        const labAvailabilities = lab_ids.map((lab_id: string) => ({
+      // O formulário público não seleciona laboratórios (são apenas
+      // informativos), então toda visita nasce vinculada a todos os
+      // laboratórios cadastrados, aguardando avaliação de disponibilidade.
+      const laboratorios = await db('laboratorios').select('id');
+      if (laboratorios.length > 0) {
+        const labAvailabilities = laboratorios.map((lab: { id: string }) => ({
           visit_id: newVisit.id,
-          lab_id,
+          lab_id: lab.id,
           status: 'pending',
         }));
         await db('visit_lab_availability').insert(labAvailabilities);
@@ -134,12 +165,26 @@ export class VisitController {
 
       // Invariante: Não deve ser possível aprovar sem pelo menos um laboratório com status "Disponível"
       if (status === 'confirmed' && availableLabs.length === 0) {
-        return res
-          .status(400)
-          .json({
+        return res.status(400).json({
+          message:
+            'Não é possível confirmar uma visita sem pelo menos um laboratório disponível.',
+        });
+      }
+
+      // Invariante: Não deve ser possível confirmar sobre um horário já
+      // ocupado na agenda do DEPPI (evita conflito com outros compromissos,
+      // não só com outras visitas já cadastradas no sistema)
+      if (status === 'confirmed') {
+        const isBusy = await calendarService.isTimeSlotBusy(
+          visit.target_date,
+          visit.shift
+        );
+        if (isBusy) {
+          return res.status(409).json({
             message:
-              'Não é possível confirmar uma visita sem pelo menos um laboratório disponível.',
+              'Já existe um compromisso na agenda do DEPPI nesse horário. Verifique a agenda antes de confirmar.',
           });
+        }
       }
 
       const [updated] = await db('school_visits')
@@ -155,6 +200,16 @@ export class VisitController {
           updated.target_date,
           labNames
         );
+        await calendarService.createVisitEvent({
+          schoolName: updated.school_name,
+          responsibleName: updated.responsible_name,
+          contactEmail: updated.contact_email,
+          contactPhone: updated.contact_phone,
+          studentsCount: updated.students_count,
+          targetDate: updated.target_date,
+          shift: updated.shift,
+          labs: labNames,
+        });
       }
 
       res.json(updated);
@@ -180,6 +235,47 @@ export class VisitController {
       }
 
       res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Permite à gestão (usuário autenticado) vincular um laboratório
+  // adicional a uma visita — útil para laboratórios cadastrados depois
+  // da visita ter sido criada, que não entraram no vínculo automático.
+  async addLab(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { lab_id } = req.body;
+
+      if (!lab_id) {
+        return res.status(400).json({ message: 'lab_id é obrigatório.' });
+      }
+
+      const visit = await db('school_visits').where({ id }).first();
+      if (!visit) {
+        return res.status(404).json({ message: 'Visita não encontrada' });
+      }
+
+      const lab = await db('laboratorios').where({ id: lab_id }).first();
+      if (!lab) {
+        return res.status(404).json({ message: 'Laboratório não encontrado' });
+      }
+
+      const existing = await db('visit_lab_availability')
+        .where({ visit_id: id, lab_id })
+        .first();
+      if (existing) {
+        return res
+          .status(409)
+          .json({ message: 'Este laboratório já está associado à visita.' });
+      }
+
+      const [created] = await db('visit_lab_availability')
+        .insert({ visit_id: id, lab_id, status: 'pending' })
+        .returning('*');
+
+      res.status(201).json({ ...created, name: lab.name });
     } catch (error) {
       next(error);
     }
