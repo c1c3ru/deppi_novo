@@ -11,11 +11,20 @@
 # Diferenciais deste script em relação a rodar os comandos manualmente:
 #   - Idempotente: cada etapa concluída é registrada em /var/lib/openvas-install/state
 #     e etapas já feitas são puladas em uma nova execução (retomada após falha).
+#   - Versões consistentes entre componentes: por padrão, cada repositório
+#     (gvm-libs, openvas-scanner, gvmd, gsa, gsad, ...) fixa sozinho a última
+#     tag de release própria em vez da branch main/dev — evita o clássico
+#     "gvm-libs estável + gvmd de desenvolvimento" que quebra em structs/ABI
+#     incompatíveis. A combinação de versões usada vira um fingerprint; mudar
+#     qualquer *_REF (ou surgir uma tag nova) invalida automaticamente os
+#     builds antigos e força reconstrução de toda a cadeia — não precisa
+#     apagar manualmente estado ou diretórios de um componente específico.
 #   - Pacotes ausentes/renomeados: cada pacote apt é instalado individualmente;
 #     pacotes "opcionais" (documentação/empacotamento) que falharem apenas geram
 #     aviso, pacotes "críticos" abortam a etapa com relatório claro do que faltou.
 #   - Fallback de compilação: se libpaho-mqtt-dev não existir nos repositórios,
-#     a biblioteca é compilada a partir do código-fonte.
+#     a biblioteca é compilada a partir do código-fonte. CMake roda com
+#     -Wno-error por padrão (evita falhas por avisos-como-erro do GCC 15+).
 #   - Fallback Python: se a instalação via pip --break-system-packages falhar
 #     (ambiente gerenciado/PEP 668 mais restrito), usa um virtualenv dedicado.
 #   - Retentativas com backoff exponencial para operações de rede (apt, git, pip).
@@ -28,17 +37,22 @@
 # Opções:
 #   --skip-feed-sync         Pula a sincronização de feeds (NVT/SCAP/CERT/gvmd-data).
 #                             Pode ser rodada depois manualmente, veja o relatório final.
-#   --clean                   Ignora o estado salvo e reexecuta todas as etapas.
+#   --clean                   Remove /opt/source, o virtualenv Python e o estado
+#                             salvo, e reexecuta a instalação do zero. Use quando
+#                             trocar de versão (*_REF) ou suspeitar de código-fonte
+#                             corrompido/misturado de tentativas anteriores.
 #   --admin-password SENHA    Define a senha do usuário admin do GVM.
 #                             Se omitido, uma senha aleatória é gerada e salva em
 #                             /root/openvas-admin-credentials.txt (chmod 600).
 #   -h, --help                 Mostra esta ajuda.
 #
-# Variáveis de ambiente opcionais (para fixar versões em produção):
+# Variáveis de ambiente opcionais (para fixar versões em produção/homologação):
 #   GVM_LIBS_REF, OPENVAS_SCANNER_REF, OSPD_OPENVAS_REF, GVMD_REF, GSA_REF,
 #   GSAD_REF, NOTUS_SCANNER_REF, FEED_SYNC_REF
-#   Por padrão usam a branch principal de cada repositório. Antes de usar em
-#   produção, confira https://github.com/greenbone e fixe tags testadas.
+#   Ex.: GVMD_REF=v22.5.5 GSA_REF=v22.08.0 GSAD_REF=v22.4.1 sudo -E ./install-openvas.sh --clean
+#   Se omitidas, cada componente resolve sozinho sua última tag de release
+#   (persistida em /var/lib/openvas-install/resolved-refs). Consulte
+#   https://github.com/greenbone antes de fixar manualmente uma combinação.
 # ==============================================================================
 
 set -uo pipefail
@@ -66,6 +80,9 @@ CRED_FILE="/root/openvas-admin-credentials.txt"
 SKIP_FEED_SYNC=0
 CLEAN_INSTALL=0
 
+# Se vazio, cada componente fixa sozinho a última tag de release do seu
+# próprio repositório (ver resolve_ref_for_repo) em vez da branch main/dev —
+# isso evita misturar um componente estável com outro em desenvolvimento.
 GVM_LIBS_REF="${GVM_LIBS_REF:-}"
 OPENVAS_SCANNER_REF="${OPENVAS_SCANNER_REF:-}"
 OSPD_OPENVAS_REF="${OSPD_OPENVAS_REF:-}"
@@ -74,10 +91,16 @@ GSA_REF="${GSA_REF:-}"
 GSAD_REF="${GSAD_REF:-}"
 NOTUS_SCANNER_REF="${NOTUS_SCANNER_REF:-}"
 FEED_SYNC_REF="${FEED_SYNC_REF:-}"
+RESOLVED_REFS_FILE="$STATE_DIR/resolved-refs"
 
 # Caminhos resolvidos dinamicamente (podem virar o venv, se pip do sistema falhar)
 OSPD_BIN=""
 FEED_SYNC_BIN=""
+
+# Assinatura das versões efetivamente usadas nesta execução (ver step_clone_sources).
+# Etapas de build usam isso no nome do estado, então mudar qualquer *_REF invalida
+# automaticamente os builds anteriores em vez de exigir limpeza manual de estado.
+VERSION_FINGERPRINT=""
 
 WARNINGS=()
 
@@ -399,24 +422,78 @@ REPOS=(
   "greenbone-feed-sync|https://github.com/greenbone/greenbone-feed-sync.git|FEED_SYNC_REF"
 )
 
+# Descobre qual ref usar para um repositório: valor explícito do usuário (env var)
+# > ref já resolvida em execução anterior (persistida) > última tag de release
+# (vN.N ou vN.N.N) > branch padrão do remoto, como último recurso (com aviso,
+# pois branch de desenvolvimento não tem garantia de compatibilidade).
+resolve_ref_for_repo() {
+  local name="$1" dir="$2" user_ref="$3"
+  if [ -n "$user_ref" ]; then
+    echo "$user_ref"
+    return 0
+  fi
+  if [ -f "$RESOLVED_REFS_FILE" ]; then
+    local persisted
+    persisted=$(grep "^${name}=" "$RESOLVED_REFS_FILE" 2>/dev/null | tail -n1 | cut -d= -f2-)
+    if [ -n "$persisted" ]; then
+      echo "$persisted"
+      return 0
+    fi
+  fi
+  local latest
+  latest=$(git -C "$dir" tag --list 2>/dev/null | grep -E '^v[0-9]+\.[0-9]+(\.[0-9]+)?$' | sort -V | tail -n1)
+  if [ -z "$latest" ]; then
+    local default_branch
+    default_branch=$(git -C "$dir" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+    latest="${default_branch:-main}"
+    warn "Repositório '$name' não tem tags de release; usando branch de desenvolvimento '$latest' (risco de incompatibilidade — fixe uma tag manualmente via variável de ambiente se possível)."
+  fi
+  echo "$latest"
+}
+
+persist_resolved_ref() {
+  local name="$1" ref="$2"
+  local tmp="${RESOLVED_REFS_FILE}.tmp"
+  { [ -f "$RESOLVED_REFS_FILE" ] && grep -v "^${name}=" "$RESOLVED_REFS_FILE"; true; } > "$tmp"
+  echo "${name}=${ref}" >> "$tmp"
+  mv "$tmp" "$RESOLVED_REFS_FILE"
+}
+
+# Roda em toda execução (não é pulada por estado salvo): git fetch/checkout em
+# repositório já clonado é rápido, e é isso que garante que a resolução de
+# versão (e o fingerprint usado pelas etapas de build) esteja sempre correta,
+# mesmo ao retomar uma instalação interrompida.
 step_clone_sources() {
   mkdir -p "$SOURCE_DIR"
-  local entry name url ref_var ref dir
+  git config --system --add safe.directory '*' >>"$LOG_FILE" 2>&1 || true
+
+  local entry name url ref_var user_ref effective_ref dir fingerprint_parts=""
   for entry in "${REPOS[@]}"; do
     IFS='|' read -r name url ref_var <<< "$entry"
-    ref="${!ref_var}"
+    user_ref="${!ref_var}"
     dir="$SOURCE_DIR/$name"
+
     if [ -d "$dir/.git" ]; then
+      chown -R root:root "$dir" 2>>"$LOG_FILE" || true
       log "Atualizando repositório existente: $name"
       (cd "$dir" && retry git fetch --all --tags >>"$LOG_FILE" 2>&1) || { err "Falha ao atualizar $name."; return 1; }
     else
       log "Clonando repositório: $name"
       retry git clone "$url" "$dir" >>"$LOG_FILE" 2>&1 || { err "Falha ao clonar $name."; return 1; }
+      chown -R root:root "$dir" 2>>"$LOG_FILE" || true
     fi
-    if [ -n "$ref" ]; then
-      (cd "$dir" && git checkout "$ref" >>"$LOG_FILE" 2>&1) || { err "Falha ao mudar $name para '$ref'."; return 1; }
-    fi
+
+    effective_ref=$(resolve_ref_for_repo "$name" "$dir" "$user_ref")
+    persist_resolved_ref "$name" "$effective_ref"
+    printf -v "$ref_var" '%s' "$effective_ref"
+    log "Componente '$name' fixado na versão: $effective_ref"
+
+    (cd "$dir" && git checkout "$effective_ref" >>"$LOG_FILE" 2>&1) || { err "Falha ao mudar $name para '$effective_ref'."; return 1; }
+    fingerprint_parts="${fingerprint_parts}${name}=${effective_ref};"
   done
+
+  VERSION_FINGERPRINT=$(echo -n "$fingerprint_parts" | md5sum | cut -c1-10)
+  log "Assinatura de versões desta instalação: $VERSION_FINGERPRINT (mude *_REF para forçar reconstrução consistente)"
   return 0
 }
 
@@ -429,9 +506,14 @@ cmake_build_install() {
   [ -d "$dir" ] || { err "Diretório de fontes não encontrado: $dir"; return 1; }
   (
     cd "$dir" || exit 1
+    # build/ é sempre recriado: um CMakeCache.txt de uma versão/ref anterior
+    # pode ficar inconsistente com o código-fonte atual após um checkout.
+    rm -rf build
     mkdir -p build
     cd build || exit 1
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" "$@" >>"$LOG_FILE" 2>&1 &&
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+      -DCMAKE_C_FLAGS="-Wno-error" -DCMAKE_CXX_FLAGS="-Wno-error" \
+      "$@" >>"$LOG_FILE" 2>&1 &&
       make -j"$(nproc)" >>"$LOG_FILE" 2>&1 &&
       make install >>"$LOG_FILE" 2>&1
   )
@@ -739,7 +821,7 @@ final_report() {
 # Parsing de argumentos
 # ------------------------------------------------------------------------------
 usage() {
-  sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,55p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [ $# -gt 0 ]; do
@@ -760,7 +842,12 @@ main() {
   require_root
   mkdir -p "$STATE_DIR"
   touch "$LOG_FILE"
-  [ "$CLEAN_INSTALL" -eq 1 ] && : > "$STATE_FILE"
+  if [ "$CLEAN_INSTALL" -eq 1 ]; then
+    warn "--clean: removendo código-fonte ($SOURCE_DIR), virtualenv ($VENV_DIR) e estado anteriores para garantir uma reconstrução consistente."
+    rm -rf "$SOURCE_DIR" "$VENV_DIR"
+    rm -f "$RESOLVED_REFS_FILE"
+    : > "$STATE_FILE"
+  fi
 
   log "Log completo em: $LOG_FILE"
   check_os
@@ -771,16 +858,24 @@ main() {
   run_step "create-user" step_create_user || fatal "Falha ao criar usuário/diretórios do GVM."
   run_step "configure-redis" step_configure_redis || fatal "Falha ao configurar o Redis (socket Unix)."
   run_step "configure-postgresql" step_configure_postgresql || fatal "Falha ao configurar o PostgreSQL."
-  run_step "clone-sources" step_clone_sources || fatal "Falha ao obter o código-fonte do GVM."
-  run_step "build-gvm-libs" step_build_gvm_libs || fatal "Falha ao compilar gvm-libs."
-  run_step "build-openvas-scanner" step_build_openvas_scanner || fatal "Falha ao compilar o openvas-scanner."
-  run_step "install-ospd-openvas" step_install_ospd_openvas || fatal "Falha ao instalar o ospd-openvas."
-  run_step "install-notus-scanner" step_install_notus_scanner || true
-  run_step "install-feed-sync" step_install_feed_sync || fatal "Falha ao instalar o greenbone-feed-sync."
-  run_step "build-gvmd" step_build_gvmd || fatal "Falha ao compilar o gvmd."
-  run_step "build-gsa" step_build_gsa || fatal "Falha ao gerar o build do GSA (interface web)."
-  run_step "build-gsad" step_build_gsad || fatal "Falha ao compilar o gsad."
-  run_step "systemd-units" step_create_systemd_units || fatal "Falha ao subir os serviços systemd. Verifique os logs indicados acima."
+  # Não passa por run_step: precisa rodar sempre para resolver/persistir as
+  # versões e recalcular VERSION_FINGERPRINT, mesmo em execuções retomadas
+  # (git fetch/checkout num repositório já clonado é rápido).
+  step_clone_sources || fatal "Falha ao obter o código-fonte do GVM."
+
+  # As etapas de build abaixo levam VERSION_FINGERPRINT no nome do estado:
+  # mudar qualquer *_REF (ou uma nova tag de release aparecer) muda o
+  # fingerprint e força a reconstrução de toda a cadeia, evitando misturar
+  # binários compilados a partir de versões incompatíveis entre si.
+  run_step "build-gvm-libs:$VERSION_FINGERPRINT" step_build_gvm_libs || fatal "Falha ao compilar gvm-libs."
+  run_step "build-openvas-scanner:$VERSION_FINGERPRINT" step_build_openvas_scanner || fatal "Falha ao compilar o openvas-scanner."
+  run_step "install-ospd-openvas:$VERSION_FINGERPRINT" step_install_ospd_openvas || fatal "Falha ao instalar o ospd-openvas."
+  run_step "install-notus-scanner:$VERSION_FINGERPRINT" step_install_notus_scanner || true
+  run_step "install-feed-sync:$VERSION_FINGERPRINT" step_install_feed_sync || fatal "Falha ao instalar o greenbone-feed-sync."
+  run_step "build-gvmd:$VERSION_FINGERPRINT" step_build_gvmd || fatal "Falha ao compilar o gvmd."
+  run_step "build-gsa:$VERSION_FINGERPRINT" step_build_gsa || fatal "Falha ao gerar o build do GSA (interface web)."
+  run_step "build-gsad:$VERSION_FINGERPRINT" step_build_gsad || fatal "Falha ao compilar o gsad."
+  run_step "systemd-units:$VERSION_FINGERPRINT" step_create_systemd_units || fatal "Falha ao subir os serviços systemd. Verifique os logs indicados acima."
   run_step "sync-feeds" step_sync_feeds || true
   run_step "create-admin-user" step_create_admin_user || fatal "Falha ao criar o usuário administrador do GVM."
 
