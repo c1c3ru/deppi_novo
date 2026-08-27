@@ -379,6 +379,18 @@
   padding: var(--spacing-xs) 0;
   border-top: 1px dashed var(--color-border);
 
+  &__sigla {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primary-dark);
+    background: rgba(var(--color-primary-rgb), 0.1);
+    padding: 3px 10px;
+    border-radius: var(--border-radius-full);
+  }
+
   &__nome {
     flex: 1 1 160px;
     font-size: var(--font-size-sm);
@@ -390,6 +402,12 @@
     display: flex;
     gap: var(--spacing-xs);
   }
+}
+
+.badge-disponibilidade {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .gestao-acoes-finais {

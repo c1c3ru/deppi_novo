@@ -152,6 +152,19 @@ export class VisitasPublicComponent implements OnInit, OnDestroy {
     return !!visit.labs?.some((lab) => lab.status === 'available');
   }
 
+  // Nomes seguem o padrão "SIGLA - Nome completo" (ver toLabCard)
+  labSigla(name: string | undefined): string {
+    if (!name) return '';
+    const separatorIndex = name.indexOf(' - ');
+    return separatorIndex > 0 ? name.substring(0, separatorIndex) : name;
+  }
+
+  labNome(name: string | undefined): string {
+    if (!name) return '';
+    const separatorIndex = name.indexOf(' - ');
+    return separatorIndex > 0 ? name.substring(separatorIndex + 3) : name;
+  }
+
   updateLabStatus(visitId: string, labId: string, status: string) {
     this.visitasService
       .updateLabAvailability(visitId, labId, status)
