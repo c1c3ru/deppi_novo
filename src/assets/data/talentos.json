@@ -110,5 +110,31 @@
     "experiencia": "Sim, informal (projetos, voluntariado)",
     "curriculo": "https://drive.google.com/file/d/1ja1EKxofMbAXwdnua9V8XDpPyPrcXoc0/view?usp=drivesdk",
     "autorizado": true
+  },
+  {
+    "id": "dff11eac",
+    "nome": "Marcos Iury de Lima Américo",
+    "curso": "Bacharelado em Ciência da Computação",
+    "semestre": "6º Semestre",
+    "superpoder": "Redes de Computadores e Segurança",
+    "bio": "Infraestrutura e Redes, Suporte e ITSM, Manutenção de Hardware e Equipamentos, Sistemas Operacionais e Servidores, Virtualização, Banco de Dados SQ...",
+    "skills": [
+      "Redes de Computadores e Segurança",
+      "Outra (Especificar no campo 'Habilidades')"
+    ],
+    "github": null,
+    "linkedin": "https://www.linkedin.com/in/marcosiury/",
+    "avatar_seed": "marcos-iury-de-lima-americo",
+    "foto": "https://lh3.googleusercontent.com/d/1C0V59oAQUQDMEPSKxfkVph84ERrQhtMG",
+    "turno": "Diurno (Manhã e/ou Tarde)",
+    "disponibilidade": "Parcial (Tarde)",
+    "idiomas": [
+      "Inglês: Fluente",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, informal (projetos, voluntariado)",
+    "curriculo": "https://drive.google.com/file/d/1XtbRcelsU1KgFZgEpMZWRhh6vk1a0OyT/view?usp=sharing",
+    "autorizado": true
   }
 ]
