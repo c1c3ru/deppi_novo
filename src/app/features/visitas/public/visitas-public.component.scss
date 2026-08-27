@@ -342,6 +342,114 @@
 }
 
 // =============================================================================
+// GESTÃO DE SOLICITAÇÕES (usuário/admin logado)
+// =============================================================================
+
+.gestao-visitas {
+  max-width: var(--container-max-width);
+  margin: 0 auto var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  background: var(--color-surface, var(--color-background));
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+}
+
+.gestao-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-top: var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+}
+
+.gestao-labs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.gestao-lab {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  border-top: 1px dashed var(--color-border);
+
+  &__nome {
+    flex: 1 1 160px;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  &__acoes {
+    display: flex;
+    gap: var(--spacing-xs);
+  }
+}
+
+.gestao-acoes-finais {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--border-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #065f46;
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #7f1d1d;
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #78350f;
+}
+
+.btn-outline-success {
+  background: transparent;
+  color: #059669;
+  border-color: #059669;
+
+  &:hover:not(:disabled) {
+    background: #059669;
+    color: #ffffff;
+  }
+}
+
+.btn-outline-danger {
+  background: transparent;
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-secondary);
+    color: #ffffff;
+  }
+}
+
+// =============================================================================
 // ANIMAÇÕES
 // =============================================================================
 

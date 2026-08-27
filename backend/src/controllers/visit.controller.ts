@@ -6,10 +6,36 @@ import { calendarService } from '../services/calendar.service';
 export class VisitController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const visits = await db('school_visits')
+      const isAuthenticated = !!(req as any).user;
+
+      // Visitantes anônimos só enxergam a agenda pública (visitas confirmadas),
+      // sem dados de contato. Solicitações pendentes/canceladas e dados de
+      // contato só são expostos para usuários autenticados (gestão).
+      const query = db('school_visits')
         .select('*')
         .orderBy('target_date', 'asc');
-      res.json(visits);
+
+      if (!isAuthenticated) {
+        query.where({ status: 'confirmed' });
+      }
+
+      const visits = await query;
+
+      if (isAuthenticated) {
+        return res.json(visits);
+      }
+
+      const publicVisits = visits.map((visit: any) => ({
+        id: visit.id,
+        school_name: visit.school_name,
+        responsible_name: visit.responsible_name,
+        students_count: visit.students_count,
+        target_date: visit.target_date,
+        shift: visit.shift,
+        status: visit.status,
+      }));
+
+      res.json(publicVisits);
     } catch (error) {
       next(error);
     }
@@ -53,7 +79,6 @@ export class VisitController {
         students_count,
         target_date,
         shift,
-        lab_ids,
       } = req.body;
 
       // Constraint: O limite de alunos por visita não deve ultrapassar ~30
@@ -69,12 +94,10 @@ export class VisitController {
         .whereIn('status', ['confirmed', 'pending']);
 
       if (existingVisits.length > 0) {
-        return res
-          .status(400)
-          .json({
-            message:
-              'Já existe uma solicitação ou visita confirmada para esta data e turno.',
-          });
+        return res.status(400).json({
+          message:
+            'Já existe uma solicitação ou visita confirmada para esta data e turno.',
+        });
       }
 
       const [newVisit] = await db('school_visits')
@@ -89,10 +112,14 @@ export class VisitController {
         })
         .returning('*');
 
-      if (lab_ids && lab_ids.length > 0) {
-        const labAvailabilities = lab_ids.map((lab_id: string) => ({
+      // O formulário público não seleciona laboratórios (são apenas
+      // informativos), então toda visita nasce vinculada a todos os
+      // laboratórios cadastrados, aguardando avaliação de disponibilidade.
+      const laboratorios = await db('laboratorios').select('id');
+      if (laboratorios.length > 0) {
+        const labAvailabilities = laboratorios.map((lab: { id: string }) => ({
           visit_id: newVisit.id,
-          lab_id,
+          lab_id: lab.id,
           status: 'pending',
         }));
         await db('visit_lab_availability').insert(labAvailabilities);
@@ -135,12 +162,10 @@ export class VisitController {
 
       // Invariante: Não deve ser possível aprovar sem pelo menos um laboratório com status "Disponível"
       if (status === 'confirmed' && availableLabs.length === 0) {
-        return res
-          .status(400)
-          .json({
-            message:
-              'Não é possível confirmar uma visita sem pelo menos um laboratório disponível.',
-          });
+        return res.status(400).json({
+          message:
+            'Não é possível confirmar uma visita sem pelo menos um laboratório disponível.',
+        });
       }
 
       // Invariante: Não deve ser possível confirmar sobre um horário já
