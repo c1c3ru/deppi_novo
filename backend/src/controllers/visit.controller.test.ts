@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-const mockDb = jest.fn();
+const mockDb = jest.fn() as any;
+mockDb.fn = { now: jest.fn(() => 'NOW()') };
 jest.mock('../database/db', () => ({ __esModule: true, default: mockDb }));
 jest.mock('../services/email.service', () => ({
   emailService: {
@@ -16,16 +17,30 @@ jest.mock('../services/calendar.service', () => ({
 }));
 
 import { visitController } from './visit.controller';
+import { calendarService } from '../services/calendar.service';
 
 // Simula um Knex QueryBuilder: encadeável e "thenable" (awaitable),
-// resolvendo para as linhas passadas em `rows`.
-function mockQuery(rows: unknown[]) {
+// resolvendo sempre para `resolveValue` (array ou objeto único, conforme
+// o método real chamaria — ex: .first() resolve para objeto, o restante
+// para array).
+function mockQuery(resolveValue: unknown) {
   const builder: any = {};
-  builder.select = jest.fn(() => builder);
-  builder.orderBy = jest.fn(() => builder);
-  builder.where = jest.fn(() => builder);
+  const chainableMethods = [
+    'select',
+    'orderBy',
+    'where',
+    'whereIn',
+    'join',
+    'insert',
+    'returning',
+    'update',
+    'first',
+  ];
+  chainableMethods.forEach((method) => {
+    builder[method] = jest.fn(() => builder);
+  });
   builder.then = (resolve: (v: unknown) => void, reject?: (e: unknown) => void) =>
-    Promise.resolve(rows).then(resolve, reject);
+    Promise.resolve(resolveValue).then(resolve, reject);
   return builder;
 }
 
@@ -104,5 +119,116 @@ describe('VisitController.getAll — filtragem LGPD de dados públicos', () => {
     const payload = (res.json as jest.Mock).mock.calls[0][0];
     expect(payload[0]).toHaveProperty('contact_email', dbRow.contact_email);
     expect(payload[0]).toHaveProperty('contact_phone', dbRow.contact_phone);
+  });
+});
+
+describe('VisitController.create — status padrão PENDING', () => {
+  it('salva a nova solicitação de visita com status "pending", nunca "confirmed"', async () => {
+    const insertedVisit = {
+      id: 'v-new',
+      school_name: 'Escola Nova',
+      responsible_name: 'Ciclana',
+      contact_email: 'ciclana@escola.edu.br',
+      contact_phone: '(85) 98888-7777',
+      students_count: 15,
+      target_date: '2026-10-01',
+      shift: 'T',
+      status: 'pending',
+    };
+
+    let insertPayload: any;
+    const insertBuilder: any = {};
+    insertBuilder.insert = jest.fn((payload: any) => {
+      insertPayload = payload;
+      return insertBuilder;
+    });
+    insertBuilder.returning = jest.fn(() => insertBuilder);
+    insertBuilder.then = (resolve: (v: unknown) => void) =>
+      Promise.resolve([insertedVisit]).then(resolve);
+
+    mockDb
+      .mockImplementationOnce(() => mockQuery([])) // checagem de conflito de horário — nenhuma visita existente
+      .mockImplementationOnce(() => insertBuilder) // insert em school_visits
+      .mockImplementationOnce(() => mockQuery([])); // laboratorios cadastrados — nenhum, pula vínculo automático
+
+    const req = {
+      body: {
+        school_name: insertedVisit.school_name,
+        responsible_name: insertedVisit.responsible_name,
+        contact_email: insertedVisit.contact_email,
+        contact_phone: insertedVisit.contact_phone,
+        students_count: insertedVisit.students_count,
+        target_date: insertedVisit.target_date,
+        shift: insertedVisit.shift,
+      },
+    } as unknown as Request;
+    const res = makeRes();
+    const next = jest.fn() as NextFunction;
+
+    await visitController.create(req, res, next);
+
+    expect(insertPayload).toEqual(expect.objectContaining({ status: 'pending' }));
+    expect(insertPayload.status).not.toBe('confirmed');
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith(insertedVisit);
+  });
+});
+
+describe('VisitController.updateStatus — aprovação e integração com o Google Calendar', () => {
+  const visitRow = {
+    id: 'v1',
+    school_name: 'Escola X',
+    responsible_name: 'Fulano',
+    contact_email: 'fulano@escola.edu.br',
+    contact_phone: '(85) 99999-9999',
+    students_count: 10,
+    target_date: '2026-09-01',
+    shift: 'M',
+    status: 'pending',
+  };
+
+  it('ao confirmar a visita, chama a criação do evento no Google Calendar exatamente uma vez', async () => {
+    (calendarService.isTimeSlotBusy as jest.Mock).mockResolvedValue(false);
+
+    mockDb
+      .mockImplementationOnce(() => mockQuery(visitRow)) // school_visits.where(id).first()
+      .mockImplementationOnce(() => mockQuery([{ name: 'Lab A' }])) // labs disponíveis (join/select)
+      .mockImplementationOnce(() =>
+        mockQuery([{ ...visitRow, status: 'confirmed' }])
+      ); // update().returning('*')
+
+    const req = {
+      params: { id: 'v1' },
+      body: { status: 'confirmed' },
+    } as unknown as Request;
+    const res = makeRes();
+    const next = jest.fn() as NextFunction;
+
+    await visitController.updateStatus(req, res, next);
+
+    expect(calendarService.createVisitEvent).toHaveBeenCalledTimes(1);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'confirmed' })
+    );
+  });
+
+  it('não chama o Google Calendar quando a mudança de status não é para "confirmed"', async () => {
+    mockDb
+      .mockImplementationOnce(() => mockQuery(visitRow)) // school_visits.where(id).first()
+      .mockImplementationOnce(() => mockQuery([{ name: 'Lab A' }])) // labs disponíveis
+      .mockImplementationOnce(() =>
+        mockQuery([{ ...visitRow, status: 'canceled' }])
+      ); // update().returning('*')
+
+    const req = {
+      params: { id: 'v1' },
+      body: { status: 'canceled' },
+    } as unknown as Request;
+    const res = makeRes();
+    const next = jest.fn() as NextFunction;
+
+    await visitController.updateStatus(req, res, next);
+
+    expect(calendarService.createVisitEvent).not.toHaveBeenCalled();
   });
 });

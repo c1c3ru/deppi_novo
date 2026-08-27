@@ -410,6 +410,19 @@
   letter-spacing: normal;
 }
 
+.gestao-adicionar-lab {
+  margin-top: var(--spacing-sm);
+
+  &__linha {
+    display: flex;
+    gap: var(--spacing-xs);
+
+    select {
+      flex: 1;
+    }
+  }
+}
+
 .gestao-acoes-finais {
   display: flex;
   gap: var(--spacing-sm);

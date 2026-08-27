@@ -48,7 +48,7 @@ describe('VisitasPublicComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('renders the "Agendar Visita" form when there is no active session (visitante)', () => {
+  it('renders the "Agendar Visita" form when there is no active session (visitante), with no approval button and no "add lab" option', () => {
     fixture.detectChanges();
 
     const formWrapper = fixture.nativeElement.querySelector(
@@ -56,6 +56,13 @@ describe('VisitasPublicComponent', () => {
     );
     expect(formWrapper).not.toBeNull();
     expect(fixture.nativeElement.querySelector('form')).not.toBeNull();
+
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="confirmar-visita-btn"]')
+    ).toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="adicionar-lab"]')
+    ).toBeNull();
   });
 
   it('removes the "Agendar Visita" form entirely from the DOM and keeps "Confirmar as visitas" enabled when authenticated', () => {
@@ -96,6 +103,45 @@ describe('VisitasPublicComponent', () => {
     );
     expect(confirmBtn).not.toBeNull();
     expect(confirmBtn.disabled).toBeFalse();
+  });
+
+  it('exibe a opção de adicionar mais laboratórios apenas no estado autenticado', () => {
+    const pendingVisit = {
+      id: 'v1',
+      school_name: 'Escola X',
+      responsible_name: 'Fulano',
+      contact_email: 'fulano@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      students_count: 10,
+      target_date: '2026-09-01',
+      shift: 'M',
+      status: 'pending',
+    };
+    laboratoriosServiceSpy.getAll.and.returnValue(
+      of([
+        { id: 'l1', name: 'LAB - Laboratório Vinculado', description: '' },
+        { id: 'l2', name: 'LAB2 - Laboratório Novo', description: '' },
+      ])
+    );
+    visitasServiceSpy.getAll.and.returnValue(of([pendingVisit]));
+    visitasServiceSpy.getById.and.returnValue(
+      of({
+        ...pendingVisit,
+        labs: [
+          { visit_id: 'v1', lab_id: 'l1', name: 'LAB - Laboratório Vinculado', status: 'pending' },
+        ],
+      })
+    );
+
+    isAuthenticatedSubject.next(true);
+    fixture.detectChanges();
+
+    const addLabSection = fixture.nativeElement.querySelector(
+      '[data-testid="adicionar-lab"]'
+    );
+    expect(addLabSection).not.toBeNull();
+    expect(addLabSection.textContent).toContain('LAB2');
+    expect(addLabSection.textContent).not.toContain('Laboratório Vinculado');
   });
 
   it('renders lab cards (sigla, nome, descrição) for the authenticated user', () => {

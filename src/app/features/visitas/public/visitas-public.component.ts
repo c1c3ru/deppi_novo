@@ -176,6 +176,30 @@ export class VisitasPublicComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Laboratórios ainda não vinculados a esta visita (ex: cadastrados
+  // depois da visita ter sido criada) — disponíveis para adicionar.
+  labsDisponiveisParaAdicionar(visit: SchoolVisit): LabCard[] {
+    const vinculados = new Set((visit.labs || []).map((lab) => lab.lab_id));
+    return this.laboratorios.filter((lab) => !vinculados.has(lab.id));
+  }
+
+  addLabToVisit(visitId: string, labId: string) {
+    if (!labId) return;
+    this.managementError = '';
+    this.visitasService.addLab(visitId, labId).subscribe({
+      next: () => {
+        const visit = this.pendingVisitas.find((v) => v.id === visitId);
+        if (visit) {
+          this.loadVisitDetails(visit);
+        }
+      },
+      error: (err: any) => {
+        this.managementError =
+          err.error?.message || 'Erro ao adicionar laboratório à visita.';
+      },
+    });
+  }
+
   confirmVisit(visitId: string) {
     this.setVisitStatus(visitId, 'confirmed', 'Visita confirmada com sucesso.');
   }

@@ -107,6 +107,38 @@
         </p>
       </div>
 
+      <!-- ====== ADICIONAR MAIS LABORATÓRIOS — somente usuário logado ====== -->
+      <div
+        class="gestao-adicionar-lab"
+        data-testid="adicionar-lab"
+        *ngIf="labsDisponiveisParaAdicionar(visita).length > 0"
+      >
+        <label class="campo-label" [attr.for]="'add-lab-' + visita.id">
+          Adicionar laboratório
+        </label>
+        <div class="gestao-adicionar-lab__linha">
+          <select
+            class="campo-input campo-select"
+            [id]="'add-lab-' + visita.id"
+            #labSelect
+          >
+            <option
+              *ngFor="let lab of labsDisponiveisParaAdicionar(visita)"
+              [value]="lab.id"
+            >
+              {{ lab.sigla }} - {{ lab.nome }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-success"
+            (click)="addLabToVisit(visita.id, labSelect.value)"
+          >
+            Adicionar
+          </button>
+        </div>
+      </div>
+
       <div class="gestao-acoes-finais">
         <button
           type="button"

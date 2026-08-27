@@ -100,6 +100,8 @@ export class VisitController {
         });
       }
 
+      // Toda visita nasce como 'pending': a confirmação exige aprovação
+      // manual de um usuário autenticado (ver updateStatus).
       const [newVisit] = await db('school_visits')
         .insert({
           school_name,
@@ -109,6 +111,7 @@ export class VisitController {
           students_count,
           target_date,
           shift,
+          status: 'pending',
         })
         .returning('*');
 
@@ -232,6 +235,47 @@ export class VisitController {
       }
 
       res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Permite à gestão (usuário autenticado) vincular um laboratório
+  // adicional a uma visita — útil para laboratórios cadastrados depois
+  // da visita ter sido criada, que não entraram no vínculo automático.
+  async addLab(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { lab_id } = req.body;
+
+      if (!lab_id) {
+        return res.status(400).json({ message: 'lab_id é obrigatório.' });
+      }
+
+      const visit = await db('school_visits').where({ id }).first();
+      if (!visit) {
+        return res.status(404).json({ message: 'Visita não encontrada' });
+      }
+
+      const lab = await db('laboratorios').where({ id: lab_id }).first();
+      if (!lab) {
+        return res.status(404).json({ message: 'Laboratório não encontrado' });
+      }
+
+      const existing = await db('visit_lab_availability')
+        .where({ visit_id: id, lab_id })
+        .first();
+      if (existing) {
+        return res
+          .status(409)
+          .json({ message: 'Este laboratório já está associado à visita.' });
+      }
+
+      const [created] = await db('visit_lab_availability')
+        .insert({ visit_id: id, lab_id, status: 'pending' })
+        .returning('*');
+
+      res.status(201).json({ ...created, name: lab.name });
     } catch (error) {
       next(error);
     }
