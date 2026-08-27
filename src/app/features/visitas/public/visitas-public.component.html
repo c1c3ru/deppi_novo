@@ -11,6 +11,19 @@
       </p>
     </div>
 
+    <!-- Cards dos laboratórios (Sigla, Nome, Descrição) — visão do usuário logado -->
+    <div class="labs-grid" data-testid="labs-grid-autenticado" *ngIf="laboratorios.length > 0">
+      <div
+        class="lab-card"
+        *ngFor="let lab of laboratorios; let i = index"
+        [style.animation-delay.ms]="i * 60"
+      >
+        <span class="lab-card__sigla">{{ lab.sigla }}</span>
+        <span class="lab-card__nome">{{ lab.nome }}</span>
+        <span class="lab-card__descricao">{{ lab.descricao }}</span>
+      </div>
+    </div>
+
     <div *ngIf="managementSuccess" class="alerta alerta-sucesso">
       {{ managementSuccess }}
     </div>
@@ -45,22 +58,30 @@
 
       <div class="gestao-labs">
         <div class="gestao-lab" *ngFor="let lab of visita.labs">
-          <span class="gestao-lab__nome">{{ lab.name }}</span>
+          <span class="gestao-lab__sigla">{{ labSigla(lab.name) }}</span>
+          <span class="gestao-lab__nome">{{ labNome(lab.name) }}</span>
           <span
-            class="badge"
-            [ngClass]="{
-              'badge-warning': lab.status === 'pending',
-              'badge-success': lab.status === 'available',
-              'badge-danger': lab.status === 'unavailable',
-            }"
+            class="badge badge-disponibilidade"
+            data-testid="lab-availability-flag"
+            [class.badge-warning]="lab.status === 'pending'"
+            [class.badge-success]="lab.status === 'available'"
+            [class.badge-danger]="lab.status === 'unavailable'"
           >
             {{
               lab.status === 'available'
                 ? 'Disponível'
                 : lab.status === 'unavailable'
-                  ? 'Indisponível'
+                  ? 'Não Disponível'
                   : 'Pendente'
             }}
+            · {{ visita.target_date | date: 'dd/MM/yyyy' }}
+            ({{
+              visita.shift === 'M'
+                ? 'Manhã'
+                : visita.shift === 'T'
+                  ? 'Tarde'
+                  : 'Noite'
+            }})
           </span>
           <div class="gestao-lab__acoes">
             <button
@@ -86,15 +107,47 @@
         </p>
       </div>
 
+      <!-- ====== ADICIONAR MAIS LABORATÓRIOS — somente usuário logado ====== -->
+      <div
+        class="gestao-adicionar-lab"
+        data-testid="adicionar-lab"
+        *ngIf="labsDisponiveisParaAdicionar(visita).length > 0"
+      >
+        <label class="campo-label" [attr.for]="'add-lab-' + visita.id">
+          Adicionar laboratório
+        </label>
+        <div class="gestao-adicionar-lab__linha">
+          <select
+            class="campo-input campo-select"
+            [id]="'add-lab-' + visita.id"
+            #labSelect
+          >
+            <option
+              *ngFor="let lab of labsDisponiveisParaAdicionar(visita)"
+              [value]="lab.id"
+            >
+              {{ lab.sigla }} - {{ lab.nome }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-success"
+            (click)="addLabToVisit(visita.id, labSelect.value)"
+          >
+            Adicionar
+          </button>
+        </div>
+      </div>
+
       <div class="gestao-acoes-finais">
         <button
           type="button"
           class="btn btn-primary"
+          data-testid="confirmar-visita-btn"
           (click)="confirmVisit(visita.id)"
-          [disabled]="!hasAvailableLab(visita)"
-          title="É necessário pelo menos um laboratório disponível"
+          title="Confirmar as visitas"
         >
-          Confirmar Visita
+          Confirmar as visitas
         </button>
         <button
           type="button"
@@ -108,8 +161,8 @@
   </div>
 
   <div class="visitas-layout">
-    <!-- ======== COLUNA ESQUERDA: FORMULÁRIO ======== -->
-    <div class="coluna-formulario">
+    <!-- ======== COLUNA ESQUERDA: FORMULÁRIO (somente visitante não autenticado) ======== -->
+    <div class="coluna-formulario" *ngIf="!isAuthenticated" data-testid="coluna-formulario">
       <div class="formulario-cabecalho">
         <span class="formulario-rotulo">Caravana Escolar</span>
         <h2 class="formulario-titulo">Agendar Visita</h2>
