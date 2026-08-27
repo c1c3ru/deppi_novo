@@ -41,4 +41,10 @@ export class VisitasService {
       status,
     });
   }
+
+  addLab(visitId: string, labId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${visitId}/labs`, {
+      lab_id: labId,
+    });
+  }
 }

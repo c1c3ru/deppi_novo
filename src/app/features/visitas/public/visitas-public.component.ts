@@ -152,6 +152,19 @@ export class VisitasPublicComponent implements OnInit, OnDestroy {
     return !!visit.labs?.some((lab) => lab.status === 'available');
   }
 
+  // Nomes seguem o padrão "SIGLA - Nome completo" (ver toLabCard)
+  labSigla(name: string | undefined): string {
+    if (!name) return '';
+    const separatorIndex = name.indexOf(' - ');
+    return separatorIndex > 0 ? name.substring(0, separatorIndex) : name;
+  }
+
+  labNome(name: string | undefined): string {
+    if (!name) return '';
+    const separatorIndex = name.indexOf(' - ');
+    return separatorIndex > 0 ? name.substring(separatorIndex + 3) : name;
+  }
+
   updateLabStatus(visitId: string, labId: string, status: string) {
     this.visitasService
       .updateLabAvailability(visitId, labId, status)
@@ -161,6 +174,30 @@ export class VisitasPublicComponent implements OnInit, OnDestroy {
           this.loadVisitDetails(visit);
         }
       });
+  }
+
+  // Laboratórios ainda não vinculados a esta visita (ex: cadastrados
+  // depois da visita ter sido criada) — disponíveis para adicionar.
+  labsDisponiveisParaAdicionar(visit: SchoolVisit): LabCard[] {
+    const vinculados = new Set((visit.labs || []).map((lab) => lab.lab_id));
+    return this.laboratorios.filter((lab) => !vinculados.has(lab.id));
+  }
+
+  addLabToVisit(visitId: string, labId: string) {
+    if (!labId) return;
+    this.managementError = '';
+    this.visitasService.addLab(visitId, labId).subscribe({
+      next: () => {
+        const visit = this.pendingVisitas.find((v) => v.id === visitId);
+        if (visit) {
+          this.loadVisitDetails(visit);
+        }
+      },
+      error: (err: any) => {
+        this.managementError =
+          err.error?.message || 'Erro ao adicionar laboratório à visita.';
+      },
+    });
   }
 
   confirmVisit(visitId: string) {

@@ -19,5 +19,6 @@ router.patch(
   authMiddleware,
   visitController.updateLabAvailability
 );
+router.post('/:id/labs', authMiddleware, visitController.addLab);
 
 export default router;
