@@ -23,7 +23,7 @@
     <div class="lab-content">
       <div class="main-column">
         <!-- Produções Section -->
-        <section class="sub-section reveal-up" *ngIf="lab.productions?.length">
+        <section class="sub-section reveal-up" *ngIf="lab.productions.length">
           <h2 class="section-label">Linhas de Pesquisa & Produções</h2>
           <div class="productions-list">
             <div *ngFor="let prod of lab.productions" class="glass item-card">
@@ -43,7 +43,7 @@
         </section>
 
         <!-- Serviços Section -->
-        <section class="sub-section reveal-up" *ngIf="lab.services?.length">
+        <section class="sub-section reveal-up" *ngIf="lab.services.length">
           <h2 class="section-label">Serviços Oferecidos</h2>
           <div class="services-list">
             <div *ngFor="let service of lab.services" class="glass item-card">
