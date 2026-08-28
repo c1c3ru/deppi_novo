@@ -161,4 +161,32 @@ describe('VisitasPublicComponent', () => {
     expect(labsGrid.textContent).toContain('Laboratório de Testes');
     expect(labsGrid.textContent).toContain('Descrição do lab');
   });
+
+  it('renders the 7 new laboratory cards (siglas) on the public visit scheduling form', () => {
+    const novosLaboratorios = [
+      { id: 'l1', name: 'LAQAMB - Laboratório de Química Ambiental', description: 'Breve descrição das atividades do laboratório LAQAMB.' },
+      { id: 'l2', name: 'LAPP - Laboratório de Automação e Processos Produtivos', description: 'Breve descrição das atividades do laboratório LAPP.' },
+      { id: 'l3', name: 'MAKER - Espaço Maker', description: 'Breve descrição das atividades do laboratório MAKER.' },
+      { id: 'l4', name: 'OFICINA - Oficina de Prototipagem e Manutenção', description: 'Breve descrição das atividades do laboratório OFICINA.' },
+      { id: 'l5', name: 'LQOI - Laboratório de Química Orgânica e Inorgânica', description: 'Breve descrição das atividades do laboratório LQOI.' },
+      { id: 'l6', name: 'LABVICIA - Visão & IA', description: 'Breve descrição das atividades do laboratório LABVICIA.' },
+      { id: 'l7', name: 'LASIC - Laboratório de Sistemas Inteligentes e Computação', description: 'Breve descrição das atividades do laboratório LASIC.' },
+    ];
+    laboratoriosServiceSpy.getAll.and.returnValue(of(novosLaboratorios));
+
+    fixture.detectChanges();
+
+    const formWrapper = fixture.nativeElement.querySelector(
+      '[data-testid="coluna-formulario"]'
+    );
+    expect(formWrapper).not.toBeNull();
+
+    const siglas = ['LAQAMB', 'LAPP', 'MAKER', 'OFICINA', 'LQOI', 'LABVICIA', 'LASIC'];
+    siglas.forEach((sigla) => {
+      expect(formWrapper.textContent).toContain(sigla);
+    });
+
+    const labCards = formWrapper.querySelectorAll('.lab-card');
+    expect(labCards.length).toBe(7);
+  });
 });
