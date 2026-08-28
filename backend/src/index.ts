@@ -155,7 +155,7 @@ class Application {
             description: 'API para o sistema DEPPI do IFCE Campus Maracanaú',
             contact: {
               name: 'DEPPI Team',
-              email: 'deppi.maracanau@ifce.edu.br',
+              email: 'conhecaifce@maracanau.ifce.edu.br',
             },
           },
           servers: [

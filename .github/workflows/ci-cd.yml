@@ -314,6 +314,7 @@ jobs:
           echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
           echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env
           echo "EMAIL_FROM_NAME=DEPPI IFCE Maracanaú" >> .env
+          echo "EMAIL_CONTACT_TO=${{ secrets.EMAIL_CONTACT_TO }}" >> .env
 
           # Google Calendar (agenda de visitas)
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
@@ -440,8 +441,9 @@ jobs:
           echo "SMTP_PORT=587" >> .env
           echo "SMTP_USER=$(safe SMTP_USER)" >> .env
           echo "SMTP_PASS=$(safe SMTP_PASS)" >> .env
-          echo "EMAIL_FROM=noreply@deppi.ifce.edu.br" >> .env
+          echo "EMAIL_FROM=conhecaifce@maracanau.ifce.edu.br" >> .env
           echo "EMAIL_FROM_NAME=DEPPI IFCE Maracanaú" >> .env
+          echo "EMAIL_CONTACT_TO=conhecaifce@maracanau.ifce.edu.br" >> .env
 
           # Google Calendar (agenda de visitas)
           echo "GOOGLE_CLIENT_ID=$(safe GOOGLE_CLIENT_ID)" >> .env

@@ -2,7 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { VisitasService } from '../services/visitas.service';
-import { SchoolVisit } from '../../../shared/models/visitas.model';
+import {
+  MAX_STUDENTS_PER_VISIT,
+  RECOMMENDED_STUDENTS_PER_VISIT,
+  SchoolVisit,
+} from '../../../shared/models/visitas.model';
 import { LaboratoriosService } from '../../laboratorios/services/laboratorios.service';
 import { Laboratorio } from '../../laboratorios/models/laboratorio.model';
 import { AuthService } from '../../../core/services/auth.service';
@@ -27,6 +31,9 @@ export class VisitasPublicComponent implements OnInit, OnDestroy {
   successMessage = '';
   errorMessage = '';
 
+  readonly maxStudentsPerVisit = MAX_STUDENTS_PER_VISIT;
+  readonly recommendedStudentsPerVisit = RECOMMENDED_STUDENTS_PER_VISIT;
+
   // Laboratórios exibidos apenas como informação — não são selecionáveis
   laboratorios: LabCard[] = [];
 
@@ -45,12 +52,27 @@ export class VisitasPublicComponent implements OnInit, OnDestroy {
   ) {
     this.visitForm = this.fb.group({
       school_name: ['', Validators.required],
+      school_city: ['', Validators.required],
+      school_network: ['', Validators.required],
+      director_name: ['', Validators.required],
       responsible_name: ['', Validators.required],
       contact_email: ['', [Validators.required, Validators.email]],
       contact_phone: ['', Validators.required],
-      students_count: ['', [Validators.required, Validators.max(30)]],
+      institutional_email: ['', [Validators.required, Validators.email]],
+      whatsapp_phone: ['', Validators.required],
+      class_supervisors: ['', Validators.required],
+      grade_level: ['', Validators.required],
+      students_count: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(MAX_STUDENTS_PER_VISIT),
+        ],
+      ],
       target_date: ['', Validators.required],
       shift: ['M', Validators.required],
+      notes: [''],
     });
   }
 

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import db from '../database/db';
 import { emailService } from '../services/email.service';
 import { calendarService } from '../services/calendar.service';
+import { MAX_STUDENTS_PER_VISIT } from '../types/visit.types';
 
 export class VisitController {
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -79,13 +80,21 @@ export class VisitController {
         students_count,
         target_date,
         shift,
+        school_city,
+        school_network,
+        director_name,
+        institutional_email,
+        whatsapp_phone,
+        class_supervisors,
+        grade_level,
+        notes,
       } = req.body;
 
-      // Constraint: O limite de alunos por visita não deve ultrapassar ~30
-      if (students_count > 30) {
-        return res
-          .status(400)
-          .json({ message: 'O limite de alunos por visita é 30.' });
+      // Constraint: o limite de alunos por visita é 50 (recomendado: até 40).
+      if (students_count > MAX_STUDENTS_PER_VISIT) {
+        return res.status(400).json({
+          message: `O limite de alunos por visita é ${MAX_STUDENTS_PER_VISIT}.`,
+        });
       }
 
       // Risco: Múltiplas visitas na mesma data/horário gerando superlotação.
@@ -102,6 +111,8 @@ export class VisitController {
 
       // Toda visita nasce como 'pending': a confirmação exige aprovação
       // manual de um usuário autenticado (ver updateStatus).
+      // Campos opcionais viram `null` explícito quando ausentes — o Knex
+      // rejeita `undefined` em bindings de insert.
       const [newVisit] = await db('school_visits')
         .insert({
           school_name,
@@ -111,6 +122,14 @@ export class VisitController {
           students_count,
           target_date,
           shift,
+          school_city: school_city ?? null,
+          school_network: school_network ?? null,
+          director_name: director_name ?? null,
+          institutional_email: institutional_email ?? null,
+          whatsapp_phone: whatsapp_phone ?? null,
+          class_supervisors: class_supervisors ?? null,
+          grade_level: grade_level ?? null,
+          notes: notes ?? null,
           status: 'pending',
         })
         .returning('*');

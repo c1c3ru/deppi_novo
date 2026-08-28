@@ -168,7 +168,7 @@
         <h2 class="formulario-titulo">Agendar Visita</h2>
         <p class="formulario-descricao">
           Preencha os dados abaixo para solicitar uma visita técnica. O limite
-          máximo é de <strong>30 alunos</strong> por turma.
+          máximo é de <strong>50 alunos</strong> por turma.
         </p>
       </div>
 
@@ -209,12 +209,13 @@
         (ngSubmit)="onSubmit()"
         class="formulario-visita"
       >
-        <!-- Escola e Responsável -->
+        <!-- Escola -->
         <div class="campo-grupo">
-          <label class="campo-label required"
+          <label class="campo-label required" for="school_name"
             >Nome da Escola / Instituição</label
           >
           <input
+            id="school_name"
             type="text"
             class="campo-input"
             formControlName="school_name"
@@ -222,9 +223,60 @@
           />
         </div>
 
+        <!-- Cidade e Rede de Ensino -->
+        <div class="campos-duplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="school_city"
+              >Cidade da Escola</label
+            >
+            <input
+              id="school_city"
+              type="text"
+              class="campo-input"
+              formControlName="school_city"
+              placeholder="Ex: Maracanaú"
+            />
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="school_network"
+              >Rede de Ensino</label
+            >
+            <select
+              id="school_network"
+              class="campo-input campo-select"
+              formControlName="school_network"
+            >
+              <option value="" disabled>Selecione</option>
+              <option value="municipal">Municipal</option>
+              <option value="estadual">Estadual</option>
+              <option value="federal">Federal</option>
+              <option value="privada">Privada</option>
+              <option value="outra">Outra</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Diretor(a) -->
         <div class="campo-grupo">
-          <label class="campo-label required">Nome do Responsável</label>
+          <label class="campo-label required" for="director_name"
+            >Diretor(a)</label
+          >
           <input
+            id="director_name"
+            type="text"
+            class="campo-input"
+            formControlName="director_name"
+            placeholder="Nome completo do(a) diretor(a)"
+          />
+        </div>
+
+        <!-- Responsável pela solicitação -->
+        <div class="campo-grupo">
+          <label class="campo-label required" for="responsible_name"
+            >Nome do Responsável</label
+          >
+          <input
+            id="responsible_name"
             type="text"
             class="campo-input"
             formControlName="responsible_name"
@@ -232,11 +284,14 @@
           />
         </div>
 
-        <!-- Email e Telefone lado a lado -->
+        <!-- Email e Telefone de contato do responsável -->
         <div class="campos-duplos">
           <div class="campo-grupo">
-            <label class="campo-label required">E-mail de Contato</label>
+            <label class="campo-label required" for="contact_email"
+              >E-mail de Contato</label
+            >
             <input
+              id="contact_email"
               type="email"
               class="campo-input"
               formControlName="contact_email"
@@ -244,8 +299,11 @@
             />
           </div>
           <div class="campo-grupo">
-            <label class="campo-label required">Telefone</label>
+            <label class="campo-label required" for="contact_phone"
+              >Telefone</label
+            >
             <input
+              id="contact_phone"
               type="text"
               class="campo-input"
               formControlName="contact_phone"
@@ -255,35 +313,125 @@
           </div>
         </div>
 
-        <!-- Qtd Alunos, Data e Turno -->
-        <div class="campos-triplos">
+        <!-- E-mail institucional e Telefone/WhatsApp da escola -->
+        <div class="campos-duplos">
           <div class="campo-grupo">
-            <label class="campo-label required">Qtd. de Alunos</label>
+            <label class="campo-label required" for="institutional_email"
+              >E-mail Institucional</label
+            >
             <input
-              type="number"
+              id="institutional_email"
+              type="email"
               class="campo-input"
-              formControlName="students_count"
-              placeholder="Máx. 30"
-              min="1"
-              max="30"
+              formControlName="institutional_email"
+              placeholder="secretaria@escola.edu.br"
             />
           </div>
           <div class="campo-grupo">
-            <label class="campo-label required">Data Pretendida</label>
+            <label class="campo-label required" for="whatsapp_phone"
+              >Telefone/WhatsApp</label
+            >
             <input
+              id="whatsapp_phone"
+              type="text"
+              class="campo-input"
+              formControlName="whatsapp_phone"
+              placeholder="(85) 99999-9999"
+              mask="(00) 00000-0000"
+            />
+          </div>
+        </div>
+
+        <!-- Responsáveis pela turma e Ano/Série -->
+        <div class="campos-duplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="class_supervisors"
+              >Responsáveis pela Turma</label
+            >
+            <input
+              id="class_supervisors"
+              type="text"
+              class="campo-input"
+              formControlName="class_supervisors"
+              placeholder="Ex: Maria Silva e João Souza"
+            />
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="grade_level"
+              >Ano/Série</label
+            >
+            <input
+              id="grade_level"
+              type="text"
+              class="campo-input"
+              formControlName="grade_level"
+              placeholder="Ex: 9º ano do Ensino Fundamental"
+            />
+          </div>
+        </div>
+
+        <!-- Qtd Alunos, Data e Turno -->
+        <div class="campos-triplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="students_count"
+              >Qtd. de Alunos</label
+            >
+            <input
+              id="students_count"
+              type="number"
+              class="campo-input"
+              formControlName="students_count"
+              placeholder="Máx. 50"
+              min="1"
+              [max]="maxStudentsPerVisit"
+            />
+            <span class="campo-hint campo-hint-alerta">
+              Recomendamos grupos de até {{ recommendedStudentsPerVisit }}
+              estudantes. O limite máximo permitido é de
+              {{ maxStudentsPerVisit }} estudantes por visita.
+            </span>
+            <span
+              *ngIf="visitForm.get('students_count')?.hasError('max') && visitForm.get('students_count')?.touched"
+              class="campo-hint campo-hint-erro"
+            >
+              Máximo de {{ maxStudentsPerVisit }} alunos permitido por visita.
+            </span>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="target_date"
+              >Data Pretendida</label
+            >
+            <input
+              id="target_date"
               type="date"
               class="campo-input"
               formControlName="target_date"
             />
           </div>
           <div class="campo-grupo">
-            <label class="campo-label required">Turno</label>
-            <select class="campo-input campo-select" formControlName="shift">
+            <label class="campo-label required" for="shift">Turno</label>
+            <select
+              id="shift"
+              class="campo-input campo-select"
+              formControlName="shift"
+            >
               <option value="M">☀️ Manhã</option>
               <option value="T">🌤️ Tarde</option>
               <option value="N">🌙 Noite</option>
             </select>
           </div>
+        </div>
+
+        <!-- Observações -->
+        <div class="campo-grupo">
+          <label class="campo-label" for="notes">Observações</label>
+          <textarea
+            id="notes"
+            class="campo-input campo-textarea"
+            formControlName="notes"
+            rows="3"
+            placeholder="Alguma informação adicional relevante para a visita?"
+          ></textarea>
         </div>
 
         <!-- ====== LABORATÓRIOS — SOMENTE EXIBIÇÃO ====== -->

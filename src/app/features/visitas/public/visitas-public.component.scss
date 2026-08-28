@@ -125,6 +125,25 @@
   font-size: 0.85em;
 }
 
+.campo-hint-alerta {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-text-secondary);
+}
+
+.campo-hint-erro {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+
+.campo-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: var(--font-family);
+}
+
 .campo-input {
   width: 100%;
   padding: 10px var(--spacing-md);

@@ -20,8 +20,8 @@ export async function seed(knex: Knex): Promise<void> {
       ]),
     },
     {
-      name: 'LabVICIA - Visão & IA',
-      description: 'O LabVICIA é o centro de excelência em Visão Computacional e Inteligência Artificial do campus. Pesquisamos algoritmos de Deep Learning, processamento de imagens e reconhecimento de padrões para aplicações na saúde, segurança e agricultura.',
+      name: 'LABVICIA - Visão & IA',
+      description: 'O LABVICIA é o centro de excelência em Visão Computacional e Inteligência Artificial do campus. Pesquisamos algoritmos de Deep Learning, processamento de imagens e reconhecimento de padrões para aplicações na saúde, segurança e agricultura.',
       cover_image: '',
       productions: JSON.stringify([
         { title: 'Detecção de Pragas em Plantações de Milho via Drone', type: 'Patente', year: '2023' },
@@ -74,6 +74,49 @@ export async function seed(knex: Knex): Promise<void> {
       services: JSON.stringify([
         { name: 'Análise Vibracional', type: 'Manutenção', description: 'Diagnóstico de falhas em máquinas rotativas.' }
       ]),
-    }
+    },
+    // Laboratórios disponíveis para agendamento de visitas escolares (FEAT-002).
+    {
+      name: 'LAQAMB - Laboratório de Química Ambiental',
+      description: 'Breve descrição das atividades do laboratório LAQAMB. Texto placeholder a ser substituído pela descrição oficial.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'LAPP - Laboratório de Automação e Processos Produtivos',
+      description: 'Breve descrição das atividades do laboratório LAPP. Texto placeholder a ser substituído pela descrição oficial.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'MAKER - Espaço Maker',
+      description: 'Breve descrição das atividades do laboratório MAKER. Texto placeholder a ser substituído pela descrição oficial.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'OFICINA - Oficina de Prototipagem e Manutenção',
+      description: 'Breve descrição das atividades do laboratório OFICINA. Texto placeholder a ser substituído pela descrição oficial.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'LQOI - Laboratório de Química Orgânica e Inorgânica',
+      description: 'Breve descrição das atividades do laboratório LQOI. Texto placeholder a ser substituído pela descrição oficial.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'LASIC - Laboratório de Sistemas Inteligentes e Computação',
+      description: 'Breve descrição das atividades do laboratório LASIC. Texto placeholder a ser substituído pela descrição oficial.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
   ]);
 }
