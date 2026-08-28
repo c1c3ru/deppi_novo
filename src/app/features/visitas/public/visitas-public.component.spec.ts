@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { of, BehaviorSubject } from 'rxjs';
+import { of, throwError, BehaviorSubject } from 'rxjs';
 
 import { VisitasPublicComponent } from './visitas-public.component';
 import { VisitasService } from '../services/visitas.service';
@@ -142,6 +142,135 @@ describe('VisitasPublicComponent', () => {
     expect(addLabSection).not.toBeNull();
     expect(addLabSection.textContent).toContain('LAB2');
     expect(addLabSection.textContent).not.toContain('Laboratório Vinculado');
+  });
+
+  it('renderiza os novos campos escolares no DOM sem erros durante a montagem do componente', () => {
+    expect(() => fixture.detectChanges()).not.toThrow();
+
+    const novosCampos = [
+      'school_city',
+      'school_network',
+      'director_name',
+      'institutional_email',
+      'whatsapp_phone',
+      'class_supervisors',
+      'grade_level',
+      'students_count',
+      'notes',
+    ];
+
+    novosCampos.forEach((campo) => {
+      const el = fixture.nativeElement.querySelector(`#${campo}`);
+      expect(el).withContext(`campo #${campo} não renderizado`).not.toBeNull();
+    });
+
+    const studentsInput: HTMLInputElement =
+      fixture.nativeElement.querySelector('#students_count');
+    expect(studentsInput.max).toBe('50');
+
+    const hint = fixture.nativeElement.querySelector('.campo-hint-alerta');
+    expect(hint).not.toBeNull();
+    expect(hint.textContent).toContain(
+      'Recomendamos grupos de até 40 estudantes'
+    );
+    expect(hint.textContent).toContain(
+      'O limite máximo permitido é de 50 estudantes por visita'
+    );
+  });
+
+  it('bloqueia o envio do formulário quando a quantidade de alunos excede 50 (validação client-side)', () => {
+    fixture.detectChanges();
+
+    component.visitForm.patchValue({
+      school_name: 'Escola X',
+      school_city: 'Maracanaú',
+      school_network: 'municipal',
+      director_name: 'Diretor(a) Exemplo',
+      responsible_name: 'Responsável Exemplo',
+      contact_email: 'responsavel@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      institutional_email: 'secretaria@escola.edu.br',
+      whatsapp_phone: '(85) 99999-9999',
+      class_supervisors: 'Fulano e Beltrano',
+      grade_level: '9º ano',
+      students_count: 51,
+      target_date: '2026-12-01',
+      shift: 'M',
+    });
+
+    expect(component.visitForm.get('students_count')?.hasError('max')).toBeTrue();
+    expect(component.visitForm.invalid).toBeTrue();
+
+    component.visitForm.patchValue({ students_count: 50 });
+    expect(component.visitForm.get('students_count')?.hasError('max')).toBeFalse();
+  });
+
+  it('envia os novos campos no payload da requisição POST ao submeter o formulário', () => {
+    fixture.detectChanges();
+    visitasServiceSpy.create.and.returnValue(of({ id: 'new-visit' }));
+
+    component.visitForm.setValue({
+      school_name: 'Escola X',
+      school_city: 'Maracanaú',
+      school_network: 'municipal',
+      director_name: 'Diretor(a) Exemplo',
+      responsible_name: 'Responsável Exemplo',
+      contact_email: 'responsavel@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      institutional_email: 'secretaria@escola.edu.br',
+      whatsapp_phone: '(85) 99999-9999',
+      class_supervisors: 'Fulano e Beltrano',
+      grade_level: '9º ano',
+      students_count: 30,
+      target_date: '2026-12-01',
+      shift: 'M',
+      notes: 'Observação de teste',
+    });
+
+    component.onSubmit();
+
+    expect(visitasServiceSpy.create).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        school_city: 'Maracanaú',
+        school_network: 'municipal',
+        director_name: 'Diretor(a) Exemplo',
+        institutional_email: 'secretaria@escola.edu.br',
+        whatsapp_phone: '(85) 99999-9999',
+        class_supervisors: 'Fulano e Beltrano',
+        grade_level: '9º ano',
+        notes: 'Observação de teste',
+      })
+    );
+  });
+
+  it('exibe a mensagem de erro retornada pela API quando a submissão falha (ex: limite de alunos)', () => {
+    fixture.detectChanges();
+    visitasServiceSpy.create.and.returnValue(
+      throwError(() => ({ error: { message: 'O limite de alunos por visita é 50.' } }))
+    );
+
+    component.visitForm.setValue({
+      school_name: 'Escola X',
+      school_city: 'Maracanaú',
+      school_network: 'municipal',
+      director_name: 'Diretor(a) Exemplo',
+      responsible_name: 'Responsável Exemplo',
+      contact_email: 'responsavel@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      institutional_email: 'secretaria@escola.edu.br',
+      whatsapp_phone: '(85) 99999-9999',
+      class_supervisors: 'Fulano e Beltrano',
+      grade_level: '9º ano',
+      students_count: 30,
+      target_date: '2026-12-01',
+      shift: 'M',
+      notes: '',
+    });
+
+    component.onSubmit();
+
+    expect(component.errorMessage).toBe('O limite de alunos por visita é 50.');
+    expect(component.isSubmitting).toBeFalse();
   });
 
   it('renders lab cards (sigla, nome, descrição) for the authenticated user', () => {

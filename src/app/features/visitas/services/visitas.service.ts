@@ -20,9 +20,7 @@ export class VisitasService {
     return this.http.get<SchoolVisit>(`${this.apiUrl}/${id}`);
   }
 
-  create(
-    visit: Partial<SchoolVisit> & { lab_ids: string[] }
-  ): Observable<SchoolVisit> {
+  create(visit: Partial<SchoolVisit>): Observable<SchoolVisit> {
     return this.http.post<SchoolVisit>(this.apiUrl, visit);
   }
 
