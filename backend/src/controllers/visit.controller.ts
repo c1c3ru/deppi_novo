@@ -2,7 +2,24 @@ import { Request, Response, NextFunction } from 'express';
 import db from '../database/db';
 import { emailService } from '../services/email.service';
 import { calendarService } from '../services/calendar.service';
+import { getRetentionCutoffDate } from '../services/visit-retention.service';
+import { getTodayISODate } from '../utils/date';
 import { MAX_STUDENTS_PER_VISIT } from '../types/visit.types';
+
+// Visitantes anônimos só enxergam dados não sensíveis (LGPD): sem e-mail
+// ou telefone de contato. Usado tanto na agenda pública quanto no
+// histórico de visitas realizadas.
+function toPublicVisit(visit: any) {
+  return {
+    id: visit.id,
+    school_name: visit.school_name,
+    responsible_name: visit.responsible_name,
+    students_count: visit.students_count,
+    target_date: visit.target_date,
+    shift: visit.shift,
+    status: visit.status,
+  };
+}
 
 export class VisitController {
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -26,17 +43,32 @@ export class VisitController {
         return res.json(visits);
       }
 
-      const publicVisits = visits.map((visit: any) => ({
-        id: visit.id,
-        school_name: visit.school_name,
-        responsible_name: visit.responsible_name,
-        students_count: visit.students_count,
-        target_date: visit.target_date,
-        shift: visit.shift,
-        status: visit.status,
-      }));
+      res.json(visits.map(toPublicVisit));
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      res.json(publicVisits);
+  // "Visitas Realizadas": histórico de visitas confirmadas cuja data já
+  // passou (ou é hoje), limitado aos últimos 30 dias — o mesmo corte usado
+  // pela limpeza automática (visit-retention.service), calculado no fuso
+  // America/Sao_Paulo para não variar conforme o horário do servidor.
+  async getRealizadas(req: Request, res: Response, next: NextFunction) {
+    try {
+      const isAuthenticated = !!(req as any).user;
+      const today = getTodayISODate();
+      const cutoffDate = getRetentionCutoffDate();
+
+      const query = db('school_visits')
+        .select('*')
+        .where('status', 'confirmed')
+        .where('target_date', '>=', cutoffDate)
+        .where('target_date', '<=', today)
+        .orderBy('target_date', 'desc');
+
+      const visits = await query;
+
+      res.json(isAuthenticated ? visits : visits.map(toPublicVisit));
     } catch (error) {
       next(error);
     }

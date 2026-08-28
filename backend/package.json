@@ -37,6 +37,7 @@
     "knex": "^3.0.1",
     "morgan": "^1.10.0",
     "multer": "^2.1.1",
+    "node-cron": "^4.6.0",
     "nodemailer": "^8.0.9",
     "pg": "^8.11.3",
     "pg-connection-string": "^2.12.0",

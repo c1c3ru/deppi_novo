@@ -25,6 +25,7 @@ import healthRoutes from './routes/health.routes';
 import contactRoutes from './routes/contact.routes';
 import laboratorioRoutes from './routes/laboratorios.routes';
 import visitRoutes from './routes/visit.routes';
+import { startVisitCleanupJob } from './jobs/visit-cleanup.job';
 // Sentry
 import * as Sentry from '@sentry/node';
 
@@ -206,6 +207,12 @@ class Application {
 
       if (config.nodeEnv !== 'production') {
         logger.info(`📚 Swagger docs available at http://localhost:${config.port}/api-docs`);
+      }
+
+      // Não agenda o cron durante os testes (jest) para não manter o
+      // processo vivo nem disparar limpezas fora de controle nos testes.
+      if (config.nodeEnv !== 'test') {
+        startVisitCleanupJob();
       }
     });
   }

@@ -9,6 +9,8 @@ const router = Router();
 
 // Public routes (dados sensíveis são filtrados no controller para anônimos)
 router.get('/', optionalAuthMiddleware, visitController.getAll);
+// Precisa vir antes de '/:id' — senão Express trataria "realizadas" como um :id.
+router.get('/realizadas', optionalAuthMiddleware, visitController.getRealizadas);
 router.post('/', visitController.create);
 
 // Protected routes
