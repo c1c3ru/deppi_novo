@@ -122,6 +122,70 @@ describe('VisitController.getAll — filtragem LGPD de dados públicos', () => {
   });
 });
 
+describe('VisitController.create — limite de alunos por visita', () => {
+  it('rejeita com 400 quando students_count é maior que 50, sem tocar o banco', async () => {
+    const req = {
+      body: {
+        school_name: 'Escola Grande',
+        responsible_name: 'Fulano',
+        contact_email: 'fulano@escola.edu.br',
+        contact_phone: '(85) 99999-9999',
+        students_count: 51,
+        target_date: '2026-10-05',
+        shift: 'M',
+      },
+    } as unknown as Request;
+    const res = makeRes();
+    const next = jest.fn() as NextFunction;
+
+    await visitController.create(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ message: expect.stringContaining('50') })
+    );
+    expect(mockDb).not.toHaveBeenCalled();
+  });
+
+  it('aceita exatamente 50 alunos (limite máximo, não bloqueante)', async () => {
+    const insertedVisit = {
+      id: 'v-50',
+      school_name: 'Escola no Limite',
+      students_count: 50,
+      status: 'pending',
+    };
+
+    const insertBuilder: any = {};
+    insertBuilder.insert = jest.fn(() => insertBuilder);
+    insertBuilder.returning = jest.fn(() => insertBuilder);
+    insertBuilder.then = (resolve: (v: unknown) => void) =>
+      Promise.resolve([insertedVisit]).then(resolve);
+
+    mockDb
+      .mockImplementationOnce(() => mockQuery([]))
+      .mockImplementationOnce(() => insertBuilder)
+      .mockImplementationOnce(() => mockQuery([]));
+
+    const req = {
+      body: {
+        school_name: 'Escola no Limite',
+        responsible_name: 'Fulano',
+        contact_email: 'fulano@escola.edu.br',
+        contact_phone: '(85) 99999-9999',
+        students_count: 50,
+        target_date: '2026-10-06',
+        shift: 'M',
+      },
+    } as unknown as Request;
+    const res = makeRes();
+    const next = jest.fn() as NextFunction;
+
+    await visitController.create(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+  });
+});
+
 describe('VisitController.create — status padrão PENDING', () => {
   it('salva a nova solicitação de visita com status "pending", nunca "confirmed"', async () => {
     const insertedVisit = {
