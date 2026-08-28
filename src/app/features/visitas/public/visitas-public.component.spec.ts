@@ -294,7 +294,7 @@ describe('VisitasPublicComponent', () => {
   it('renders the 7 new laboratory cards (siglas) on the public visit scheduling form', () => {
     const novosLaboratorios = [
       { id: 'l1', name: 'LAQAMB - Laboratório de Química Ambiental', description: 'Breve descrição das atividades do laboratório LAQAMB.' },
-      { id: 'l2', name: 'LAPP - Laboratório de Automação e Processos Produtivos', description: 'Breve descrição das atividades do laboratório LAPP.' },
+      { id: 'l2', name: 'LAPP - Laboratório de Apoio às Práticas Pedagógicas', description: 'Breve descrição das atividades do laboratório LAPP.' },
       { id: 'l3', name: 'MAKER - Espaço Maker', description: 'Breve descrição das atividades do laboratório MAKER.' },
       { id: 'l4', name: 'OFICINA - Oficina de Prototipagem e Manutenção', description: 'Breve descrição das atividades do laboratório OFICINA.' },
       { id: 'l5', name: 'LQOI - Laboratório de Química Orgânica e Inorgânica', description: 'Breve descrição das atividades do laboratório LQOI.' },
