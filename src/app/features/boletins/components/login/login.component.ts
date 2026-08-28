@@ -122,7 +122,7 @@ import { CommonModule } from '@angular/common';
           <div class="login-footer">
             <p>
               Problemas com acesso?
-              <a href="mailto:deppi.maracanau@ifce.edu.br" class="link"
+              <a href="mailto:conhecaifce@maracanau.ifce.edu.br" class="link"
                 >Suporte Técnico</a
               >
             </p>
