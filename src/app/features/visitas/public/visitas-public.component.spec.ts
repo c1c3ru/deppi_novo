@@ -317,5 +317,40 @@ describe('VisitasPublicComponent', () => {
 
     const labCards = formWrapper.querySelectorAll('.lab-card');
     expect(labCards.length).toBe(7);
+
+    // O laboratório de teste ("Laboratório de Física (teste)") nunca deve
+    // aparecer na listagem pública de laboratórios.
+    expect(formWrapper.textContent.toLowerCase()).not.toContain('física');
+    expect(formWrapper.textContent.toLowerCase()).not.toContain('teste');
+  });
+
+  it('não exibe o laboratório de teste ("Laboratório de Física (teste)") na visão pública (visitante)', () => {
+    const laboratoriosReais = [
+      { id: 'l1', name: 'LAQAMB - Laboratório de Química Ambiental', description: 'Breve descrição das atividades do laboratório LAQAMB.' },
+      { id: 'l2', name: 'LABVICIA - Visão & IA', description: 'Breve descrição das atividades do laboratório LABVICIA.' },
+    ];
+    laboratoriosServiceSpy.getAll.and.returnValue(of(laboratoriosReais));
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent.toLowerCase()).not.toContain(
+      'física (teste)'
+    );
+  });
+
+  it('não exibe o laboratório de teste ("Laboratório de Física (teste)") na visão autenticada (gestão)', () => {
+    const laboratoriosReais = [
+      { id: 'l1', name: 'LAQAMB - Laboratório de Química Ambiental', description: 'Breve descrição das atividades do laboratório LAQAMB.' },
+      { id: 'l2', name: 'LABVICIA - Visão & IA', description: 'Breve descrição das atividades do laboratório LABVICIA.' },
+    ];
+    laboratoriosServiceSpy.getAll.and.returnValue(of(laboratoriosReais));
+
+    isAuthenticatedSubject.next(true);
+    fixture.detectChanges();
+
+    const labsGrid = fixture.nativeElement.querySelector(
+      '[data-testid="labs-grid-autenticado"]'
+    );
+    expect(labsGrid.textContent.toLowerCase()).not.toContain('física (teste)');
   });
 });
