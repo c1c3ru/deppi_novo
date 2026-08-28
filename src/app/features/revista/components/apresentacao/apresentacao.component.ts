@@ -56,7 +56,7 @@ import { Component } from '@angular/core';
           <h3>Inovação</h3>
           <p>
             Iniciativas de inovação, empreendedorismo e transferência de
-            tecnologia (PIT/RIT).
+            tecnologia.
           </p>
         </div>
       </div>
@@ -178,4 +178,4 @@ import { Component } from '@angular/core';
     `,
   ],
 })
-export class RevistaApresentacaoComponent {}
+export class RevistaApresentacaoComponent { }
