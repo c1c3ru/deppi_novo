@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { of, BehaviorSubject } from 'rxjs';
+import { of, throwError, BehaviorSubject } from 'rxjs';
 
 import { VisitasPublicComponent } from './visitas-public.component';
 import { VisitasService } from '../services/visitas.service';
@@ -144,6 +144,135 @@ describe('VisitasPublicComponent', () => {
     expect(addLabSection.textContent).not.toContain('Laboratório Vinculado');
   });
 
+  it('renderiza os novos campos escolares no DOM sem erros durante a montagem do componente', () => {
+    expect(() => fixture.detectChanges()).not.toThrow();
+
+    const novosCampos = [
+      'school_city',
+      'school_network',
+      'director_name',
+      'institutional_email',
+      'whatsapp_phone',
+      'class_supervisors',
+      'grade_level',
+      'students_count',
+      'notes',
+    ];
+
+    novosCampos.forEach((campo) => {
+      const el = fixture.nativeElement.querySelector(`#${campo}`);
+      expect(el).withContext(`campo #${campo} não renderizado`).not.toBeNull();
+    });
+
+    const studentsInput: HTMLInputElement =
+      fixture.nativeElement.querySelector('#students_count');
+    expect(studentsInput.max).toBe('50');
+
+    const hint = fixture.nativeElement.querySelector('.campo-hint-alerta');
+    expect(hint).not.toBeNull();
+    expect(hint.textContent).toContain(
+      'Recomendamos grupos de até 40 estudantes'
+    );
+    expect(hint.textContent).toContain(
+      'O limite máximo permitido é de 50 estudantes por visita'
+    );
+  });
+
+  it('bloqueia o envio do formulário quando a quantidade de alunos excede 50 (validação client-side)', () => {
+    fixture.detectChanges();
+
+    component.visitForm.patchValue({
+      school_name: 'Escola X',
+      school_city: 'Maracanaú',
+      school_network: 'municipal',
+      director_name: 'Diretor(a) Exemplo',
+      responsible_name: 'Responsável Exemplo',
+      contact_email: 'responsavel@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      institutional_email: 'secretaria@escola.edu.br',
+      whatsapp_phone: '(85) 99999-9999',
+      class_supervisors: 'Fulano e Beltrano',
+      grade_level: '9º ano',
+      students_count: 51,
+      target_date: '2026-12-01',
+      shift: 'M',
+    });
+
+    expect(component.visitForm.get('students_count')?.hasError('max')).toBeTrue();
+    expect(component.visitForm.invalid).toBeTrue();
+
+    component.visitForm.patchValue({ students_count: 50 });
+    expect(component.visitForm.get('students_count')?.hasError('max')).toBeFalse();
+  });
+
+  it('envia os novos campos no payload da requisição POST ao submeter o formulário', () => {
+    fixture.detectChanges();
+    visitasServiceSpy.create.and.returnValue(of({ id: 'new-visit' }));
+
+    component.visitForm.setValue({
+      school_name: 'Escola X',
+      school_city: 'Maracanaú',
+      school_network: 'municipal',
+      director_name: 'Diretor(a) Exemplo',
+      responsible_name: 'Responsável Exemplo',
+      contact_email: 'responsavel@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      institutional_email: 'secretaria@escola.edu.br',
+      whatsapp_phone: '(85) 99999-9999',
+      class_supervisors: 'Fulano e Beltrano',
+      grade_level: '9º ano',
+      students_count: 30,
+      target_date: '2026-12-01',
+      shift: 'M',
+      notes: 'Observação de teste',
+    });
+
+    component.onSubmit();
+
+    expect(visitasServiceSpy.create).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        school_city: 'Maracanaú',
+        school_network: 'municipal',
+        director_name: 'Diretor(a) Exemplo',
+        institutional_email: 'secretaria@escola.edu.br',
+        whatsapp_phone: '(85) 99999-9999',
+        class_supervisors: 'Fulano e Beltrano',
+        grade_level: '9º ano',
+        notes: 'Observação de teste',
+      })
+    );
+  });
+
+  it('exibe a mensagem de erro retornada pela API quando a submissão falha (ex: limite de alunos)', () => {
+    fixture.detectChanges();
+    visitasServiceSpy.create.and.returnValue(
+      throwError(() => ({ error: { message: 'O limite de alunos por visita é 50.' } }))
+    );
+
+    component.visitForm.setValue({
+      school_name: 'Escola X',
+      school_city: 'Maracanaú',
+      school_network: 'municipal',
+      director_name: 'Diretor(a) Exemplo',
+      responsible_name: 'Responsável Exemplo',
+      contact_email: 'responsavel@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      institutional_email: 'secretaria@escola.edu.br',
+      whatsapp_phone: '(85) 99999-9999',
+      class_supervisors: 'Fulano e Beltrano',
+      grade_level: '9º ano',
+      students_count: 30,
+      target_date: '2026-12-01',
+      shift: 'M',
+      notes: '',
+    });
+
+    component.onSubmit();
+
+    expect(component.errorMessage).toBe('O limite de alunos por visita é 50.');
+    expect(component.isSubmitting).toBeFalse();
+  });
+
   it('renders lab cards (sigla, nome, descrição) for the authenticated user', () => {
     laboratoriosServiceSpy.getAll.and.returnValue(
       of([
@@ -160,5 +289,33 @@ describe('VisitasPublicComponent', () => {
     expect(labsGrid.textContent).toContain('LAB');
     expect(labsGrid.textContent).toContain('Laboratório de Testes');
     expect(labsGrid.textContent).toContain('Descrição do lab');
+  });
+
+  it('renders the 7 new laboratory cards (siglas) on the public visit scheduling form', () => {
+    const novosLaboratorios = [
+      { id: 'l1', name: 'LAQAMB - Laboratório de Química Ambiental', description: 'Breve descrição das atividades do laboratório LAQAMB.' },
+      { id: 'l2', name: 'LAPP - Laboratório de Automação e Processos Produtivos', description: 'Breve descrição das atividades do laboratório LAPP.' },
+      { id: 'l3', name: 'MAKER - Espaço Maker', description: 'Breve descrição das atividades do laboratório MAKER.' },
+      { id: 'l4', name: 'OFICINA - Oficina de Prototipagem e Manutenção', description: 'Breve descrição das atividades do laboratório OFICINA.' },
+      { id: 'l5', name: 'LQOI - Laboratório de Química Orgânica e Inorgânica', description: 'Breve descrição das atividades do laboratório LQOI.' },
+      { id: 'l6', name: 'LABVICIA - Visão & IA', description: 'Breve descrição das atividades do laboratório LABVICIA.' },
+      { id: 'l7', name: 'LASIC - Laboratório de Sistemas Inteligentes e Computação', description: 'Breve descrição das atividades do laboratório LASIC.' },
+    ];
+    laboratoriosServiceSpy.getAll.and.returnValue(of(novosLaboratorios));
+
+    fixture.detectChanges();
+
+    const formWrapper = fixture.nativeElement.querySelector(
+      '[data-testid="coluna-formulario"]'
+    );
+    expect(formWrapper).not.toBeNull();
+
+    const siglas = ['LAQAMB', 'LAPP', 'MAKER', 'OFICINA', 'LQOI', 'LABVICIA', 'LASIC'];
+    siglas.forEach((sigla) => {
+      expect(formWrapper.textContent).toContain(sigla);
+    });
+
+    const labCards = formWrapper.querySelectorAll('.lab-card');
+    expect(labCards.length).toBe(7);
   });
 });

@@ -35,7 +35,7 @@ class EmailService {
     try {
       const mailOptions = {
         from: `"${config.email.fromName}" <${config.email.from}>`,
-        to: 'deppi.maracanau@ifce.edu.br', // The destination requested by the user
+        to: config.email.contactTo,
         replyTo: data.email,
         subject: `[Contato Site] ${data.subject}`,
         html: `
@@ -51,7 +51,7 @@ class EmailService {
 
       await this.transporter.sendMail(mailOptions);
       logger.info(
-        `Contact email sent from ${data.email} to deppi.maracanau@ifce.edu.br`
+        `Contact email sent from ${data.email} to ${config.email.contactTo}`
       );
     } catch (error) {
       logger.error('Error sending contact email:', error);
