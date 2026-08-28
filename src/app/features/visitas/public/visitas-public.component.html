@@ -145,7 +145,8 @@
           class="btn btn-primary"
           data-testid="confirmar-visita-btn"
           (click)="confirmVisit(visita.id)"
-          title="Confirmar as visitas"
+          [disabled]="!hasAvailableLab(visita)"
+          [title]="hasAvailableLab(visita) ? 'Confirmar as visitas' : 'Marque ao menos um laboratório como disponível para confirmar'"
         >
           Confirmar as visitas
         </button>

@@ -65,7 +65,7 @@ describe('VisitasPublicComponent', () => {
     ).toBeNull();
   });
 
-  it('removes the "Agendar Visita" form entirely from the DOM and keeps "Confirmar as visitas" enabled when authenticated', () => {
+  it('removes the "Agendar Visita" form entirely from the DOM when authenticated', () => {
     const pendingVisit = {
       id: 'v1',
       school_name: 'Escola X',
@@ -97,12 +97,143 @@ describe('VisitasPublicComponent', () => {
     );
     expect(formWrapper).toBeNull();
     expect(fixture.nativeElement.querySelector('form')).toBeNull();
+  });
+
+  it('mantém o botão "Confirmar as visitas" desabilitado quando nenhum laboratório está disponível', () => {
+    const pendingVisit = {
+      id: 'v1',
+      school_name: 'Escola X',
+      responsible_name: 'Fulano',
+      contact_email: 'fulano@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      students_count: 10,
+      target_date: '2026-09-01',
+      shift: 'M',
+      status: 'pending',
+    };
+    visitasServiceSpy.getAll.and.returnValue(of([pendingVisit]));
+    visitasServiceSpy.getById.and.returnValue(
+      of({
+        ...pendingVisit,
+        labs: [
+          { visit_id: 'v1', lab_id: 'l1', name: 'LAB - Laboratório', status: 'pending' },
+          { visit_id: 'v1', lab_id: 'l2', name: 'LAB2 - Laboratório 2', status: 'unavailable' },
+        ],
+      })
+    );
+
+    isAuthenticatedSubject.next(true);
+    fixture.detectChanges();
+
+    const confirmBtn: HTMLButtonElement = fixture.nativeElement.querySelector(
+      '[data-testid="confirmar-visita-btn"]'
+    );
+    expect(confirmBtn).not.toBeNull();
+    expect(confirmBtn.disabled).toBeTrue();
+  });
+
+  it('habilita o botão "Confirmar as visitas" quando ao menos um laboratório é marcado como disponível', () => {
+    const pendingVisit = {
+      id: 'v1',
+      school_name: 'Escola X',
+      responsible_name: 'Fulano',
+      contact_email: 'fulano@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      students_count: 10,
+      target_date: '2026-09-01',
+      shift: 'M',
+      status: 'pending',
+    };
+    visitasServiceSpy.getAll.and.returnValue(of([pendingVisit]));
+    visitasServiceSpy.getById.and.returnValue(
+      of({
+        ...pendingVisit,
+        labs: [
+          { visit_id: 'v1', lab_id: 'l1', name: 'LAB - Laboratório', status: 'available' },
+          { visit_id: 'v1', lab_id: 'l2', name: 'LAB2 - Laboratório 2', status: 'unavailable' },
+        ],
+      })
+    );
+
+    isAuthenticatedSubject.next(true);
+    fixture.detectChanges();
 
     const confirmBtn: HTMLButtonElement = fixture.nativeElement.querySelector(
       '[data-testid="confirmar-visita-btn"]'
     );
     expect(confirmBtn).not.toBeNull();
     expect(confirmBtn.disabled).toBeFalse();
+  });
+
+  it('updateLabStatus chama o serviço de disponibilidade e recarrega os detalhes da visita', () => {
+    const pendingVisit = {
+      id: 'v1',
+      school_name: 'Escola X',
+      responsible_name: 'Fulano',
+      contact_email: 'fulano@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      students_count: 10,
+      target_date: '2026-09-01',
+      shift: 'M',
+      status: 'pending',
+    };
+    visitasServiceSpy.getAll.and.returnValue(of([pendingVisit]));
+    visitasServiceSpy.getById.and.returnValue(
+      of({
+        ...pendingVisit,
+        labs: [
+          { visit_id: 'v1', lab_id: 'l1', name: 'LAB - Laboratório', status: 'available' },
+        ],
+      })
+    );
+    visitasServiceSpy.updateLabAvailability.and.returnValue(of({}));
+
+    isAuthenticatedSubject.next(true);
+    fixture.detectChanges();
+
+    component.updateLabStatus('v1', 'l1', 'available');
+
+    expect(visitasServiceSpy.updateLabAvailability).toHaveBeenCalledWith(
+      'v1',
+      'l1',
+      'available'
+    );
+    expect(component.hasAvailableLab(component.pendingVisitas[0])).toBeTrue();
+  });
+
+  it('recusar a visita altera o status para "canceled" e atualiza a listagem', () => {
+    const pendingVisit = {
+      id: 'v1',
+      school_name: 'Escola X',
+      responsible_name: 'Fulano',
+      contact_email: 'fulano@escola.edu.br',
+      contact_phone: '(85) 99999-9999',
+      students_count: 10,
+      target_date: '2026-09-01',
+      shift: 'M',
+      status: 'pending',
+    };
+    visitasServiceSpy.getAll.and.returnValue(of([pendingVisit]));
+    visitasServiceSpy.getById.and.returnValue(
+      of({
+        ...pendingVisit,
+        labs: [
+          { visit_id: 'v1', lab_id: 'l1', name: 'LAB - Laboratório', status: 'pending' },
+        ],
+      })
+    );
+    visitasServiceSpy.updateStatus.and.returnValue(of({}));
+
+    isAuthenticatedSubject.next(true);
+    fixture.detectChanges();
+
+    component.rejectVisit('v1');
+
+    expect(visitasServiceSpy.updateStatus).toHaveBeenCalledWith(
+      'v1',
+      'canceled'
+    );
+    expect(component.managementSuccess).toBe('Visita recusada.');
   });
 
   it('exibe a opção de adicionar mais laboratórios apenas no estado autenticado', () => {
@@ -352,5 +483,23 @@ describe('VisitasPublicComponent', () => {
       '[data-testid="labs-grid-autenticado"]'
     );
     expect(labsGrid.textContent.toLowerCase()).not.toContain('física (teste)');
+  });
+
+  it('aplica espaçamento entre a mensagem "Não há solicitações pendentes" e a listagem de cards de laboratórios', () => {
+    laboratoriosServiceSpy.getAll.and.returnValue(
+      of([{ id: 'l1', name: 'LAB - Laboratório de Testes', description: '' }])
+    );
+    visitasServiceSpy.getAll.and.returnValue(of([]));
+
+    isAuthenticatedSubject.next(true);
+    fixture.detectChanges();
+
+    const visitaVazia = fixture.nativeElement.querySelector(
+      '.gestao-visitas .visita-vazia'
+    );
+    expect(visitaVazia).not.toBeNull();
+
+    const marginTop = getComputedStyle(visitaVazia).marginTop;
+    expect(parseFloat(marginTop)).toBeGreaterThan(0);
   });
 });

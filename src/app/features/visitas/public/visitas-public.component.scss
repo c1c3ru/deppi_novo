@@ -384,6 +384,12 @@
   border-radius: var(--border-radius-lg);
 }
 
+// Espaçamento entre os cards informativos de laboratórios e a mensagem de
+// "Não há solicitações pendentes" (ou a listagem de solicitações) logo abaixo.
+.gestao-visitas .visita-vazia {
+  margin-top: var(--spacing-xl);
+}
+
 .gestao-labs {
   display: flex;
   flex-direction: column;
