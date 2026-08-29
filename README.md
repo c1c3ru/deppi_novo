@@ -134,10 +134,10 @@ sudo ./deploy-ubuntu.sh
 
 ## 🔐 Credenciais de Teste e Demonstração
 
-Após rodar os seeds (`npm run seed`), o sistema terá um usuário administrador padrão configurado para acesso à área restrita:
+Após rodar os seeds (`npm run seed`), o sistema terá um usuário administrador mestre configurado para acesso à área restrita:
 
-- **Matrícula / Usuário**: `12345`
-- **Senha**: `123456`
+- **Matrícula / Usuário**: `123456`
+- **Senha**: gerada aleatoriamente a cada execução do seed e impressa **uma única vez** no terminal (procure pelo bloco `Conta admin mestre criada`). Guarde-a nesse momento e troque-a assim que possível — ela não fica salva em nenhum outro lugar.
 - **URL de Acesso**: http://localhost:4200/boletins/login (ou `/boletins` na navegação)
 
 ---
