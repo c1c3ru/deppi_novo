@@ -25,6 +25,46 @@ export class LaboratorioController {
     }
   }
 
+  async getAvailability(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { date, shift } = req.query;
+
+      if (!date || !shift) {
+        return res.status(400).json({ message: 'Parâmetros date e shift são obrigatórios' });
+      }
+
+      const labs = await db('laboratorios').select('*');
+
+      // Encontra laboratórios já ocupados naquela data e turno por uma visita confirmada
+      const occupiedLabs = await db('visit_lab_availability')
+        .join('school_visits', 'visit_lab_availability.visit_id', 'school_visits.id')
+        .where('school_visits.target_date', date as string)
+        .where('school_visits.shift', shift as string)
+        .where('school_visits.status', 'confirmed')
+        .where('visit_lab_availability.status', 'available')
+        .select('visit_lab_availability.lab_id');
+
+      const occupiedLabIds = new Set(occupiedLabs.map((ol: any) => ol.lab_id));
+
+      const formatted = labs.map((lab: any) => ({
+        ...lab,
+        productions:
+          typeof lab.productions === 'string'
+            ? JSON.parse(lab.productions) || []
+            : lab.productions || [],
+        services:
+          typeof lab.services === 'string'
+            ? JSON.parse(lab.services) || []
+            : lab.services || [],
+        availabilityStatus: occupiedLabIds.has(lab.id) ? 'unavailable' : 'available',
+      }));
+
+      res.json(formatted);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
