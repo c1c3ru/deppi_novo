@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 export async function seed(knex: Knex): Promise<void> {
   // Limpar dados existentes
@@ -10,7 +11,6 @@ export async function seed(knex: Knex): Promise<void> {
   await knex('users').del();
 
   const dummyPasswordHash = await bcrypt.hash('LOCKED_' + Math.random(), 12);
-  const adminPasswordHash = await bcrypt.hash('admin123', 12);
 
   const allowedUsers = [
   {
@@ -807,8 +807,13 @@ export async function seed(knex: Knex): Promise<void> {
     updated_at: knex.fn.now()
   }));
 
-  // Adicionar um admin mestre para testes se não estiver na lista
+  // Adicionar um admin mestre para testes se não estiver na lista.
+  // Senha gerada aleatoriamente a cada seed (nunca hardcoded) e impressa
+  // uma única vez no log — precisa ser capturada agora e trocada no
+  // primeiro login, pois não fica salva em nenhum outro lugar.
   if (!usersToInsert.find(u => u.registration === '123456')) {
+    const adminRawPassword = crypto.randomBytes(6).toString('hex');
+    const adminPasswordHash = await bcrypt.hash(adminRawPassword, 12);
     usersToInsert.push({
       registration: '123456',
       name: 'Administrador Sistema',
@@ -819,6 +824,12 @@ export async function seed(knex: Knex): Promise<void> {
       created_at: knex.fn.now(),
       updated_at: knex.fn.now()
     });
+    console.log('\n============================================================');
+    console.log('  Conta admin mestre criada — matrícula 123456');
+    console.log(`  Senha temporária: ${adminRawPassword}`);
+    console.log('  Guarde-a agora: não será exibida de novo. Troque-a após o');
+    console.log('  primeiro login.');
+    console.log('============================================================\n');
   }
 
   // Insert in chunks to avoid literal overflow
