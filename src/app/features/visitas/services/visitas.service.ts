@@ -45,4 +45,10 @@ export class VisitasService {
       lab_id: labId,
     });
   }
+
+  checkAvailability(date: string, shift: string): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/laboratorios/availability`, {
+      params: { date, shift },
+    });
+  }
 }
