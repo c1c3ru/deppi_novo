@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BoletinsService } from '../../services/boletins.service';
 import { Boletim } from '../../../../shared/models';
+import { getFileIcon } from '../../../../shared/utils/file-icon.util';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -597,18 +598,5 @@ export class BoletimDetailComponent implements OnInit {
     });
   }
 
-  getFileIcon(mimeType: string): string {
-    if (!mimeType) return '📁';
-    const lower = mimeType.toLowerCase();
-    if (lower.includes('pdf')) return '📄';
-    if (
-      lower.includes('word') ||
-      lower.includes('docx') ||
-      lower.includes('msword')
-    )
-      return '📝';
-    if (lower.includes('image')) return '🖼️';
-    if (lower.includes('video')) return '🎥';
-    return '📁';
-  }
+  readonly getFileIcon = getFileIcon;
 }

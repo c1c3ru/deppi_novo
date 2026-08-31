@@ -24,8 +24,3 @@ export function startVisitCleanupJob(): ScheduledTask {
 
   return task;
 }
-
-export function stopVisitCleanupJob(): void {
-  task?.stop();
-  task = undefined;
-}

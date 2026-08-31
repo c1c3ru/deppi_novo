@@ -842,7 +842,7 @@ export async function seed(knex: Knex): Promise<void> {
   const userId = firstUser.id;
 
   // Inserir boletim de exemplo
-  const [boletimRow] = await knex('boletins').insert({
+  await knex('boletins').insert({
     title: 'Boletim DEPPI - Início de Ano 2026',
     description: 'Relatório das atividades iniciais do Departamento de Pesquisa e Inovação',
     content: '<h1>Bem-vindo ao Portal de Boletins</h1><p>Este é o primeiro boletim de 2026.</p>',
@@ -853,9 +853,7 @@ export async function seed(knex: Knex): Promise<void> {
     view_count: 0,
     created_at: knex.fn.now(),
     updated_at: knex.fn.now()
-  }).returning('id');
-  
-  const boletimId = typeof boletimRow === 'object' ? boletimRow.id : boletimRow;
+  });
 
   console.log('✅ Seeds executados com sucesso!');
   console.log(`   ${usersToInsert.length} usuários inseridos na base de dados.`);

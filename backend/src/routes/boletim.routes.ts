@@ -7,6 +7,42 @@ import {
 
 const router = Router();
 
+function getPagination(req: Request) {
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
+  const offset = (page - 1) * limit;
+  return { page, limit, offset };
+}
+
+// Converte a linha do banco (snake_case) para o formato camelCase
+// consumido pelo frontend, usado tanto na listagem pública quanto na admin.
+function formatBoletimSummary(b: Record<string, any>) {
+  return {
+    id: b.id,
+    title: b.title,
+    description: b.description,
+    publicationDate: b.publication_date,
+    fileUrl: b.file_url,
+    status: b.status,
+    isFeatured: b.is_featured,
+    viewCount: b.view_count,
+    createdAt: b.created_at,
+    updatedAt: b.updated_at,
+  };
+}
+
+function buildPaginatedResponse(
+  data: unknown[],
+  page: number,
+  limit: number,
+  total: number
+) {
+  return {
+    data,
+    pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+  };
+}
+
 /**
  * @swagger
  * /boletins/admin/all:
@@ -18,9 +54,7 @@ router.get(
   authMiddleware,
   async (req: Request, res: Response) => {
     try {
-      const page = Math.max(1, Number(req.query.page) || 1);
-      const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
-      const offset = (page - 1) * limit;
+      const { page, limit, offset } = getPagination(req);
 
       const boletinsQuery = db('boletins')
         .orderBy('created_at', 'desc')
@@ -34,28 +68,9 @@ router.get(
 
       const total = Number(totalCount?.count) || 0;
 
-      const formattedData = boletins.map((b) => ({
-        id: b.id,
-        title: b.title,
-        description: b.description,
-        publicationDate: b.publication_date,
-        fileUrl: b.file_url,
-        status: b.status,
-        isFeatured: b.is_featured,
-        viewCount: b.view_count,
-        createdAt: b.created_at,
-        updatedAt: b.updated_at,
-      }));
+      const formattedData = boletins.map(formatBoletimSummary);
 
-      res.json({
-        data: formattedData,
-        pagination: {
-          page,
-          limit,
-          total,
-          pages: Math.ceil(total / limit),
-        },
-      });
+      res.json(buildPaginatedResponse(formattedData, page, limit, total));
     } catch (error) {
       console.error('Error fetching admin boletins:', error);
       res.status(500).json({ error: 'Erro ao buscar boletins admin' });
@@ -72,9 +87,7 @@ router.get(
  */
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const page = Math.max(1, Number(req.query.page) || 1);
-    const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
-    const offset = (page - 1) * limit;
+    const { page, limit, offset } = getPagination(req);
 
     // Busca boletins publicados
     const boletinsQuery = db('boletins')
@@ -94,28 +107,9 @@ router.get('/', async (req: Request, res: Response) => {
     const total = Number(totalCount?.count) || 0;
 
     // Converte para camelCase para o frontend
-    const formattedData = boletins.map((b) => ({
-      id: b.id,
-      title: b.title,
-      description: b.description,
-      publicationDate: b.publication_date,
-      fileUrl: b.file_url,
-      status: b.status,
-      isFeatured: b.is_featured,
-      viewCount: b.view_count,
-      createdAt: b.created_at,
-      updatedAt: b.updated_at,
-    }));
+    const formattedData = boletins.map(formatBoletimSummary);
 
-    res.json({
-      data: formattedData,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit),
-      },
-    });
+    res.json(buildPaginatedResponse(formattedData, page, limit, total));
   } catch (error) {
     console.error('Error fetching boletins:', error);
     res.status(500).json({
