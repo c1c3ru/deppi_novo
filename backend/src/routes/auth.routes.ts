@@ -10,6 +10,30 @@ import { config } from '../config/environment';
 
 const router = Router();
 
+// roles é armazenado como JSON serializado no PostgreSQL; normaliza para
+// array em todo fluxo que emite um access token (login e refresh).
+function parseUserRoles(user: { roles: unknown }): string[] {
+  if (typeof user.roles !== 'string') {
+    return user.roles as string[];
+  }
+  try {
+    return JSON.parse(user.roles);
+  } catch {
+    return ['user'];
+  }
+}
+
+function generateAccessToken(
+  user: { id: number; registration: string },
+  roles: string[]
+): string {
+  return jwt.sign(
+    { id: user.id, registration: user.registration, roles },
+    config.jwt.secret,
+    { expiresIn: '1h' }
+  );
+}
+
 // Strict rate limiter for sensitive auth endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -102,21 +126,10 @@ router.post(
       }
 
       // Parse roles se for string (JSON do PostgreSQL)
-      let roles = user.roles;
-      if (typeof roles === 'string') {
-        try {
-          roles = JSON.parse(roles);
-        } catch {
-          roles = ['user'];
-        }
-      }
+      const roles = parseUserRoles(user);
 
       // Gera tokens usando config
-      const accessToken = jwt.sign(
-        { id: user.id, registration: user.registration, roles: roles },
-        config.jwt.secret,
-        { expiresIn: '1h' }
-      );
+      const accessToken = generateAccessToken(user, roles);
 
       const refreshToken = jwt.sign({ id: user.id }, config.jwt.secret, {
         expiresIn: '30d',
@@ -191,21 +204,10 @@ router.post(
         });
       }
 
-      let roles = user.roles;
-      if (typeof roles === 'string') {
-        try {
-          roles = JSON.parse(roles);
-        } catch {
-          roles = ['user'];
-        }
-      }
+      const roles = parseUserRoles(user);
 
       // Novo access token usando config
-      const accessToken = jwt.sign(
-        { id: user.id, registration: user.registration, roles: roles },
-        config.jwt.secret,
-        { expiresIn: '1h' }
-      );
+      const accessToken = generateAccessToken(user, roles);
 
       res.json({
         accessToken,

@@ -18,7 +18,7 @@ import { RevistaArtigoFormComponent } from './components/artigo-form/artigo-form
 import { RevistaService } from './services/revista.service';
 
 // Guards
-import { RevistaGuard } from './guards/revista.guard';
+import { AuthGuard } from '../../core/guards/auth.guard';
 
 // SharedModule
 import { SharedModule } from '../../shared/shared.module';
@@ -36,22 +36,22 @@ const routes: Routes = [
       {
         path: 'admin/edicoes/nova',
         component: RevistaEdicaoFormComponent,
-        canActivate: [RevistaGuard],
+        canActivate: [AuthGuard],
       },
       {
         path: 'admin/edicoes/:id/editar',
         component: RevistaEdicaoFormComponent,
-        canActivate: [RevistaGuard],
+        canActivate: [AuthGuard],
       },
       {
         path: 'admin/edicoes/:edicaoId/artigos/novo',
         component: RevistaArtigoFormComponent,
-        canActivate: [RevistaGuard],
+        canActivate: [AuthGuard],
       },
       {
         path: 'admin/artigos/:id/editar',
         component: RevistaArtigoFormComponent,
-        canActivate: [RevistaGuard],
+        canActivate: [AuthGuard],
       },
     ],
   },
@@ -75,6 +75,6 @@ const routes: Routes = [
     SharedModule,
     QuillModule.forRoot(),
   ],
-  providers: [RevistaService, RevistaGuard],
+  providers: [RevistaService],
 })
 export class RevistaModule {}
