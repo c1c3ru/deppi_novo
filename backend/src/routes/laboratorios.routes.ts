@@ -5,6 +5,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 const router = Router();
 
 router.get('/', laboratorioController.getAll);
+router.get('/availability', laboratorioController.getAvailability);
 router.get('/:id', laboratorioController.getById);
 router.post('/', authMiddleware, laboratorioController.create);
 router.put('/:id', authMiddleware, laboratorioController.update);
