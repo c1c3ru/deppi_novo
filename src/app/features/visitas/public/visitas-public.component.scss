@@ -81,15 +81,15 @@
 }
 
 .alerta-sucesso {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(var(--color-success-rgb), 0.1);
   color: #065f46;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(var(--color-success-rgb), 0.3);
 }
 
 .alerta-erro {
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(var(--color-error-rgb), 0.08);
   color: #7f1d1d;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(var(--color-error-rgb), 0.2);
 }
 
 // =============================================================================
@@ -469,27 +469,28 @@
 }
 
 .badge-success {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(var(--color-success-rgb), 0.15);
   color: #065f46;
 }
 
 .badge-danger {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(var(--color-error-rgb), 0.15);
   color: #7f1d1d;
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(var(--color-warning-rgb), 0.15);
   color: #78350f;
 }
 
+// Verde institucional IFCE — mesma cor de marca do .btn-primary
 .btn-outline-success {
   background: transparent;
-  color: #059669;
-  border-color: #059669;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 
   &:hover:not(:disabled) {
-    background: #059669;
+    background: var(--color-primary);
     color: #ffffff;
   }
 }

@@ -24,7 +24,7 @@
     <div class="labs-grid" *ngIf="!loading">
       <article
         *ngFor="let lab of laboratorios; let i = index"
-        class="glass lab-card reveal-up"
+        class="card lab-card reveal-up"
         [style.animation-delay]="i * 0.1 + 's'"
         [routerLink]="['/laboratorios', lab.id]"
       >
@@ -34,10 +34,7 @@
 
         <div class="card-footer">
           <div class="badges">
-            <span
-              class="btn btn-glass"
-              style="padding: 0.3rem 0.8rem; font-size: 0.8rem"
-            >
+            <span class="badge badge-primary">
               {{ lab.productions.length || 0 }} Produções
             </span>
           </div>
@@ -52,7 +49,7 @@
       *ngIf="!loading && laboratorios.length === 0"
       style="text-align: center; padding: 5rem"
     >
-      <div class="reveal-up surface" style="padding: 3rem">
+      <div class="reveal-up card" style="padding: 3rem">
         <p style="color: var(--color-text-secondary)">
           Nenhum laboratório cadastrado na vitrine ainda.
         </p>

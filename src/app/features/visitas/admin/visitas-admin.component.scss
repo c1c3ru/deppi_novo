@@ -1,1 +1,138 @@
-// Add styling for badges and borders
+// =============================================================================
+// Visitas Admin — Painel de gestão de visitas escolares
+// Design system: segue tokens.css e main.scss do projeto (cores institucionais IFCE)
+// =============================================================================
+
+.visitas-admin-page {
+  padding: var(--spacing-xl) 0;
+}
+
+// =============================================================================
+// ALERTAS DE FEEDBACK — mesmo padrão de visitas-public.component.scss
+// =============================================================================
+
+.alerta {
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-bottom: var(--spacing-lg);
+}
+
+.alerta-sucesso {
+  background: rgba(var(--color-success-rgb), 0.1);
+  color: #065f46;
+  border: 1px solid rgba(var(--color-success-rgb), 0.3);
+}
+
+.alerta-erro {
+  background: rgba(var(--color-error-rgb), 0.08);
+  color: #7f1d1d;
+  border: 1px solid rgba(var(--color-error-rgb), 0.2);
+}
+
+.alerta-info {
+  background: rgba(var(--color-info-rgb), 0.08);
+  color: #1e3a8a;
+  border: 1px solid rgba(var(--color-info-rgb), 0.2);
+}
+
+// =============================================================================
+// CABEÇALHO DO CARD DE VISITA
+// =============================================================================
+
+.visita-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+// =============================================================================
+// GRID DE INFORMAÇÕES DA VISITA (Data, Alunos, Responsável, Contato)
+// =============================================================================
+
+.visita-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+
+  @media (max-width: 700px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================================================
+// TABELA DE STATUS DOS LABORATÓRIOS
+// =============================================================================
+
+.visita-labs-table {
+  overflow-x: auto;
+  margin-top: var(--spacing-sm);
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  th,
+  td {
+    padding: var(--spacing-sm);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+  }
+
+  th {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.04em;
+  }
+}
+
+.visita-lab-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.visita-acoes-finais {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+// =============================================================================
+// BOTÕES DE AÇÃO RÁPIDA — verde/vermelho institucionais IFCE
+// =============================================================================
+
+.btn-outline-success {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: #ffffff;
+  }
+}
+
+.btn-outline-danger {
+  background: transparent;
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-secondary);
+    color: #ffffff;
+  }
+}
