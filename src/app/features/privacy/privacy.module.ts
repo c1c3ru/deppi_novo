@@ -83,7 +83,7 @@ import { Component } from '@angular/core';
           <a
             href="https://ifce.edu.br/politica-de-privacidade"
             target="_blank"
-            class="btn-solid"
+            class="btn btn-primary"
             >Política Oficial do IFCE</a
           >
         </div>
@@ -92,32 +92,17 @@ import { Component } from '@angular/core';
   `,
   styles: [
     `
-      .page-container {
-        min-height: 100vh;
-        padding-top: 120px;
-        padding-bottom: 60px;
-        background-color: #ffffff;
-        font-family: var(--font-display, 'Inter', sans-serif);
-        color: #333;
-      }
+      /* .page-container, .highlight e o link padrão herdam de main.scss com
+         os tokens institucionais (compatíveis com o modo escuro). */
       .split-section {
-        display: grid;
         grid-template-columns: 1fr;
         gap: 2rem;
         max-width: 900px;
-        margin: 0 auto;
         padding: 4rem 2rem 2rem;
         text-align: center;
       }
       .subtitle {
-        color: #00d97e;
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        display: flex;
         justify-content: center;
-        align-items: center;
         margin-bottom: 1rem;
       }
       .subtitle::before,
@@ -126,26 +111,18 @@ import { Component } from '@angular/core';
         display: inline-block;
         width: 30px;
         height: 2px;
-        background-color: #00d97e;
+        background-color: var(--color-primary);
         margin: 0 15px;
       }
       .title {
         font-size: 3.5rem;
         font-weight: 800;
-        color: #1a1a1a;
         margin: 0 0 1.5rem;
         line-height: 1.1;
       }
       .description {
         font-size: 1.1rem;
         line-height: 1.8;
-        color: #4a4a4a;
-      }
-      .highlight {
-        background-color: #00e676;
-        color: #000;
-        font-weight: 600;
-        padding: 0 0.2rem;
       }
 
       .policy-section {
@@ -159,13 +136,11 @@ import { Component } from '@angular/core';
       .article-block h2 {
         font-size: 2rem;
         font-weight: 800;
-        color: #1a1a1a;
         margin-bottom: 1.5rem;
       }
       .article-block p {
         font-size: 1.05rem;
         line-height: 1.8;
-        color: #4a4a4a;
         margin: 0 0 1.5rem;
       }
       .article-list {
@@ -179,11 +154,10 @@ import { Component } from '@angular/core';
         margin-bottom: 1rem;
         font-size: 1.05rem;
         line-height: 1.8;
-        color: #4a4a4a;
       }
       .article-list li::before {
         content: '•';
-        color: #00d97e;
+        color: var(--color-primary);
         font-size: 1.5rem;
         position: absolute;
         left: 0;
@@ -194,19 +168,6 @@ import { Component } from '@angular/core';
         justify-content: center;
         gap: 1.5rem;
         margin-top: 4rem;
-      }
-      .btn-solid {
-        background-color: #00a650;
-        color: #fff;
-        padding: 0.8rem 2rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: background 0.3s;
-      }
-      .btn-solid:hover {
-        background-color: #008a42;
       }
 
       @media (max-width: 768px) {

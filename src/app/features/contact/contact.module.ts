@@ -181,7 +181,11 @@ import { NotificationService } from '../../core/services/notification.service';
       .page-hero {
         text-align: center;
         padding: 6rem 1.5rem 4rem;
-        background: linear-gradient(135deg, var(--color-primary-light), #fff);
+        background: linear-gradient(
+          135deg,
+          var(--color-primary-light),
+          var(--color-background)
+        );
         position: relative;
         overflow: hidden;
       }
@@ -205,17 +209,15 @@ import { NotificationService } from '../../core/services/notification.service';
       }
       .page-title {
         font-size: clamp(2.5rem, 5vw, 3.5rem);
-        color: #1a1a1a;
+        color: var(--color-text);
         margin: 0 0 1.5rem;
         font-family: var(--font-display);
-        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
       }
       .page-subtitle {
         font-size: 1.25rem;
-        color: #333333;
+        color: var(--color-text-secondary);
         max-width: 700px;
         margin: 0 auto;
-        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
       }
       .content-area {
         max-width: var(--container-max-width);

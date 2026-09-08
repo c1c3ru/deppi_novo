@@ -8,9 +8,17 @@
   
   --color-secondary: #e40521;    /* IFCE Red */
   --color-secondary-rgb: 228, 5, 33;
-  
+
   --color-accent: #ffcc00;       /* Innovation Yellow/Gold */
   --color-accent-rgb: 255, 204, 0;
+
+  /* Texto/ícone sobre preenchimentos sólidos de --color-primary/-secondary
+     (botões, badges). Separado do próprio --color-primary porque no modo
+     escuro o primary vira um verde claro (bom como texto sobre o fundo
+     escuro, ruim como fundo atrás de texto branco) — ver override abaixo. */
+  --color-on-primary: #ffffff;
+  --color-on-primary-rgb: 255, 255, 255;
+  --color-on-secondary: #ffffff;
 
   /* Neutrals */
   --color-background: #ffffff;
@@ -22,6 +30,7 @@
   --color-surface-secondary: #f9fafb;
 
   --color-text: #111827;         /* Deep slate */
+  --color-text-rgb: 17, 24, 39;
   --color-text-secondary: #4b5563;
   --color-text-muted: #9ca3af;
 
@@ -38,13 +47,23 @@
   --color-info: #3b82f6;
   --color-info-rgb: 59, 130, 246;
 
+  /* Feedback — texto acessível sobre fundos tintados (badges/alertas com opacidade baixa) */
+  --color-success-text: #065f46;
+  --color-warning-text: #78350f;
+  --color-error-text: #7f1d1d;
+  --color-info-text: #1e3a8a;
+  --color-accent-text: #7a5c00;
+
   /* Glassmorphism & Modernity Hooks */
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.3);
   --glass-blur: 12px;
-  
+
   --surface-bg: rgba(255, 255, 255, 0.05);
   --surface-border: rgba(255, 255, 255, 0.1);
+
+  /* Camadas de overlay (scrims de modais/loading) — fixas nos dois temas */
+  --color-overlay: rgba(0, 0, 0, 0.6);
 
   /* Typography - Modern & Innovative Choices */
   --font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
@@ -72,12 +91,15 @@
   --border-radius-md: 0.8rem;
   --border-radius-lg: 1.2rem;
   --border-radius-xl: 2rem;
+  --border-radius-2xl: 2.5rem;
   --border-radius-full: 9999px;
 
   /* Shadows - Layered & Soft */
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   --shadow-md: 0 4px 20px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05);
   --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.25);
+  --shadow-2xl: 0 35px 60px -15px rgba(0,0,0,0.3);
   --shadow-primary: 0 10px 20px -5px rgba(47, 129, 50, 0.3);
 
   /* Transitions - Fluid & Natural */
@@ -101,6 +123,7 @@
   --color-surface-secondary: #1e293b;
 
   --color-text: #f8fafc;
+  --color-text-rgb: 248, 250, 252;
   --color-text-secondary: #94a3b8;
   --color-text-muted: #64748b;
 
@@ -111,12 +134,29 @@
   --glass-border: rgba(255, 255, 255, 0.05);
   
   --shadow-md: 0 4px 20px -5px rgba(0,0,0,0.3);
+  --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.5);
+  --shadow-2xl: 0 35px 60px -15px rgba(0,0,0,0.6);
 
   /* Contrastes ajustados para Modo Escuro */
   --color-primary: #4ade80; /* Verde mais claro (Tailwind Green 400) */
   --color-primary-rgb: 74, 222, 128;
+  --color-primary-light: rgba(74, 222, 128, 0.14);
   --color-primary-dark: #22c55e;
-  
+
   --color-secondary: #f87171; /* Vermelho mais claro (Tailwind Red 400) */
   --color-secondary-rgb: 248, 113, 113;
+
+  /* --color-primary/-secondary ficam claros no escuro (bons como texto sobre
+     o fundo escuro do app) — então o texto sobre um preenchimento sólido
+     dessas cores precisa ser escuro, não branco, para manter contraste AA. */
+  --color-on-primary: #0f172a;
+  --color-on-primary-rgb: 15, 23, 42;
+  --color-on-secondary: #0f172a;
+
+  /* Feedback — variantes claras para texto legível sobre fundos tintados escuros */
+  --color-success-text: #6ee7b7;
+  --color-warning-text: #fcd34d;
+  --color-error-text: #fca5a5;
+  --color-info-text: #93c5fd;
+  --color-accent-text: #fde047;
 }

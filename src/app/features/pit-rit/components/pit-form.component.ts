@@ -312,6 +312,9 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
   `,
   styles: [
     `
+      /* Cores categóricas dos tipos de atividade — tokens locais ao
+         componente (não fazem parte da paleta institucional), com variante
+         escura para permanecerem legíveis e confortáveis no dark mode. */
       :host {
         --slot-bg-Aula: #e8f5e9;
         --slot-color-Aula: #2e7d32;
@@ -333,6 +336,29 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         --slot-color-Gestão: #283593;
         --slot-bg-Comissões: #fff8e1;
         --slot-color-Comissões: #ff8f00;
+      }
+
+      :host-context([data-theme='dark']) {
+        --slot-bg-Aula: rgba(46, 125, 50, 0.25);
+        --slot-color-Aula: #81c784;
+        --slot-bg-Planejamento: rgba(230, 81, 0, 0.22);
+        --slot-color-Planejamento: #ffb74d;
+        --slot-bg-Atendimento: rgba(21, 101, 192, 0.25);
+        --slot-color-Atendimento: #64b5f6;
+        --slot-bg-Apoio: rgba(106, 27, 154, 0.25);
+        --slot-color-Apoio: #ba68c8;
+        --slot-bg-Orientação: rgba(173, 20, 87, 0.25);
+        --slot-color-Orientação: #f06292;
+        --slot-bg-Extracurricular: rgba(55, 71, 79, 0.4);
+        --slot-color-Extracurricular: #b0bec5;
+        --slot-bg-Pesquisa: rgba(0, 105, 92, 0.28);
+        --slot-color-Pesquisa: #4db6ac;
+        --slot-bg-Extensão: rgba(216, 67, 21, 0.25);
+        --slot-color-Extensão: #ff8a65;
+        --slot-bg-Gestão: rgba(40, 53, 147, 0.28);
+        --slot-color-Gestão: #7986cb;
+        --slot-bg-Comissões: rgba(255, 143, 0, 0.2);
+        --slot-color-Comissões: #ffd54f;
       }
       .pit-form-container {
         padding: 2.5rem;
@@ -459,7 +485,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         min-height: 28px;
       }
       .input-cell input:focus {
-        outline: 2px solid #2e7d32;
+        outline: 2px solid var(--color-primary);
       }
       .result-cell {
         background: rgba(var(--color-accent-rgb), 0.1);
@@ -588,9 +614,9 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         transition: background 0.3s;
       }
       .total-alert.total-excedido {
-        background: rgba(211, 47, 47, 0.1);
-        color: #c62828;
-        border: 1px solid rgba(211, 47, 47, 0.3);
+        background: rgba(var(--color-error-rgb), 0.1);
+        color: var(--color-error-text);
+        border: 1px solid rgba(var(--color-error-rgb), 0.3);
       }
       .total-max {
         font-size: 0.9rem;
@@ -613,7 +639,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
       }
       .btn-primary {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border: none;
         padding: 0.8rem 2rem;
         border-radius: 50px;

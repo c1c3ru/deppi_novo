@@ -64,9 +64,6 @@
 .bg-secondary { background-color: var(--color-secondary); }
 .bg-accent { background-color: var(--color-accent); }
 
-.text-white { color: #ffffff; }
-.text-black { color: #000000; }
-
 /* Spacing */
 .m-0 { margin: 0; }
 .m-1 { margin: var(--spacing-xs); }

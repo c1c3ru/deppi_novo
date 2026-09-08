@@ -147,7 +147,7 @@ import { CommonModule } from '@angular/common';
         align-items: center;
         justify-content: center;
         padding: 4rem;
-        color: white;
+        color: var(--color-on-primary);
         overflow: hidden;
       }
 
@@ -174,7 +174,7 @@ import { CommonModule } from '@angular/common';
 
       .visual-desc {
         font-size: 1.25rem;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(var(--color-on-primary-rgb), 0.8);
         line-height: 1.6;
       }
 

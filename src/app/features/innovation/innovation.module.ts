@@ -129,13 +129,13 @@ import { Component } from '@angular/core';
           <a
             href="https://acervo.ifce.edu.br/instituto/documentos-institucionais/resolucoes/2018/resolucao-no-129.pdf/@@download/file/RESOLU%C3%87%C3%83O%20N%C2%BA%20129.pdf"
             target="_blank"
-            class="btn-solid"
+            class="btn btn-primary"
             >Ver Resolução 129</a
           >
           <a
             href="https://acervo.ifce.edu.br/instituto/documentos-institucionais"
             target="_blank"
-            class="btn-solid"
+            class="btn btn-primary"
             >Outros documentos</a
           >
         </div>
@@ -144,64 +144,18 @@ import { Component } from '@angular/core';
   `,
   styles: [
     `
-      .page-container {
-        min-height: 100vh;
-        padding-top: 120px;
-        padding-bottom: 60px;
-        background-color: #ffffff;
-        font-family: var(--font-display, 'Inter', sans-serif);
-        color: #333;
-      }
-      .split-section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 2rem;
-        align-items: center;
-      }
-      .subtitle {
-        color: #00d97e;
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-      .subtitle::before {
-        content: '';
-        display: inline-block;
-        width: 30px;
-        height: 2px;
-        background-color: #00d97e;
-        margin-right: 15px;
-      }
+      /* .page-container, .split-section, .subtitle, .highlight, .image-col img
+         e o link padrão <a> herdam de main.scss com os tokens institucionais
+         (compatíveis com o modo escuro). Aqui só o específico desta página. */
       .title {
         font-size: 4rem;
         font-weight: 800;
-        color: #1a1a1a;
         margin: 0 0 1.5rem;
         line-height: 1.1;
       }
       .description {
         font-size: 1.1rem;
         line-height: 1.8;
-        color: #4a4a4a;
-      }
-      .highlight {
-        background-color: #00e676;
-        color: #000;
-        font-weight: 600;
-        padding: 0 0.2rem;
-      }
-      .image-col img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-        border-radius: 4px;
       }
 
       .obligations-section {
@@ -216,24 +170,17 @@ import { Component } from '@angular/core';
       .obligations-header h2 {
         font-size: 2.5rem;
         font-weight: 800;
-        color: #1a1a1a;
         margin: 0 0 0.5rem;
       }
       .obligations-header p {
         font-size: 1.1rem;
-        color: #4a4a4a;
         margin: 0;
-      }
-      .obligations-header a {
-        color: #00d97e;
-        text-decoration: none;
-        font-weight: 600;
       }
       .article-block {
         margin-bottom: 2.5rem;
       }
       .article-title {
-        color: #00d97e;
+        color: var(--color-primary);
         font-weight: 700;
         font-size: 0.9rem;
         text-transform: uppercase;
@@ -243,7 +190,6 @@ import { Component } from '@angular/core';
       .article-block p {
         font-size: 1rem;
         line-height: 1.8;
-        color: #333;
         margin: 0 0 1rem;
       }
       .article-list {
@@ -255,7 +201,6 @@ import { Component } from '@angular/core';
         margin-bottom: 1rem;
         font-size: 1rem;
         line-height: 1.8;
-        color: #333;
       }
       .actions {
         display: flex;
@@ -263,25 +208,8 @@ import { Component } from '@angular/core';
         gap: 1.5rem;
         margin-top: 4rem;
       }
-      .btn-solid {
-        background-color: #00a650;
-        color: #fff;
-        padding: 0.8rem 2rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: background 0.3s;
-      }
-      .btn-solid:hover {
-        background-color: #008a42;
-      }
 
       @media (max-width: 768px) {
-        .split-section {
-          grid-template-columns: 1fr;
-          gap: 2rem;
-        }
         .title {
           font-size: 2.5rem;
         }
