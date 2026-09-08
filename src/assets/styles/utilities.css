@@ -49,6 +49,7 @@
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
+.font-display { font-family: var(--font-display); }
 
 .text-center { text-align: center; }
 .text-left { text-align: left; }
