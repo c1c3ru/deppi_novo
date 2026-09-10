@@ -122,6 +122,15 @@ server {
     listen 80;
     server_name $DOMAIN_NAME;
 
+    # Oculta a versão do Nginx nos headers de resposta e páginas de erro
+    server_tokens off;
+
+    # Cabeçalhos de segurança (aplicados a todas as respostas deste server)
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; frame-src 'self' https://www.youtube.com https://player.vimeo.com;" always;
+
     # Frontend (Angular SPA)
     root $PROJECT_ROOT/dist/deppi/browser;
     index index.html;
@@ -157,7 +166,12 @@ server {
         alias $PROJECT_ROOT/uploads/;
         autoindex off;
         expires 30d;
+        # add_header nesta location substitui os herdados do server, por isso repetimos
         add_header Cache-Control "public, no-transform";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; frame-src 'self' https://www.youtube.com https://player.vimeo.com;" always;
     }
 
     # Gzip Compression
