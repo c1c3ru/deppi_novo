@@ -110,7 +110,7 @@ import { CommonModule } from '@angular/common';
         width: 40px;
         height: 40px;
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border-radius: var(--border-radius-md);
         display: flex;
         align-items: center;
@@ -169,7 +169,7 @@ import { CommonModule } from '@angular/common';
 
       .nav-item.active {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         box-shadow: var(--shadow-primary);
       }
 
@@ -237,7 +237,7 @@ import { CommonModule } from '@angular/common';
 
       .logout-btn:hover {
         background: var(--color-secondary);
-        color: white;
+        color: var(--color-on-secondary);
       }
 
       .boletins-main {

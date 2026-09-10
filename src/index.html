@@ -2,6 +2,27 @@
 <html lang="pt-br">
   <head>
     <meta charset="utf-8" />
+    <!--
+      Aplica o tema salvo (ou a preferência do sistema) em <html> ANTES do
+      primeiro paint, evitando o "flash" de tema claro seguido de escuro.
+      Mantém a mesma chave/lógica do ThemeService (core/services/theme.service.ts).
+    -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme');
+          var theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
     <title>Deppi</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

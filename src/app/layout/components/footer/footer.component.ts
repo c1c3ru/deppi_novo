@@ -257,7 +257,7 @@ import { Component } from '@angular/core';
 
       .social-btn:hover {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border-color: var(--color-primary);
         transform: translateY(-3px);
       }

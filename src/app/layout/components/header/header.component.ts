@@ -165,9 +165,16 @@ import { CommonModule } from '@angular/common';
           <button
             class="theme-toggle"
             (click)="toggleTheme()"
-            aria-label="Alternar tema"
+            [attr.aria-label]="
+              isDarkTheme
+                ? 'Alternar para tema claro'
+                : 'Alternar para tema escuro'
+            "
+            [attr.aria-pressed]="isDarkTheme"
           >
-            <span class="theme-icon">{{ isDarkTheme ? '🔆' : '🌙' }}</span>
+            <span class="theme-icon" aria-hidden="true">{{
+              isDarkTheme ? '🔆' : '🌙'
+            }}</span>
           </button>
 
           <ng-container *ngIf="!isAuthenticated; else userMenu">

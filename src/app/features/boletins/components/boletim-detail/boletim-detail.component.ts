@@ -227,7 +227,7 @@ import { CommonModule } from '@angular/common';
 
       .detail-badge.featured {
         background: rgba(var(--color-accent-rgb), 0.15);
-        color: #b45309;
+        color: var(--color-accent-text);
       }
 
       .detail-date {
@@ -416,7 +416,7 @@ import { CommonModule } from '@angular/common';
         height: 50px;
         border-radius: 50%;
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border: none;
         box-shadow: var(--shadow-xl);
 

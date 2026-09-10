@@ -21,19 +21,19 @@
 
 .alerta-sucesso {
   background: rgba(var(--color-success-rgb), 0.1);
-  color: #065f46;
+  color: var(--color-success-text);
   border: 1px solid rgba(var(--color-success-rgb), 0.3);
 }
 
 .alerta-erro {
   background: rgba(var(--color-error-rgb), 0.08);
-  color: #7f1d1d;
+  color: var(--color-error-text);
   border: 1px solid rgba(var(--color-error-rgb), 0.2);
 }
 
 .alerta-info {
   background: rgba(var(--color-info-rgb), 0.08);
-  color: #1e3a8a;
+  color: var(--color-info-text);
   border: 1px solid rgba(var(--color-info-rgb), 0.2);
 }
 
@@ -122,7 +122,7 @@
 
   &:hover:not(:disabled) {
     background: var(--color-primary);
-    color: #ffffff;
+    color: var(--color-on-primary);
   }
 }
 
@@ -133,6 +133,6 @@
 
   &:hover:not(:disabled) {
     background: var(--color-secondary);
-    color: #ffffff;
+    color: var(--color-on-secondary);
   }
 }
