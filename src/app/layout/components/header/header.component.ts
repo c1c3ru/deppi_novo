@@ -122,7 +122,7 @@ import { CommonModule } from '@angular/common';
                 class="dropdown-item"
                 [class.active]="isActive('/revista')"
                 (click)="closeMenu()"
-                >Revista DEPPI</a
+                >Anais da Mostra Científica</a
               >
               <a
                 routerLink="/pit-rit"

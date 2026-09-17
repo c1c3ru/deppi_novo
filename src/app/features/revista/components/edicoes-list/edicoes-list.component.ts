@@ -22,8 +22,9 @@ import { RevistaEdicao } from '../../../../shared/models';
           <span class="empty-icon">🗂️</span>
           <h3>Nenhuma edição publicada ainda</h3>
           <p>
-            O primeiro volume da Revista DEPPI está em preparação. Em breve
-            a edição atual estará disponível nesta página.
+            O primeiro volume dos Anais da Mostra Científica do IFCE Campus
+            Maracanaú está em preparação. Em breve a edição atual estará
+            disponível nesta página.
           </p>
         </div>
 

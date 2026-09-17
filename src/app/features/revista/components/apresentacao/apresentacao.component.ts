@@ -8,21 +8,22 @@ import { Component } from '@angular/core';
       <article class="surface intro-card">
         <h2>Sobre a publicação</h2>
         <p>
-          A <strong>Revista DEPPI</strong> é o recurso contínuo online de
-          divulgação técnico-científica do Departamento de Extensão,
-          Pesquisa, Pós-Graduação e Inovação (DEPPI) do Instituto Federal do
-          Ceará &mdash; Campus Maracanaú. A publicação reúne, de forma
-          periódica, artigos, relatos de experiência, resultados de projetos
-          e boas práticas produzidos pela comunidade acadêmica do campus,
-          com o objetivo de dar visibilidade e permanência às ações de
-          pesquisa, extensão, pós-graduação e inovação desenvolvidas na
-          instituição.
+          Os <strong>Anais da Mostra Científica do IFCE Campus Maracanaú</strong>
+          constituem o recurso contínuo online de registro e divulgação dos
+          trabalhos apresentados na Mostra Científica, evento promovido pelo
+          Departamento de Extensão, Pesquisa, Pós-Graduação e Inovação
+          (DEPPI) do Instituto Federal do Ceará &mdash; Campus Maracanaú. A
+          publicação reúne, de forma periódica, artigos, relatos de
+          experiência, resultados de projetos e boas práticas produzidos
+          pela comunidade acadêmica do campus, com o objetivo de dar
+          visibilidade e permanência às ações de pesquisa, extensão,
+          pós-graduação e inovação desenvolvidas na instituição.
         </p>
         <p>
-          Cada número reúne artigos organizados por
+          Cada volume reúne os trabalhos organizados por
           <strong>volume (Vol.) e ano civil</strong>, conforme a
           periodicidade da publicação, e fica permanentemente disponível
-          nesta seção do site, junto às edições anteriores.
+          nesta seção do site, junto aos volumes anteriores.
         </p>
       </article>
 
