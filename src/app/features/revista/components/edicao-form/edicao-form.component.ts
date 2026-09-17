@@ -61,7 +61,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
               type="text"
               class="input-modern"
               formControlName="title"
-              placeholder="Ex: Revista DEPPI - Volume 1"
+              placeholder="Ex: Anais da Mostra Científica - Volume 1"
             />
           </div>
 

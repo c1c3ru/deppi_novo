@@ -11,7 +11,7 @@ import { Component } from '@angular/core';
         <dl class="info-list">
           <div class="info-row">
             <dt>Título</dt>
-            <dd>Revista DEPPI</dd>
+            <dd>Anais da Mostra Científica do IFCE Campus Maracanaú</dd>
           </div>
           <div class="info-row">
             <dt>ISSN</dt>
