@@ -88,4 +88,4 @@ cargahoraria/favicon.ico
 # Docker Volumes
 database/
 backend/uploads/
-scripts/backup.sh
+scripts/backup.shclient_secret_*.json
