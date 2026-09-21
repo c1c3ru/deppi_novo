@@ -276,6 +276,10 @@ import { NotificationService } from '../../core/services/notification.service';
       .contact-info-card,
       .form-container {
         border-radius: var(--border-radius-lg);
+        /* .surface usa --surface-border (branco translúcido fixo), visível
+           só no escuro. Aqui trocamos pelo token de borda que acompanha o
+           tema, igual ao resto dos cards do site. */
+        border-color: var(--color-border);
         transition:
           transform var(--transition-normal),
           box-shadow var(--transition-normal),
@@ -286,7 +290,11 @@ import { NotificationService } from '../../core/services/notification.service';
       .form-container:hover {
         transform: translateY(-4px);
         box-shadow: var(--shadow-md);
-        border-color: rgba(var(--color-primary-rgb), 0.25);
+        border-color: rgba(var(--color-primary-rgb), 0.4);
+      }
+
+      .contact-info-card {
+        padding: 2.5rem;
       }
 
       .form-container {
