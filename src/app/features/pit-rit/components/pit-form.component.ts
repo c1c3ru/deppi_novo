@@ -28,7 +28,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
   providers: [provideNgxMask()],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="pit-form-container glass-card animate-fade-in">
+    <div class="pit-form-container animate-in">
       <header class="form-header">
         <h2 class="section-title">Formulário PIT</h2>
         <p class="section-desc">
@@ -312,68 +312,26 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
   `,
   styles: [
     `
-      /* Cores categóricas dos tipos de atividade — tokens locais ao
-         componente (não fazem parte da paleta institucional), com variante
-         escura para permanecerem legíveis e confortáveis no dark mode. */
-      :host {
-        --slot-bg-Aula: #e8f5e9;
-        --slot-color-Aula: #2e7d32;
-        --slot-bg-Planejamento: #fff3e0;
-        --slot-color-Planejamento: #e65100;
-        --slot-bg-Atendimento: #e3f2fd;
-        --slot-color-Atendimento: #1565c0;
-        --slot-bg-Apoio: #f3e5f5;
-        --slot-color-Apoio: #6a1b9a;
-        --slot-bg-Orientação: #fce4ec;
-        --slot-color-Orientação: #ad1457;
-        --slot-bg-Extracurricular: #eceff1;
-        --slot-color-Extracurricular: #37474f;
-        --slot-bg-Pesquisa: #e0f2f1;
-        --slot-color-Pesquisa: #00695c;
-        --slot-bg-Extensão: #fbe9e7;
-        --slot-color-Extensão: #d84315;
-        --slot-bg-Gestão: #e8eaf6;
-        --slot-color-Gestão: #283593;
-        --slot-bg-Comissões: #fff8e1;
-        --slot-color-Comissões: #ff8f00;
-      }
-
-      :host-context([data-theme='dark']) {
-        --slot-bg-Aula: rgba(46, 125, 50, 0.25);
-        --slot-color-Aula: #81c784;
-        --slot-bg-Planejamento: rgba(230, 81, 0, 0.22);
-        --slot-color-Planejamento: #ffb74d;
-        --slot-bg-Atendimento: rgba(21, 101, 192, 0.25);
-        --slot-color-Atendimento: #64b5f6;
-        --slot-bg-Apoio: rgba(106, 27, 154, 0.25);
-        --slot-color-Apoio: #ba68c8;
-        --slot-bg-Orientação: rgba(173, 20, 87, 0.25);
-        --slot-color-Orientação: #f06292;
-        --slot-bg-Extracurricular: rgba(55, 71, 79, 0.4);
-        --slot-color-Extracurricular: #b0bec5;
-        --slot-bg-Pesquisa: rgba(0, 105, 92, 0.28);
-        --slot-color-Pesquisa: #4db6ac;
-        --slot-bg-Extensão: rgba(216, 67, 21, 0.25);
-        --slot-color-Extensão: #ff8a65;
-        --slot-bg-Gestão: rgba(40, 53, 147, 0.28);
-        --slot-color-Gestão: #7986cb;
-        --slot-bg-Comissões: rgba(255, 143, 0, 0.2);
-        --slot-color-Comissões: #ffd54f;
-      }
+      /* Cores categóricas dos tipos de atividade (tokens --slot-bg-<categoria>
+         e --slot-color-<categoria>, com variante escura) definidas em
+         src/assets/styles/tokens.css — compartilhadas com
+         rit-form.component.ts (mesmas categorias). */
       .pit-form-container {
         padding: 2.5rem;
         max-width: 1200px;
         margin: 2rem auto;
         border-radius: 20px;
-        background: var(--color-background);
-        border: 1px solid var(--color-border);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
         box-shadow: var(--shadow-md);
         transform: translateZ(0); /* Estabilização de renderização */
         backface-visibility: hidden;
       }
       .form-header {
         margin-bottom: 2.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid var(--color-border-light);
         padding-bottom: 1.5rem;
       }
       .section-title {

@@ -496,105 +496,9 @@ function diceBearUrl(seed: string): string {
   `,
   styles: [
     `
-      /* ─── Design Tokens (paleta local "neo-brutalista") ───
-         Paleta própria desta página (fundo creme, tinta quase-
-         preta, bordas grossas, sombras duras deslocadas) —
-         independente das cores institucionais (verde/vermelho/
-         dourado do IFCE) usadas no resto do site.
-
-         Os valores em :host são os valores originais (modo
-         claro, inalterados). :host-context([data-theme='dark'])
-         redefine as MESMAS variáveis com uma paleta escura
-         (nunca preto/branco puro em áreas grandes) mantendo a
-         estética de bordas/sombras duras — a cor de tinta/borda
-         inverte para um tom claro para permanecer visível sobre
-         o fundo escuro. ─────────────────────────────────────── */
-      :host {
-        /* Núcleo — invertem entre claro/escuro */
-        --talentos-cream: #f5f0e8;
-        --talentos-ink: #1a1a1a;
-        --talentos-surface: #ffffff;
-
-        /* Texto secundário / labels / placeholders — invertem */
-        --talentos-text-secondary: #444444;
-        --talentos-muted: #666666;
-        --talentos-label-muted: #888888;
-        --talentos-placeholder: #999999;
-        --talentos-faint: #aaaaaa;
-        --talentos-track: #dddddd;
-        --talentos-avatar-bg: #f0e8d8;
-
-        /* Semânticas do swipe (like/pass) — invertem */
-        --talentos-success: #16a34a;
-        --talentos-danger-neutral: #4b5563;
-
-        /* Botão de contato — invertem */
-        --talentos-contact-bg: #5746e3;
-        --talentos-contact-hover-bg: #4a3bc2;
-
-        /* Sombra de hover do card (rgba) — inverte */
-        --talentos-hover-shadow: rgba(0, 0, 0, 0.15);
-
-        /* Acentos de marca / decorativos — FIXOS nos dois temas,
-           não participam da inversão claro/escuro (ver bloco
-           dark abaixo para a justificativa de cada um). */
-        --talentos-accent-gold: #f5c842;
-        --talentos-stripe-coral: #ff6b6b;
-        --talentos-stripe-teal: #4ecdc4;
-        --talentos-stripe-purple: #a29bfe;
-        --talentos-linkedin: #0077b5;
-        --talentos-cv: #ff5e5e;
-        --talentos-on-accent: #ffffff;
-        --talentos-ink-fixed: #1a1a1a;
-        --talentos-cream-fixed: #f5f0e8;
-        --talentos-on-gold-soft: #333333;
-        --talentos-shadow-soft: #444444;
-      }
-
-      :host-context([data-theme='dark']) {
-        /* Núcleo: creme claro ↔ chumbo quente escuro; tinta
-           quase-preta ↔ quase-branco quente (nunca #000/#fff). */
-        --talentos-cream: #201d1a;
-        --talentos-ink: #f0ece4;
-        --talentos-surface: #332c23;
-
-        --talentos-text-secondary: #cfc7ba;
-        --talentos-muted: #b0a89c;
-        --talentos-label-muted: #a89f90;
-        --talentos-placeholder: #9c9284;
-        --talentos-faint: #9c9182;
-        --talentos-track: #59503f;
-        --talentos-avatar-bg: #3d3120;
-
-        --talentos-success: #4ade80;
-        --talentos-danger-neutral: #9aa4b2;
-
-        --talentos-contact-bg: #7b6ae0;
-        /* Sem hover distinto no dark no design original — o hover
-           já ganha destaque via box-shadow (ver .contact-btn:hover). */
-        --talentos-contact-hover-bg: #7b6ae0;
-
-        --talentos-hover-shadow: rgba(255, 255, 255, 0.15);
-
-        /* Mantidos IGUAIS no escuro — cores fixas de marca/acento
-           que não seguem a inversão da página: dourado/listras são
-           puramente decorativos; ícones/textos brancos ficam sobre
-           botões de cor sólida (GitHub/LinkedIn/CV/Contato) que não
-           mudam com o tema; "ink-fixed"/"cream-fixed" são o par
-           tinta/creme fixo usado no verso do card (sempre escuro,
-           como um "carimbo"), que não deve clarear no dark mode. */
-        --talentos-accent-gold: #f5c842;
-        --talentos-stripe-coral: #ff6b6b;
-        --talentos-stripe-teal: #4ecdc4;
-        --talentos-stripe-purple: #a29bfe;
-        --talentos-linkedin: #0077b5;
-        --talentos-cv: #ff5e5e;
-        --talentos-on-accent: #ffffff;
-        --talentos-ink-fixed: #1a1a1a;
-        --talentos-cream-fixed: #f5f0e8;
-        --talentos-on-gold-soft: #333333;
-        --talentos-shadow-soft: #444444;
-      }
+      /* Design Tokens (paleta local "neo-brutalista" do Hub de Talentos,
+         com variante clara/escura) definidos em src/assets/styles/tokens.css
+         — --talentos-*. Ver comentário lá para o raciocínio completo. */
 
       /* ─── Reset / Base ─────────────────────────────── */
       .hub-container {
@@ -802,7 +706,7 @@ function diceBearUrl(seed: string): string {
         text-transform: uppercase;
       }
       .swipe-yes {
-        background: rgba(34, 197, 94, 0.18);
+        background: rgba(var(--talentos-success-rgb), 0.18);
         color: var(--talentos-success);
       }
       .swipe-yes span {
@@ -811,7 +715,7 @@ function diceBearUrl(seed: string): string {
         border-color: var(--talentos-success);
       }
       .swipe-no {
-        background: rgba(107, 114, 128, 0.15);
+        background: rgba(var(--talentos-danger-neutral-rgb), 0.15);
         color: var(--talentos-danger-neutral);
       }
       .swipe-no span {
@@ -994,7 +898,7 @@ function diceBearUrl(seed: string): string {
         align-items: center;
         gap: 0.2rem;
         padding: 0.5rem 0.25rem 0.25rem;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-top: 1px solid rgba(var(--talentos-ink-rgb), 0.06);
         margin-top: 0.5rem;
       }
       .hint-swipe {

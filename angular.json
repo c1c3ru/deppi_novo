@@ -76,7 +76,14 @@
                 }
               ],
               "sourceMap": false,
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "serviceWorker": true,
               "ngswConfigPath": "ngsw-config.json"
             },
