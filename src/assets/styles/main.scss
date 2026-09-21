@@ -390,6 +390,34 @@ button {
   border-radius: 3px;
 }
 
+// Título com gradiente institucional (mesma técnica de .stat-numero)
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Ganha efeito vidro ao passar o mouse — cards sobre fundo neutro
+.glass-hover {
+  transition:
+    background var(--transition-normal),
+    border-color var(--transition-normal);
+
+  &:hover {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-color: var(--glass-border);
+  }
+}
+
+// Uso dentro de .split-section/.grid quando uma única coluna deve ocupar
+// todo o espaço (ex.: página de Privacidade, sem coluna de imagem)
+.full-width {
+  grid-column: 1 / -1;
+}
+
 // Link inline dentro de parágrafos de conteúdo
 .link {
   color: var(--color-primary);
@@ -597,6 +625,47 @@ button {
   }
 }
 
+// Efeito vidro — ações secundárias sobre cabeçalhos/cards com fundo translúcido
+// (Revista/Anais, login) usando os mesmos tokens de .glass/.card-glass
+.btn-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  color: var(--color-text);
+  border-color: var(--glass-border);
+
+  &:hover {
+    background: var(--color-background-hover);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
+// Ícone inline (emoji/símbolo) ao lado de texto em botões e listas
+.icon {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+// Texto+spinner dentro de botões (estado de carregamento) — usa currentColor
+// para funcionar sobre qualquer variante de .btn (primary, outline, ghost...).
+.btn-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+
+  &::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: currentColor;
+    border-radius: var(--border-radius-full);
+    animation: girar 0.8s linear infinite;
+  }
+}
+
 // Tamanhos alternativos
 .btn-sm {
   padding: var(--spacing-xs) var(--spacing-md);
@@ -669,6 +738,14 @@ button {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin-top: var(--spacing-xs);
+}
+
+// Contêiner de formulário (Contato, PIT/RIT) — trabalha em conjunto com
+// .form-row/.form-group, que já cuidam do espaçamento entre campos.
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .form-error {
@@ -803,6 +880,27 @@ button {
   width: 20px;
   height: 20px;
   border-width: 2px;
+}
+
+// Contêiner de estado de carregamento/erro de uma página ou seção
+// (Revista/Anais, Boletins) — combine com .spinner ou .surface conforme o caso.
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--color-text-secondary);
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.error-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: var(--spacing-md);
 }
 
 // Loading em linha para botões
@@ -1073,6 +1171,30 @@ button {
 // Entrada de conteúdo das páginas via router-outlet
 router-outlet + * {
   animation: aparecer 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+// Classe explícita equivalente, para uso direto em qualquer elemento
+// (raiz de página, painel) além do efeito automático acima.
+.animate-in {
+  animation: aparecer 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+// Revelação individual de itens ao montar (cards, seções) — combine com
+// [style.animation-delay] para escalonar uma lista/grade.
+@keyframes revelar-subindo {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-up {
+  animation: revelar-subindo 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 // =============================================================================
