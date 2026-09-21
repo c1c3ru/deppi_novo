@@ -275,6 +275,7 @@ import { NotificationService } from '../../core/services/notification.service';
 
       .contact-info-card,
       .form-container {
+        border-radius: var(--border-radius-lg);
         transition:
           transform var(--transition-normal),
           box-shadow var(--transition-normal),
