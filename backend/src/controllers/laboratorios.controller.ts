@@ -1,22 +1,58 @@
 import { Request, Response, NextFunction } from 'express';
 import db from '../database/db';
 
+// productions/services são armazenados como JSON serializado; normaliza
+// para array em todo endpoint que devolve um laboratório ao cliente.
+// Função solta (não método) porque as rotas passam os handlers da classe
+// sem .bind(), então `this` não está disponível dentro deles.
+function formatLab(lab: any) {
+  return {
+    ...lab,
+    productions:
+      typeof lab.productions === 'string'
+        ? JSON.parse(lab.productions) || []
+        : lab.productions || [],
+    services:
+      typeof lab.services === 'string'
+        ? JSON.parse(lab.services) || []
+        : lab.services || [],
+  };
+}
+
 export class LaboratorioController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const labs = await db('laboratorios').select('*');
+      res.json(labs.map((lab: any) => formatLab(lab)));
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      // Converte as produções e serviços para array json se não for
+  async getAvailability(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { date, shift } = req.query;
+
+      if (!date || !shift) {
+        return res.status(400).json({ message: 'Parâmetros date e shift são obrigatórios' });
+      }
+
+      const labs = await db('laboratorios').select('*');
+
+      // Encontra laboratórios já ocupados naquela data e turno por uma visita confirmada
+      const occupiedLabs = await db('visit_lab_availability')
+        .join('school_visits', 'visit_lab_availability.visit_id', 'school_visits.id')
+        .where('school_visits.target_date', date as string)
+        .where('school_visits.shift', shift as string)
+        .where('school_visits.status', 'confirmed')
+        .where('visit_lab_availability.status', 'available')
+        .select('visit_lab_availability.lab_id');
+
+      const occupiedLabIds = new Set(occupiedLabs.map((ol: any) => ol.lab_id));
+
       const formatted = labs.map((lab: any) => ({
-        ...lab,
-        productions:
-          typeof lab.productions === 'string'
-            ? JSON.parse(lab.productions) || []
-            : lab.productions || [],
-        services:
-          typeof lab.services === 'string'
-            ? JSON.parse(lab.services) || []
-            : lab.services || [],
+        ...formatLab(lab),
+        availabilityStatus: occupiedLabIds.has(lab.id) ? 'unavailable' : 'available',
       }));
 
       res.json(formatted);
@@ -34,19 +70,7 @@ export class LaboratorioController {
         return res.status(404).json({ message: 'Lab não encontrado' });
       }
 
-      const formatted = {
-        ...lab,
-        productions:
-          typeof lab.productions === 'string'
-            ? JSON.parse(lab.productions) || []
-            : lab.productions || [],
-        services:
-          typeof lab.services === 'string'
-            ? JSON.parse(lab.services) || []
-            : lab.services || [],
-      };
-
-      res.json(formatted);
+      res.json(formatLab(lab));
     } catch (error) {
       next(error);
     }
@@ -66,19 +90,7 @@ export class LaboratorioController {
         })
         .returning('*');
 
-      const formatted = {
-        ...newLab,
-        productions:
-          typeof newLab.productions === 'string'
-            ? JSON.parse(newLab.productions) || []
-            : newLab.productions || [],
-        services:
-          typeof newLab.services === 'string'
-            ? JSON.parse(newLab.services) || []
-            : newLab.services || [],
-      };
-
-      res.status(201).json(formatted);
+      res.status(201).json(formatLab(newLab));
     } catch (error) {
       next(error);
     }
@@ -109,19 +121,7 @@ export class LaboratorioController {
         return res.status(404).json({ message: 'Não encontrado' });
       }
 
-      const formatted = {
-        ...updated,
-        productions:
-          typeof updated.productions === 'string'
-            ? JSON.parse(updated.productions) || []
-            : updated.productions || [],
-        services:
-          typeof updated.services === 'string'
-            ? JSON.parse(updated.services) || []
-            : updated.services || [],
-      };
-
-      res.json(formatted);
+      res.json(formatLab(updated));
     } catch (error) {
       next(error);
     }

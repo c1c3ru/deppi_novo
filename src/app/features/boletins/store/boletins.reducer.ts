@@ -11,22 +11,16 @@ export const loadBoletinsFailure = createAction(
   '[Boletins] Load Boletins Failure',
   props<{ error: string }>()
 );
-export const selectBoletim = createAction(
-  '[Boletins] Select Boletim',
-  props<{ id: number }>()
-);
 
 // State
 export interface BoletinsState {
   boletins: Boletim[];
-  selectedId: number | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: BoletinsState = {
   boletins: [],
-  selectedId: null,
   loading: false,
   error: null,
 };
@@ -44,9 +38,5 @@ export const boletinsReducer = createReducer(
     ...state,
     loading: false,
     error,
-  })),
-  on(selectBoletim, (state, { id }) => ({
-    ...state,
-    selectedId: id,
   }))
 );

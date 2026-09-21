@@ -26,7 +26,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   providers: [provideNgxMask()],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="rit-form-container glass-card animate-fade-in">
+    <div class="rit-form-container animate-in">
       <div class="form-section">
         <div class="alert-info">
           <h4 style="margin-bottom: 8px; color: var(--color-info);">
@@ -295,35 +295,19 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   `,
   styles: [
     `
-      :host {
-        --slot-bg-Aula: #e8f5e9;
-        --slot-color-Aula: #2e7d32;
-        --slot-bg-Planejamento: #fff3e0;
-        --slot-color-Planejamento: #e65100;
-        --slot-bg-Atendimento: #e3f2fd;
-        --slot-color-Atendimento: #1565c0;
-        --slot-bg-Apoio: #f3e5f5;
-        --slot-color-Apoio: #6a1b9a;
-        --slot-bg-Orientação: #fce4ec;
-        --slot-color-Orientação: #ad1457;
-        --slot-bg-Extracurricular: #eceff1;
-        --slot-color-Extracurricular: #37474f;
-        --slot-bg-Pesquisa: #e0f2f1;
-        --slot-color-Pesquisa: #00695c;
-        --slot-bg-Extensão: #fbe9e7;
-        --slot-color-Extensão: #d84315;
-        --slot-bg-Gestão: #e8eaf6;
-        --slot-color-Gestão: #283593;
-        --slot-bg-Comissões: #fff8e1;
-        --slot-color-Comissões: #ff8f00;
-      }
+      /* Cores categóricas dos tipos de atividade (tokens --slot-bg-<categoria>
+         e --slot-color-<categoria>, com variante escura) definidas em
+         src/assets/styles/tokens.css — compartilhadas com
+         pit-form.component.ts (mesmas categorias). */
       .rit-form-container {
         padding: 2.5rem;
         max-width: 1000px;
         margin: 2rem auto;
         border-radius: 20px;
-        background: var(--color-background);
-        border: 1px solid var(--color-border);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
         box-shadow: var(--shadow-md);
         transform: translateZ(0);
         backface-visibility: hidden;
@@ -337,7 +321,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
       }
       .form-header {
         margin-bottom: 2.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid var(--color-border-light);
         padding-bottom: 1.5rem;
       }
       .section-title {
@@ -441,7 +425,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
       }
       .btn-primary {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border: none;
         padding: 0.8rem 2.5rem;
         border-radius: 50px;

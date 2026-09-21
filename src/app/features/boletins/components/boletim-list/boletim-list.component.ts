@@ -253,7 +253,7 @@ import { Subscription } from 'rxjs';
 
       .card-badge.featured {
         background: rgba(var(--color-accent-rgb), 0.15);
-        color: #b45309;
+        color: var(--color-accent-text);
       }
 
       .card-date {
@@ -448,7 +448,7 @@ import { Subscription } from 'rxjs';
 
       .btn-page:hover:not(:disabled) {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border-color: var(--color-primary);
       }
 

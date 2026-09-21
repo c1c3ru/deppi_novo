@@ -9,6 +9,7 @@ import {
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PartialObserver } from 'rxjs';
 import { Boletim } from '../../../../shared/models';
+import { getFileIcon } from '../../../../shared/utils/file-icon.util';
 
 @Component({
   standalone: false,
@@ -865,18 +866,5 @@ export class BoletimFormComponent implements OnInit {
     }
   }
 
-  getFileIcon(mimeType: string): string {
-    if (!mimeType) return '📁';
-    const lower = mimeType.toLowerCase();
-    if (lower.includes('pdf')) return '📄';
-    if (
-      lower.includes('word') ||
-      lower.includes('docx') ||
-      lower.includes('msword')
-    )
-      return '📝';
-    if (lower.includes('image')) return '🖼️';
-    if (lower.includes('video')) return '🎥';
-    return '📁';
-  }
+  readonly getFileIcon = getFileIcon;
 }

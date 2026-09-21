@@ -8,7 +8,7 @@
       <div *ngIf="isAdmin$ | async" class="admin-actions">
         <a
           [routerLink]="['/laboratorios', lab.id, 'editar']"
-          class="btn btn-glass"
+          class="btn btn-ghost"
         >
           <i class="icon-edit"></i> Editar Laboratório
         </a>
@@ -26,7 +26,7 @@
         <section class="sub-section reveal-up" *ngIf="lab.productions.length">
           <h2 class="section-label">Linhas de Pesquisa & Produções</h2>
           <div class="productions-list">
-            <div *ngFor="let prod of lab.productions" class="glass item-card">
+            <div *ngFor="let prod of lab.productions" class="card item-card">
               <span class="badge" *ngIf="prod.type">{{ prod.type }}</span>
               <span class="badge" *ngIf="prod.year">{{ prod.year }}</span>
               <h4>{{ prod.title }}</h4>
@@ -46,7 +46,7 @@
         <section class="sub-section reveal-up" *ngIf="lab.services.length">
           <h2 class="section-label">Serviços Oferecidos</h2>
           <div class="services-list">
-            <div *ngFor="let service of lab.services" class="glass item-card">
+            <div *ngFor="let service of lab.services" class="card item-card">
               <span class="badge" *ngIf="service.type">{{ service.type }}</span>
               <h4>{{ service.name }}</h4>
               <p>{{ service.description }}</p>
@@ -56,7 +56,7 @@
       </div>
 
       <div class="sidebar reveal-up">
-        <div class="glass contact-card">
+        <div class="card contact-card">
           <h3 class="font-display contact-title">Interessado?</h3>
           <p class="contact-text">
             Entre em contato com o DEPPI para saber como colaborar com este

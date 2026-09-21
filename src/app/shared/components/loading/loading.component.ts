@@ -24,7 +24,7 @@ import { Observable } from 'rxjs';
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 0, 0.6);
+        background: var(--color-overlay);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         display: flex;
@@ -50,7 +50,7 @@ import { Observable } from 'rxjs';
         width: 100%;
         height: 100%;
         border: 4px solid transparent;
-        border-top: 4px solid #0066b3;
+        border-top: 4px solid var(--color-primary);
         border-radius: 50%;
         animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
       }
@@ -60,7 +60,7 @@ import { Observable } from 'rxjs';
         width: 70%;
         height: 70%;
         border: 4px solid transparent;
-        border-bottom: 4px solid #ffcc00;
+        border-bottom: 4px solid var(--color-accent);
         border-radius: 50%;
         animation: spin-reverse 1.5s linear infinite;
       }
@@ -72,7 +72,7 @@ import { Observable } from 'rxjs';
         text-transform: uppercase;
         letter-spacing: 2px;
         animation: pulse 1.5s ease-in-out infinite;
-        text-shadow: 0 0 10px rgba(0, 102, 179, 0.5);
+        text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.5);
       }
 
       @keyframes spin {
