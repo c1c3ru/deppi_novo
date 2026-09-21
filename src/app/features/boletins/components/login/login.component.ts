@@ -6,6 +6,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: false,
   selector: 'app-login',
   template: `
     <div class="login-page">
@@ -121,7 +122,7 @@ import { CommonModule } from '@angular/common';
           <div class="login-footer">
             <p>
               Problemas com acesso?
-              <a href="mailto:deppi.maracanau@ifce.edu.br" class="link"
+              <a href="mailto:conhecaifce@maracanau.ifce.edu.br" class="link"
                 >Suporte Técnico</a
               >
             </p>
@@ -146,7 +147,7 @@ import { CommonModule } from '@angular/common';
         align-items: center;
         justify-content: center;
         padding: 4rem;
-        color: white;
+        color: var(--color-on-primary);
         overflow: hidden;
       }
 
@@ -173,7 +174,7 @@ import { CommonModule } from '@angular/common';
 
       .visual-desc {
         font-size: 1.25rem;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(var(--color-on-primary-rgb), 0.8);
         line-height: 1.6;
       }
 
@@ -233,7 +234,7 @@ import { CommonModule } from '@angular/common';
         right: 1rem;
         background: none;
         border: none;
-        cursor: pointer;
+
         font-size: 1.2rem;
         color: var(--color-text-muted);
       }

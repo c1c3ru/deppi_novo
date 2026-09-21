@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared/shared.module';
@@ -21,14 +26,14 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   providers: [provideNgxMask()],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="rit-form-container glass-card animate-fade-in">
+    <div class="rit-form-container animate-in">
       <div class="form-section">
         <div class="alert-info">
-          <h4 style="margin-bottom: 8px; color: #0066b3;">
+          <h4 style="margin-bottom: 8px; color: var(--color-info);">
             Orientações para preenchimento do RIT
           </h4>
           <ol
-            style="margin-left: 20px; font-size: 0.9rem; line-height: 1.5; color: #444;"
+            style="margin-left: 20px; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-secondary);"
           >
             <li>
               A carga horária (C.H.) deve ser contabilizada em horas de 60
@@ -133,7 +138,9 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
                 class="form-select"
               >
                 <option value="Efetivo">Efetivo</option>
-                <option value="Dedicação Exclusiva (D.E.)">Dedicação Exclusiva (D.E.)</option>
+                <option value="Dedicação Exclusiva (D.E.)">
+                  Dedicação Exclusiva (D.E.)
+                </option>
                 <option value="Substituto">Substituto</option>
                 <option value="Temporário">Temporário</option>
                 <option value="Colaborador">Colaborador</option>
@@ -288,47 +295,33 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   `,
   styles: [
     `
-      :host {
-        --slot-bg-Aula: #e8f5e9;
-        --slot-color-Aula: #2e7d32;
-        --slot-bg-Planejamento: #fff3e0;
-        --slot-color-Planejamento: #e65100;
-        --slot-bg-Atendimento: #e3f2fd;
-        --slot-color-Atendimento: #1565c0;
-        --slot-bg-Apoio: #f3e5f5;
-        --slot-color-Apoio: #6a1b9a;
-        --slot-bg-Orientação: #fce4ec;
-        --slot-color-Orientação: #ad1457;
-        --slot-bg-Extracurricular: #eceff1;
-        --slot-color-Extracurricular: #37474f;
-        --slot-bg-Pesquisa: #e0f2f1;
-        --slot-color-Pesquisa: #00695c;
-        --slot-bg-Extensão: #fbe9e7;
-        --slot-color-Extensão: #d84315;
-        --slot-bg-Gestão: #e8eaf6;
-        --slot-color-Gestão: #283593;
-        --slot-bg-Comissões: #fff8e1;
-        --slot-color-Comissões: #ff8f00;
-      }
+      /* Cores categóricas dos tipos de atividade (tokens --slot-bg-<categoria>
+         e --slot-color-<categoria>, com variante escura) definidas em
+         src/assets/styles/tokens.css — compartilhadas com
+         pit-form.component.ts (mesmas categorias). */
       .rit-form-container {
         padding: 2.5rem;
         max-width: 1000px;
         margin: 2rem auto;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-md);
         transform: translateZ(0);
         backface-visibility: hidden;
       }
       .alert-info {
-        background: #e3f2fd;
+        background: var(--color-background-hover);
         padding: 1.5rem;
-        border-left: 4px solid #1565c0;
+        border-left: 4px solid var(--color-info);
         border-radius: 8px;
         margin-bottom: 2rem;
       }
       .form-header {
         margin-bottom: 2.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid var(--color-border-light);
         padding-bottom: 1.5rem;
       }
       .section-title {
@@ -393,7 +386,9 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
         border-radius: 8px;
         font-size: 0.95rem;
         /* Apenas border-color na transition para evitar re-layout e flickering */
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
         background: var(--color-background-secondary);
         color: var(--color-text);
       }
@@ -409,7 +404,6 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
       .form-input::placeholder {
         color: var(--color-text-muted);
       }
-
 
       .form-group.has-error .form-input {
         border-color: var(--color-error);
@@ -431,12 +425,12 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
       }
       .btn-primary {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border: none;
         padding: 0.8rem 2.5rem;
         border-radius: 50px;
         font-weight: 600;
-        cursor: pointer;
+
         transition: all 0.2s;
       }
       .btn-secondary {
@@ -446,9 +440,9 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
         padding: 0.8rem 2rem;
         border-radius: 50px;
         font-weight: 600;
-        cursor: pointer;
       }
-      .btn-primary *, .btn-secondary * {
+      .btn-primary *,
+      .btn-secondary * {
         pointer-events: none;
       }
       .btn-primary:hover {

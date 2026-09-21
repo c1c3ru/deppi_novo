@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LaboratoriosService } from '../../services/laboratorios.service';
 
 @Component({
-  selector: 'app-lab-form',
   standalone: false,
+  selector: 'app-lab-form',
   templateUrl: './lab-form.component.html',
-  styleUrls: ['./lab-form.component.scss']
+  styleUrls: ['./lab-form.component.scss'],
 })
 export class LabFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -25,12 +25,12 @@ export class LabFormComponent implements OnInit {
       name: ['', Validators.required],
       description: ['', Validators.required],
       productions: this.fb.array([]),
-      services: this.fb.array([])
+      services: this.fb.array([]),
     });
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id && id !== 'novo') {
         this.labId = id;
@@ -52,12 +52,14 @@ export class LabFormComponent implements OnInit {
   }
 
   addProduction() {
-    this.productions.push(this.fb.group({
-      title: ['', Validators.required],
-      type: [''],
-      year: [''],
-      link: ['']
-    }));
+    this.productions.push(
+      this.fb.group({
+        title: ['', Validators.required],
+        type: [''],
+        year: [''],
+        link: [''],
+      })
+    );
   }
 
   removeProduction(index: number) {
@@ -65,11 +67,13 @@ export class LabFormComponent implements OnInit {
   }
 
   addService() {
-    this.services.push(this.fb.group({
-      name: ['', Validators.required],
-      description: [''],
-      type: ['']
-    }));
+    this.services.push(
+      this.fb.group({
+        name: ['', Validators.required],
+        description: [''],
+        type: [''],
+      })
+    );
   }
 
   removeService(index: number) {
@@ -81,33 +85,33 @@ export class LabFormComponent implements OnInit {
       next: (data) => {
         this.labForm.patchValue({
           name: data.name,
-          description: data.description
+          description: data.description,
         });
-        
+
         // Populate arrays
-        data.productions?.forEach(p => {
+        data.productions?.forEach((p) => {
           this.productions.push(this.fb.group(p));
         });
-        
-        data.services?.forEach(s => {
+
+        data.services?.forEach((s) => {
           this.services.push(this.fb.group(s));
         });
-        
+
         this.loading = false;
       },
       error: () => {
         this.router.navigate(['/laboratorios']);
-      }
+      },
     });
   }
 
   onSubmit() {
     if (this.labForm.invalid) return;
-    
+
     this.saving = true;
     const labData = this.labForm.value;
-    
-    const request = this.labId 
+
+    const request = this.labId
       ? this.labsService.update(this.labId, labData)
       : this.labsService.create(labData);
 
@@ -120,7 +124,7 @@ export class LabFormComponent implements OnInit {
       error: () => {
         this.saving = false;
         alert('Erro ao salvar laboratório');
-      }
+      },
     });
   }
 }

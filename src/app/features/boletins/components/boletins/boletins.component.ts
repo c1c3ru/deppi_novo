@@ -4,6 +4,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: false,
   selector: 'app-boletins',
   template: `
     <div class="boletins-shell" [class.authenticated]="isAuthenticated">
@@ -109,7 +110,7 @@ import { CommonModule } from '@angular/common';
         width: 40px;
         height: 40px;
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border-radius: var(--border-radius-md);
         display: flex;
         align-items: center;
@@ -168,7 +169,7 @@ import { CommonModule } from '@angular/common';
 
       .nav-item.active {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         box-shadow: var(--shadow-primary);
       }
 
@@ -228,7 +229,7 @@ import { CommonModule } from '@angular/common';
         border: 1px solid rgba(var(--color-secondary-rgb), 0.1);
         color: var(--color-secondary);
         border-radius: var(--border-radius-md);
-        cursor: pointer;
+
         font-weight: 700;
         font-size: 0.85rem;
         transition: all var(--transition-fast);
@@ -236,7 +237,7 @@ import { CommonModule } from '@angular/common';
 
       .logout-btn:hover {
         background: var(--color-secondary);
-        color: white;
+        color: var(--color-on-secondary);
       }
 
       .boletins-main {

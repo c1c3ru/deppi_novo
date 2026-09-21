@@ -1,0 +1,522 @@
+// =============================================================================
+// Visitas Public — Estilos do componente de agendamento de visitas
+// Design system: segue tokens.css e main.scss do projeto
+// =============================================================================
+
+// Layout principal: 2 colunas lado a lado
+.pagina-visitas {
+  min-height: 100vh;
+  padding: 120px var(--spacing-md) var(--spacing-2xl);
+  background: var(--color-background);
+}
+
+.visitas-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================================================
+// CABECALHOS DAS COLUNAS
+// =============================================================================
+
+.formulario-cabecalho,
+.calendario-cabecalho {
+  margin-bottom: var(--spacing-xl);
+}
+
+.formulario-rotulo {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.formulario-titulo {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.formulario-descricao {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+
+  strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+}
+
+// =============================================================================
+// ALERTAS DE FEEDBACK
+// =============================================================================
+
+.alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-bottom: var(--spacing-lg);
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+.alerta-sucesso {
+  background: rgba(var(--color-success-rgb), 0.1);
+  color: var(--color-success-text);
+  border: 1px solid rgba(var(--color-success-rgb), 0.3);
+}
+
+.alerta-erro {
+  background: rgba(var(--color-error-rgb), 0.08);
+  color: var(--color-error-text);
+  border: 1px solid rgba(var(--color-error-rgb), 0.2);
+}
+
+// =============================================================================
+// FORMULÁRIO — CAMPOS
+// =============================================================================
+
+.formulario-visita {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.campo-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+
+  &.required::after {
+    content: ' *';
+    color: var(--color-secondary);
+  }
+}
+
+.campo-hint {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.85em;
+}
+
+.campo-hint-alerta {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-text-secondary);
+}
+
+.campo-hint-erro {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+
+.campo-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: var(--font-family);
+}
+
+.campo-input {
+  width: 100%;
+  padding: 10px var(--spacing-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-background);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.12);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+}
+
+.campo-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  padding-right: var(--spacing-xl);
+}
+
+.campos-duplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.campos-triplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--spacing-md);
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// =============================================================================
+// CARDS DE LABORATÓRIOS (somente exibição)
+// =============================================================================
+
+.labs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.lab-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  opacity: 0;
+  animation: lab-card-entrar 0.5s ease-out forwards;
+
+  &__sigla {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primary-dark);
+    background: rgba(var(--color-primary-rgb), 0.1);
+    padding: 3px 10px;
+    border-radius: var(--border-radius-full);
+  }
+
+  &__nome {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.3;
+  }
+
+  &__descricao {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+}
+
+@keyframes lab-card-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-card {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+// =============================================================================
+// BOTÃO DE ENVIO
+// =============================================================================
+
+.btn-envio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: 14px var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-top: var(--spacing-sm);
+}
+
+// =============================================================================
+// COLUNA DIREITA — LISTA DE VISITAS CONFIRMADAS
+// =============================================================================
+
+.visitas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.visita-vazia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--border-radius-lg);
+  text-align: center;
+  color: var(--color-text-muted);
+
+  svg {
+    opacity: 0.4;
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+  }
+}
+
+.visita-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  &__topo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+  }
+
+  &__escola {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  &__info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+
+      svg {
+        flex-shrink: 0;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// GESTÃO DE SOLICITAÇÕES (usuário/admin logado)
+// =============================================================================
+
+.gestao-visitas {
+  max-width: var(--container-max-width);
+  margin: 0 auto var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  background: var(--color-surface, var(--color-background));
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+}
+
+.gestao-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-top: var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+}
+
+// Espaçamento entre os cards informativos de laboratórios e a mensagem de
+// "Não há solicitações pendentes" (ou a listagem de solicitações) logo abaixo.
+.gestao-visitas .visita-vazia {
+  margin-top: var(--spacing-xl);
+}
+
+.gestao-labs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.gestao-lab {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  border-top: 1px dashed var(--color-border);
+
+  &__sigla {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primary-dark);
+    background: rgba(var(--color-primary-rgb), 0.1);
+    padding: 3px 10px;
+    border-radius: var(--border-radius-full);
+  }
+
+  &__nome {
+    flex: 1 1 160px;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  &__acoes {
+    display: flex;
+    gap: var(--spacing-xs);
+  }
+}
+
+.badge-disponibilidade {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.gestao-adicionar-lab {
+  margin-top: var(--spacing-sm);
+
+  &__linha {
+    display: flex;
+    gap: var(--spacing-xs);
+
+    select {
+      flex: 1;
+    }
+  }
+}
+
+.gestao-acoes-finais {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--border-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-success {
+  background: rgba(var(--color-success-rgb), 0.15);
+  color: var(--color-success-text);
+}
+
+.badge-danger {
+  background: rgba(var(--color-error-rgb), 0.15);
+  color: var(--color-error-text);
+}
+
+.badge-warning {
+  background: rgba(var(--color-warning-rgb), 0.15);
+  color: var(--color-warning-text);
+}
+
+// Verde institucional IFCE — mesma cor de marca do .btn-primary
+.btn-outline-success {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+}
+
+.btn-outline-danger {
+  background: transparent;
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-secondary);
+    color: var(--color-on-secondary);
+  }
+}
+
+// =============================================================================
+// ANIMAÇÕES
+// =============================================================================
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-footer',
   template: `
     <footer class="footer ifce-bg-accent">
@@ -129,6 +130,7 @@ import { Component } from '@angular/core';
               <li><a routerLink="/post-graduation">Pós-Graduação</a></li>
               <li><a routerLink="/pit-rit">PIT/RIT</a></li>
               <li><a routerLink="/boletins">Boletins Informativos</a></li>
+              <li><a routerLink="/revista">Anais da Mostra Científica</a></li>
               <li><a routerLink="/contact">Fale Conosco</a></li>
               <li>
                 <a href="https://ifce.edu.br/maracanau" target="_blank"
@@ -255,7 +257,7 @@ import { Component } from '@angular/core';
 
       .social-btn:hover {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border-color: var(--color-primary);
         transform: translateY(-3px);
       }

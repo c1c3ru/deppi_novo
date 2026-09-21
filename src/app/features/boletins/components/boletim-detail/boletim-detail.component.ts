@@ -3,9 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BoletinsService } from '../../services/boletins.service';
 import { Boletim } from '../../../../shared/models';
+import { getFileIcon } from '../../../../shared/utils/file-icon.util';
 import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: false,
   selector: 'app-boletim-detail',
   template: `
     <div class="boletim-detail-page animate-in">
@@ -108,19 +110,34 @@ import { CommonModule } from '@angular/common';
           </div>
         </section>
 
-        <section class="attachments-section" *ngIf="boletim.attachments?.length">
+        <section
+          class="attachments-section"
+          *ngIf="boletim.attachments?.length"
+        >
           <div class="section-header">
             <h2 class="section-title">Anexos e Documentos</h2>
             <div class="section-divider"></div>
           </div>
           <div class="attachments-grid">
-            <div class="attachment-card surface" *ngFor="let file of boletim.attachments">
+            <div
+              class="attachment-card surface"
+              *ngFor="let file of boletim.attachments"
+            >
               <div class="file-icon">{{ getFileIcon(file.mimeType) }}</div>
               <div class="file-info">
-                <span class="file-name">{{ file.originalName || file.filename }}</span>
-                <span class="file-meta">{{ (file.size / 1024 / 1024).toFixed(2) }} MB • {{ file.mimeType }}</span>
+                <span class="file-name">{{
+                  file.originalName || file.filename
+                }}</span>
+                <span class="file-meta"
+                  >{{ (file.size / 1024 / 1024).toFixed(2) }} MB •
+                  {{ file.mimeType }}</span
+                >
               </div>
-              <a [href]="file.url" target="_blank" class="btn btn-secondary btn-sm download-btn">
+              <a
+                [href]="file.url"
+                target="_blank"
+                class="btn btn-secondary btn-sm download-btn"
+              >
                 Baixar
               </a>
             </div>
@@ -172,7 +189,7 @@ import { CommonModule } from '@angular/common';
         font-size: 0.9rem;
         font-weight: 700;
         color: var(--color-primary);
-        cursor: pointer;
+
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -210,7 +227,7 @@ import { CommonModule } from '@angular/common';
 
       .detail-badge.featured {
         background: rgba(var(--color-accent-rgb), 0.15);
-        color: #b45309;
+        color: var(--color-accent-text);
       }
 
       .detail-date {
@@ -399,10 +416,10 @@ import { CommonModule } from '@angular/common';
         height: 50px;
         border-radius: 50%;
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border: none;
         box-shadow: var(--shadow-xl);
-        cursor: pointer;
+
         display: flex;
         align-items: center;
         justify-content: center;
@@ -581,13 +598,5 @@ export class BoletimDetailComponent implements OnInit {
     });
   }
 
-  getFileIcon(mimeType: string): string {
-    if (!mimeType) return '📁';
-    const lower = mimeType.toLowerCase();
-    if (lower.includes('pdf')) return '📄';
-    if (lower.includes('word') || lower.includes('docx') || lower.includes('msword')) return '📝';
-    if (lower.includes('image')) return '🖼️';
-    if (lower.includes('video')) return '🎥';
-    return '📁';
-  }
+  readonly getFileIcon = getFileIcon;
 }

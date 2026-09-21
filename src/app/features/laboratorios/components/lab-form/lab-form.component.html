@@ -1,131 +1,202 @@
 <div class="lab-form-container">
   <div class="container">
-    <a [routerLink]="['/laboratorios', labId]" class="back-link" aria-label="Voltar para a página do laboratório">
+    <a
+      [routerLink]="['/laboratorios', labId]"
+      class="back-link"
+      aria-label="Voltar para a página do laboratório"
+    >
       <span>&larr;</span> Voltar para Laboratório
     </a>
 
-    <div class="surface reveal-up form-surface">
-      <h1 class="font-display form-header">{{ labId ? 'Editar Laboratório' : 'Novo Laboratório' }}</h1>
-      
+    <div class="card reveal-up form-surface">
+      <h1 class="font-display form-header">
+        {{ labId ? 'Editar Laboratório' : 'Novo Laboratório' }}
+      </h1>
+
       <ng-container *ngIf="loading && labId">
-        <div class="loading-state glass">
+        <div class="loading-state card">
           <div class="spinner"></div>
           <p class="loading-text">Carregando dados do laboratório...</p>
         </div>
       </ng-container>
 
-      <form *ngIf="!loading || !labId" [formGroup]="labForm" (ngSubmit)="onSubmit()">
+      <form
+        *ngIf="!loading || !labId"
+        [formGroup]="labForm"
+        (ngSubmit)="onSubmit()"
+      >
         <div class="form-group">
           <label for="labName">Nome do Laboratório</label>
-          <input 
+          <input
             id="labName"
-            type="text" 
-            formControlName="name" 
+            type="text"
+            formControlName="name"
             placeholder="Ex: Laboratório de Inovação Tecnológica (LIT)"
-            aria-required="true">
-        </div>
-        
-        <div class="form-group">
-          <label for="labDescription">Descrição Detalhada</label>
-          <textarea 
-            id="labDescription"
-            formControlName="description" 
-            rows="6" 
-            placeholder="Descreva os objetivos, infraestrutura e principais atividades do laboratório..."
-            aria-required="true"></textarea>
+            aria-required="true"
+          />
         </div>
 
-        <hr class="section-divider">
-        
-        <h3 class="font-display section-title">Linhas de Pesquisa & Produções</h3>
+        <div class="form-group">
+          <label for="labDescription">Descrição Detalhada</label>
+          <textarea
+            id="labDescription"
+            formControlName="description"
+            rows="6"
+            placeholder="Descreva os objetivos, infraestrutura e principais atividades do laboratório..."
+            aria-required="true"
+          ></textarea>
+        </div>
+
+        <hr class="section-divider" />
+
+        <h3 class="font-display section-title">
+          Linhas de Pesquisa & Produções
+        </h3>
         <p class="section-hint">
           Liste as principais conquistas, artigos e projetos do laboratório.
         </p>
 
         <div formArrayName="productions">
-          <div *ngFor="let prod of productions.controls; let i=index" [formGroupName]="i" class="glass item-card reveal-up">
+          <div
+            *ngFor="let prod of productions.controls; let i = index"
+            [formGroupName]="i"
+            class="card item-card reveal-up"
+          >
             <div class="item-header">
-              <b>Produção #{{i + 1}}</b>
-              <button 
-                type="button" 
-                (click)="removeProduction(i)" 
-                class="btn btn-glass btn-remove" 
-                [attr.aria-label]="'Remover produção ' + (i + 1)">
+              <b>Produção #{{ i + 1 }}</b>
+              <button
+                type="button"
+                (click)="removeProduction(i)"
+                class="btn btn-ghost btn-remove"
+                [attr.aria-label]="'Remover produção ' + (i + 1)"
+              >
                 <span>&times;</span> Remover
               </button>
             </div>
-            
+
             <div class="innovative-grid">
               <div class="form-group">
                 <label [for]="'prodTitle' + i">Título / Nome</label>
-                <input [id]="'prodTitle' + i" type="text" formControlName="title" placeholder="Título da produção">
+                <input
+                  [id]="'prodTitle' + i"
+                  type="text"
+                  formControlName="title"
+                  placeholder="Título da produção"
+                />
               </div>
               <div class="form-group">
                 <label [for]="'prodType' + i">Tipo</label>
-                <input [id]="'prodType' + i" type="text" formControlName="type" placeholder="Artigo, Patente, TCC...">
+                <input
+                  [id]="'prodType' + i"
+                  type="text"
+                  formControlName="type"
+                  placeholder="Artigo, Patente, TCC..."
+                />
               </div>
               <div class="form-group">
                 <label [for]="'prodYear' + i">Ano</label>
-                <input [id]="'prodYear' + i" type="text" formControlName="year" placeholder="AAAA">
+                <input
+                  [id]="'prodYear' + i"
+                  type="text"
+                  formControlName="year"
+                  placeholder="AAAA"
+                />
               </div>
               <div class="form-group">
                 <label [for]="'prodLink' + i">Link (Opcional)</label>
-                <input [id]="'prodLink' + i" type="text" formControlName="link" placeholder="https://...">
+                <input
+                  [id]="'prodLink' + i"
+                  type="text"
+                  formControlName="link"
+                  placeholder="https://..."
+                />
               </div>
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-glass add-btn" (click)="addProduction()">
+        <button
+          type="button"
+          class="btn btn-ghost add-btn"
+          (click)="addProduction()"
+        >
           + Adicionar Produção
         </button>
 
-        <hr class="section-divider">
-        
+        <hr class="section-divider" />
+
         <h3 class="font-display section-title">Serviços Oferecidos</h3>
         <p class="section-hint">
-          Descreva os serviços prestados pelo laboratório à comunidade ou empresas.
+          Descreva os serviços prestados pelo laboratório à comunidade ou
+          empresas.
         </p>
 
         <div formArrayName="services">
-          <div *ngFor="let serv of services.controls; let i=index" [formGroupName]="i" class="glass item-card reveal-up">
+          <div
+            *ngFor="let serv of services.controls; let i = index"
+            [formGroupName]="i"
+            class="card item-card reveal-up"
+          >
             <div class="item-header">
-              <b>Serviço #{{i + 1}}</b>
-              <button 
-                type="button" 
-                (click)="removeService(i)" 
-                class="btn btn-glass btn-remove" 
-                [attr.aria-label]="'Remover serviço ' + (i + 1)">
+              <b>Serviço #{{ i + 1 }}</b>
+              <button
+                type="button"
+                (click)="removeService(i)"
+                class="btn btn-ghost btn-remove"
+                [attr.aria-label]="'Remover serviço ' + (i + 1)"
+              >
                 <span>&times;</span> Remover
               </button>
             </div>
-            
+
             <div class="innovative-grid">
               <div class="form-group">
                 <label [for]="'servName' + i">Nome do Serviço</label>
-                <input [id]="'servName' + i" type="text" formControlName="name" placeholder="Nome do serviço">
+                <input
+                  [id]="'servName' + i"
+                  type="text"
+                  formControlName="name"
+                  placeholder="Nome do serviço"
+                />
               </div>
               <div class="form-group">
                 <label [for]="'servType' + i">Tipo/Categoria</label>
-                <input [id]="'servType' + i" type="text" formControlName="type" placeholder="Ex: Consultoria, Ensaio...">
+                <input
+                  [id]="'servType' + i"
+                  type="text"
+                  formControlName="type"
+                  placeholder="Ex: Consultoria, Ensaio..."
+                />
               </div>
             </div>
             <div class="form-group">
               <label [for]="'servDesc' + i">Descrição Curta</label>
-              <textarea [id]="'servDesc' + i" formControlName="description" rows="2" placeholder="Descreva brevemente o serviço oferecido..."></textarea>
+              <textarea
+                [id]="'servDesc' + i"
+                formControlName="description"
+                rows="2"
+                placeholder="Descreva brevemente o serviço oferecido..."
+              ></textarea>
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-glass add-btn" (click)="addService()">
+        <button
+          type="button"
+          class="btn btn-ghost add-btn"
+          (click)="addService()"
+        >
           + Adicionar Serviço
         </button>
 
         <div class="form-actions">
-          <a [routerLink]="['/laboratorios', labId]" class="btn btn-glass">Cancelar</a>
-          <button 
-            type="submit" 
-            class="btn btn-primary" 
-            [disabled]="saving || labForm.invalid">
-            <span *ngIf="saving" class="spinner-small"></span>
+          <a [routerLink]="['/laboratorios', labId]" class="btn btn-ghost"
+            >Cancelar</a
+          >
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="saving || labForm.invalid"
+          >
+            <span *ngIf="saving" class="loading-inline"></span>
             {{ saving ? 'Salvando...' : 'Confirmar Alterações' }}
           </button>
         </div>

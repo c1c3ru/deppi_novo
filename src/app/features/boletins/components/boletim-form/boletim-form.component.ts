@@ -2,14 +2,18 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BoletinsService } from '../../services/boletins.service';
-import { UploadService, Attachment } from '../../../../core/services/upload.service';
+import {
+  UploadService,
+  Attachment,
+} from '../../../../core/services/upload.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PartialObserver } from 'rxjs';
 import { Boletim } from '../../../../shared/models';
+import { getFileIcon } from '../../../../shared/utils/file-icon.util';
 
 @Component({
-  selector: 'app-boletim-form',
   standalone: false,
+  selector: 'app-boletim-form',
   template: `
     <div class="boletim-form-page animate-in">
       <div class="header-container">
@@ -141,23 +145,44 @@ import { Boletim } from '../../../../shared/models';
             <div class="divider"></div>
             <label>Arquivos Anexos (PDF, DOCX, Vídeos)</label>
             <p class="help-text">
-              Arquivos de apoio que estarão disponíveis para download pelos usuários.
+              Arquivos de apoio que estarão disponíveis para download pelos
+              usuários.
             </p>
 
             <div class="attachments-list" *ngIf="attachments.length > 0">
-              <div class="attachment-item surface-secondary" *ngFor="let file of attachments">
+              <div
+                class="attachment-item surface-secondary"
+                *ngFor="let file of attachments"
+              >
                 <div class="file-info">
-                  <span class="file-icon">{{ getFileIcon(file.mimeType) }}</span>
+                  <span class="file-icon">{{
+                    getFileIcon(file.mimeType)
+                  }}</span>
                   <div class="file-details">
-                    <span class="file-name">{{ file.originalName || file.filename }}</span>
-                    <span class="file-meta">{{ (file.size / 1024).toFixed(1) }} KB • {{ file.mimeType }}</span>
+                    <span class="file-name">{{
+                      file.originalName || file.filename
+                    }}</span>
+                    <span class="file-meta"
+                      >{{ (file.size / 1024).toFixed(1) }} KB •
+                      {{ file.mimeType }}</span
+                    >
                   </div>
                 </div>
                 <div class="file-actions">
-                  <a [href]="file.url" target="_blank" class="btn-icon" title="Ver Arquivo">
+                  <a
+                    [href]="file.url"
+                    target="_blank"
+                    class="btn-icon"
+                    title="Ver Arquivo"
+                  >
                     👁️
                   </a>
-                  <button type="button" class="btn-icon delete" (click)="removeAttachment(file.id)" title="Remover">
+                  <button
+                    type="button"
+                    class="btn-icon delete"
+                    (click)="removeAttachment(file.id)"
+                    title="Remover"
+                  >
                     🗑️
                   </button>
                 </div>
@@ -169,16 +194,16 @@ import { Boletim } from '../../../../shared/models';
             </div>
 
             <div class="upload-controls">
-              <input 
-                #fileInput 
-                type="file" 
-                (change)="onFileSelected($event)" 
-                style="display: none" 
+              <input
+                #fileInput
+                type="file"
+                (change)="onFileSelected($event)"
+                style="display: none"
                 multiple
               />
-              <button 
-                type="button" 
-                class="btn btn-glass add-attachment" 
+              <button
+                type="button"
+                class="btn btn-glass add-attachment"
                 (click)="fileInput.click()"
                 [disabled]="uploading"
               >
@@ -244,7 +269,6 @@ import { Boletim } from '../../../../shared/models';
         color: var(--color-text-secondary);
         font-weight: 600;
         font-size: 0.9rem;
-        cursor: pointer;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -417,7 +441,6 @@ import { Boletim } from '../../../../shared/models';
         position: relative;
         padding-left: 35px;
         margin-bottom: 12px;
-        cursor: pointer;
         font-size: 1rem;
         font-weight: 500;
         user-select: none;
@@ -427,7 +450,7 @@ import { Boletim } from '../../../../shared/models';
       .custom-checkbox input {
         position: absolute;
         opacity: 0;
-        cursor: pointer;
+
         height: 0;
         width: 0;
       }
@@ -566,7 +589,7 @@ import { Boletim } from '../../../../shared/models';
         background: none;
         border: none;
         font-size: 1.2rem;
-        cursor: pointer;
+
         padding: 0.5rem;
         border-radius: var(--border-radius-sm);
         transition: background var(--transition-fast);
@@ -629,35 +652,41 @@ export class BoletimFormComponent implements OnInit {
   constructor() {
     if (typeof window !== 'undefined') {
       // Se o Quill já estiver definido globalmente e o ImageResize já estiver registrado, apenas marque como pronto
-      if ((window as any).Quill && (window as any).Quill.modules && (window as any).Quill.modules.imageResize) {
+      if (
+        (window as any).Quill &&
+        (window as any).Quill.modules &&
+        (window as any).Quill.modules.imageResize
+      ) {
         this.quillReady = true;
         return;
       }
 
       // Registro dinâmico do plugin quill-image-resize com guardas globais para evitar loop
-      import('quill').then((quillModule) => {
-        const actualQuill: any = quillModule.default || quillModule;
-        (window as any).Quill = actualQuill;
+      import('quill')
+        .then((quillModule) => {
+          const actualQuill: any = quillModule.default || quillModule;
+          (window as any).Quill = actualQuill;
 
-        import('@mgreminger/quill-image-resize-module')
-          .then((module) => {
-            const ImageResize = module.default || module;
-            if (actualQuill && typeof actualQuill.register === 'function') {
-              try {
-                actualQuill.register('modules/imageResize', ImageResize);
-              } catch (e) {
-                // Registrar silenciosamente se já existir
+          import('@mgreminger/quill-image-resize-module')
+            .then((module) => {
+              const ImageResize = module.default || module;
+              if (actualQuill && typeof actualQuill.register === 'function') {
+                try {
+                  actualQuill.register('modules/imageResize', ImageResize);
+                } catch (e) {
+                  // Registrar silenciosamente se já existir
+                }
               }
-            }
-            this.quillReady = true;
-          })
-          .catch((e) => {
-            console.warn('Could not load quill-image-resize:', e);
-            this.quillReady = true; // Continua sem o plugin de resize
-          });
-      }).catch((e) => {
-        console.warn('Could not load Quill dynamically:', e);
-      });
+              this.quillReady = true;
+            })
+            .catch((e) => {
+              console.warn('Could not load quill-image-resize:', e);
+              this.quillReady = true; // Continua sem o plugin de resize
+            });
+        })
+        .catch((e) => {
+          console.warn('Could not load Quill dynamically:', e);
+        });
     } else {
       // No servidor (SSR), não renderiza o editor
       this.quillReady = false;
@@ -831,18 +860,11 @@ export class BoletimFormComponent implements OnInit {
           this.notificationService.showSuccess('Anexo removido.');
           this.attachments = this.attachments.filter((a) => a.id !== id);
         },
-        error: () => this.notificationService.showError('Erro ao remover anexo.'),
+        error: () =>
+          this.notificationService.showError('Erro ao remover anexo.'),
       });
     }
   }
 
-  getFileIcon(mimeType: string): string {
-    if (!mimeType) return '📁';
-    const lower = mimeType.toLowerCase();
-    if (lower.includes('pdf')) return '📄';
-    if (lower.includes('word') || lower.includes('docx') || lower.includes('msword')) return '📝';
-    if (lower.includes('image')) return '🖼️';
-    if (lower.includes('video')) return '🎥';
-    return '📁';
-  }
+  readonly getFileIcon = getFileIcon;
 }

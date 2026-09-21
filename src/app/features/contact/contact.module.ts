@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
 import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
+  standalone: false,
   selector: 'app-contact',
   template: `
     <main class="page-container ifce-bg-accent">
@@ -180,7 +181,11 @@ import { NotificationService } from '../../core/services/notification.service';
       .page-hero {
         text-align: center;
         padding: 6rem 1.5rem 4rem;
-        background: linear-gradient(135deg, var(--color-primary-light), #fff);
+        background: linear-gradient(
+          135deg,
+          var(--color-primary-light),
+          var(--color-background)
+        );
         position: relative;
         overflow: hidden;
       }
@@ -354,7 +359,7 @@ export class ContactComponent {
     this.isSubmitting = true;
 
     this.http
-      .post(`${environment.apiUrl}/api/contact`, this.form.value)
+      .post(`${environment.apiUrl}/contact`, this.form.value)
       .subscribe({
         next: () => {
           this.notificationService.showSuccess(

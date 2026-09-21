@@ -14,8 +14,8 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-boletim-list',
   standalone: false,
+  selector: 'app-boletim-list',
   template: `
     <div class="boletim-list-page animate-in">
       <header class="list-header">
@@ -224,7 +224,11 @@ import { Subscription } from 'rxjs';
         flex-direction: column;
         padding: 2.5rem;
         border-radius: var(--border-radius-lg);
-        cursor: pointer;
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-md);
         position: relative;
         overflow: hidden;
       }
@@ -249,7 +253,7 @@ import { Subscription } from 'rxjs';
 
       .card-badge.featured {
         background: rgba(var(--color-accent-rgb), 0.15);
-        color: #b45309;
+        color: var(--color-accent-text);
       }
 
       .card-date {
@@ -347,7 +351,7 @@ import { Subscription } from 'rxjs';
         font-size: 0.85rem;
         font-weight: 800;
         color: var(--color-primary);
-        cursor: pointer;
+
         padding: 0;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -368,7 +372,7 @@ import { Subscription } from 'rxjs';
         border: 1px solid var(--color-border-light);
         border-radius: 0.5rem;
         padding: 0.5rem;
-        cursor: pointer;
+
         font-size: 1rem;
         display: flex;
         align-items: center;
@@ -391,6 +395,12 @@ import { Subscription } from 'rxjs';
         grid-column: 1 / -1;
         text-align: center;
         padding: 10rem 2rem;
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-md);
       }
 
       .empty-visual {
@@ -432,13 +442,13 @@ import { Subscription } from 'rxjs';
         border: 1px solid var(--color-border);
         color: var(--color-text);
         font-weight: 600;
-        cursor: pointer;
+
         transition: all var(--transition-fast);
       }
 
       .btn-page:hover:not(:disabled) {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border-color: var(--color-primary);
       }
 

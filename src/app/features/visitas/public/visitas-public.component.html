@@ -1,0 +1,573 @@
+<div class="pagina-visitas">
+  <!-- ======== GESTÃO DE SOLICITAÇÕES — visível apenas para usuário logado ======== -->
+  <div class="gestao-visitas" *ngIf="isAuthenticated">
+    <div class="calendario-cabecalho">
+      <span class="formulario-rotulo">Gestão</span>
+      <h2 class="formulario-titulo">Solicitações Pendentes</h2>
+      <p class="formulario-descricao">
+        Marque a disponibilidade de cada laboratório e confirme ou recuse a
+        visita. É necessário pelo menos um laboratório
+        <strong>disponível</strong> para confirmar.
+      </p>
+    </div>
+
+    <!-- Cards dos laboratórios (Sigla, Nome, Descrição) — visão do usuário logado -->
+    <div class="labs-grid" data-testid="labs-grid-autenticado" *ngIf="laboratorios.length > 0">
+      <div
+        class="lab-card"
+        *ngFor="let lab of laboratorios; let i = index"
+        [style.animation-delay.ms]="i * 60"
+      >
+        <span class="lab-card__sigla">{{ lab.sigla }}</span>
+        <span class="lab-card__nome">{{ lab.nome }}</span>
+        <span class="lab-card__descricao">{{ lab.descricao }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="managementSuccess" class="alerta alerta-sucesso">
+      {{ managementSuccess }}
+    </div>
+    <div *ngIf="managementError" class="alerta alerta-erro">
+      {{ managementError }}
+    </div>
+
+    <div class="visita-vazia" *ngIf="pendingVisitas.length === 0">
+      <p>Não há solicitações pendentes no momento.</p>
+    </div>
+
+    <div class="gestao-item" *ngFor="let visita of pendingVisitas">
+      <div class="visita-item__topo">
+        <h5 class="visita-item__escola">{{ visita.school_name }}</h5>
+        <span class="badge badge-warning">Pendente</span>
+      </div>
+      <div class="visita-item__info">
+        <span>
+          {{ visita.target_date | date: 'dd/MM/yyyy' }}
+          ({{
+            visita.shift === 'M'
+              ? 'Manhã'
+              : visita.shift === 'T'
+                ? 'Tarde'
+                : 'Noite'
+          }})
+        </span>
+        <span>{{ visita.responsible_name }}</span>
+        <span>{{ visita.students_count }} alunos</span>
+        <span>{{ visita.contact_email }} · {{ visita.contact_phone }}</span>
+      </div>
+
+      <div class="gestao-labs">
+        <div class="gestao-lab" *ngFor="let lab of visita.labs">
+          <span class="gestao-lab__sigla">{{ labSigla(lab.name) }}</span>
+          <span class="gestao-lab__nome">{{ labNome(lab.name) }}</span>
+          <span
+            class="badge badge-disponibilidade"
+            data-testid="lab-availability-flag"
+            [class.badge-warning]="lab.status === 'pending'"
+            [class.badge-success]="lab.status === 'available'"
+            [class.badge-danger]="lab.status === 'unavailable'"
+          >
+            {{
+              lab.status === 'available'
+                ? 'Disponível'
+                : lab.status === 'unavailable'
+                  ? 'Não Disponível'
+                  : 'Pendente'
+            }}
+            · {{ visita.target_date | date: 'dd/MM/yyyy' }}
+            ({{
+              visita.shift === 'M'
+                ? 'Manhã'
+                : visita.shift === 'T'
+                  ? 'Tarde'
+                  : 'Noite'
+            }})
+          </span>
+          <div class="gestao-lab__acoes">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-success"
+              (click)="updateLabStatus(visita.id, lab.lab_id, 'available')"
+              [disabled]="lab.status === 'available'"
+            >
+              Disponível
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="updateLabStatus(visita.id, lab.lab_id, 'unavailable')"
+              [disabled]="lab.status === 'unavailable'"
+            >
+              Indisponível
+            </button>
+          </div>
+        </div>
+        <p *ngIf="!visita.labs || visita.labs.length === 0" class="campo-hint">
+          Carregando laboratórios...
+        </p>
+      </div>
+
+      <!-- ====== ADICIONAR MAIS LABORATÓRIOS — somente usuário logado ====== -->
+      <div
+        class="gestao-adicionar-lab"
+        data-testid="adicionar-lab"
+        *ngIf="labsDisponiveisParaAdicionar(visita).length > 0"
+      >
+        <label class="campo-label" [attr.for]="'add-lab-' + visita.id">
+          Adicionar laboratório
+        </label>
+        <div class="gestao-adicionar-lab__linha">
+          <select
+            class="campo-input campo-select"
+            [id]="'add-lab-' + visita.id"
+            #labSelect
+          >
+            <option
+              *ngFor="let lab of labsDisponiveisParaAdicionar(visita)"
+              [value]="lab.id"
+            >
+              {{ lab.sigla }} - {{ lab.nome }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-success"
+            (click)="addLabToVisit(visita.id, labSelect.value)"
+          >
+            Adicionar
+          </button>
+        </div>
+      </div>
+
+      <div class="gestao-acoes-finais">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-testid="confirmar-visita-btn"
+          (click)="confirmVisit(visita.id)"
+          [disabled]="!hasAvailableLab(visita)"
+          [title]="hasAvailableLab(visita) ? 'Confirmar as visitas' : 'Marque ao menos um laboratório como disponível para confirmar'"
+        >
+          Confirmar as visitas
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          (click)="rejectVisit(visita.id)"
+        >
+          Recusar Visita
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="visitas-layout">
+    <!-- ======== COLUNA ESQUERDA: FORMULÁRIO (somente visitante não autenticado) ======== -->
+    <div class="coluna-formulario" *ngIf="!isAuthenticated" data-testid="coluna-formulario">
+      <div class="formulario-cabecalho">
+        <span class="formulario-rotulo">Caravana Escolar</span>
+        <h2 class="formulario-titulo">Agendar Visita</h2>
+        <p class="formulario-descricao">
+          Preencha os dados abaixo para solicitar uma visita técnica. O limite
+          máximo é de <strong>50 alunos</strong> por turma.
+        </p>
+      </div>
+
+      <!-- Alertas de sucesso/erro -->
+      <div *ngIf="successMessage" class="alerta alerta-sucesso">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="alerta alerta-erro">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <form
+        [formGroup]="visitForm"
+        (ngSubmit)="onSubmit()"
+        class="formulario-visita"
+      >
+        <!-- Escola -->
+        <div class="campo-grupo">
+          <label class="campo-label required" for="school_name"
+            >Nome da Escola / Instituição</label
+          >
+          <input
+            id="school_name"
+            type="text"
+            class="campo-input"
+            formControlName="school_name"
+            placeholder="Ex: Escola Estadual José de Alencar"
+          />
+        </div>
+
+        <!-- Cidade e Rede de Ensino -->
+        <div class="campos-duplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="school_city"
+              >Cidade da Escola</label
+            >
+            <input
+              id="school_city"
+              type="text"
+              class="campo-input"
+              formControlName="school_city"
+              placeholder="Ex: Maracanaú"
+            />
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="school_network"
+              >Rede de Ensino</label
+            >
+            <select
+              id="school_network"
+              class="campo-input campo-select"
+              formControlName="school_network"
+            >
+              <option value="" disabled>Selecione</option>
+              <option value="municipal">Municipal</option>
+              <option value="estadual">Estadual</option>
+              <option value="federal">Federal</option>
+              <option value="privada">Privada</option>
+              <option value="outra">Outra</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Diretor(a) -->
+        <div class="campo-grupo">
+          <label class="campo-label required" for="director_name"
+            >Diretor(a)</label
+          >
+          <input
+            id="director_name"
+            type="text"
+            class="campo-input"
+            formControlName="director_name"
+            placeholder="Nome completo do(a) diretor(a)"
+          />
+        </div>
+
+        <!-- Responsável pela solicitação -->
+        <div class="campo-grupo">
+          <label class="campo-label required" for="responsible_name"
+            >Nome do Responsável</label
+          >
+          <input
+            id="responsible_name"
+            type="text"
+            class="campo-input"
+            formControlName="responsible_name"
+            placeholder="Nome completo do professor ou coordenador"
+          />
+        </div>
+
+        <!-- Email e Telefone de contato do responsável -->
+        <div class="campos-duplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="contact_email"
+              >E-mail de Contato</label
+            >
+            <input
+              id="contact_email"
+              type="email"
+              class="campo-input"
+              formControlName="contact_email"
+              placeholder="email@escola.edu.br"
+            />
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="contact_phone"
+              >Telefone</label
+            >
+            <input
+              id="contact_phone"
+              type="text"
+              class="campo-input"
+              formControlName="contact_phone"
+              placeholder="(85) 99999-9999"
+              mask="(00) 00000-0000"
+            />
+          </div>
+        </div>
+
+        <!-- E-mail institucional e Telefone/WhatsApp da escola -->
+        <div class="campos-duplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="institutional_email"
+              >E-mail Institucional</label
+            >
+            <input
+              id="institutional_email"
+              type="email"
+              class="campo-input"
+              formControlName="institutional_email"
+              placeholder="secretaria@escola.edu.br"
+            />
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="whatsapp_phone"
+              >Telefone/WhatsApp</label
+            >
+            <input
+              id="whatsapp_phone"
+              type="text"
+              class="campo-input"
+              formControlName="whatsapp_phone"
+              placeholder="(85) 99999-9999"
+              mask="(00) 00000-0000"
+            />
+          </div>
+        </div>
+
+        <!-- Responsáveis pela turma e Ano/Série -->
+        <div class="campos-duplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="class_supervisors"
+              >Responsáveis pela Turma</label
+            >
+            <input
+              id="class_supervisors"
+              type="text"
+              class="campo-input"
+              formControlName="class_supervisors"
+              placeholder="Ex: Maria Silva e João Souza"
+            />
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="grade_level"
+              >Ano/Série</label
+            >
+            <input
+              id="grade_level"
+              type="text"
+              class="campo-input"
+              formControlName="grade_level"
+              placeholder="Ex: 9º ano do Ensino Fundamental"
+            />
+          </div>
+        </div>
+
+        <!-- Qtd Alunos, Data e Turno -->
+        <div class="campos-triplos">
+          <div class="campo-grupo">
+            <label class="campo-label required" for="students_count"
+              >Qtd. de Alunos</label
+            >
+            <input
+              id="students_count"
+              type="number"
+              class="campo-input"
+              formControlName="students_count"
+              placeholder="Máx. 50"
+              min="1"
+              [max]="maxStudentsPerVisit"
+            />
+            <span class="campo-hint campo-hint-alerta">
+              Recomendamos grupos de até {{ recommendedStudentsPerVisit }}
+              estudantes. O limite máximo permitido é de
+              {{ maxStudentsPerVisit }} estudantes por visita.
+            </span>
+            <span
+              *ngIf="visitForm.get('students_count')?.hasError('max') && visitForm.get('students_count')?.touched"
+              class="campo-hint campo-hint-erro"
+            >
+              Máximo de {{ maxStudentsPerVisit }} alunos permitido por visita.
+            </span>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="target_date"
+              >Data Pretendida</label
+            >
+            <input
+              id="target_date"
+              type="date"
+              class="campo-input"
+              formControlName="target_date"
+            />
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label required" for="shift">Turno</label>
+            <select
+              id="shift"
+              class="campo-input campo-select"
+              formControlName="shift"
+            >
+              <option value="M">☀️ Manhã</option>
+              <option value="T">🌤️ Tarde</option>
+              <option value="N">🌙 Noite</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Observações -->
+        <div class="campo-grupo">
+          <label class="campo-label" for="notes">Observações</label>
+          <textarea
+            id="notes"
+            class="campo-input campo-textarea"
+            formControlName="notes"
+            rows="3"
+            placeholder="Alguma informação adicional relevante para a visita?"
+          ></textarea>
+        </div>
+
+        <!-- ====== LABORATÓRIOS — SOMENTE EXIBIÇÃO ====== -->
+        <div class="campo-grupo" *ngIf="laboratorios.length > 0">
+          <label class="campo-label">
+            Laboratórios que recebem a visita
+            <span class="campo-hint"
+              >— sua turma poderá conhecer estes espaços</span
+            >
+          </label>
+
+          <div class="labs-grid">
+            <div
+              class="lab-card"
+              *ngFor="let lab of laboratorios; let i = index"
+              [style.animation-delay.ms]="i * 60"
+            >
+              <span class="lab-card__sigla">{{ lab.sigla }}</span>
+              <span class="lab-card__nome">{{ lab.nome }}</span>
+              <span class="lab-card__descricao">{{ lab.descricao }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botão de envio -->
+        <button
+          type="submit"
+          class="btn btn-primary btn-envio"
+          [disabled]="visitForm.invalid || isSubmitting"
+        >
+          <span *ngIf="isSubmitting" class="loading-inline"></span>
+          <svg
+            *ngIf="!isSubmitting"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+          {{ isSubmitting ? 'Enviando...' : 'Solicitar Agendamento' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- ======== COLUNA DIREITA: CALENDÁRIO ======== -->
+    <div class="coluna-calendario">
+      <div class="calendario-cabecalho">
+        <span class="formulario-rotulo">Agenda</span>
+        <h2 class="formulario-titulo">Visitas Confirmadas</h2>
+      </div>
+
+      <div class="visitas-lista">
+        <div class="visita-vazia" *ngIf="visitas.length === 0">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <p>Não há visitas confirmadas no momento.</p>
+        </div>
+
+        <div class="visita-item" *ngFor="let visita of visitas">
+          <div class="visita-item__topo">
+            <h5 class="visita-item__escola">{{ visita.school_name }}</h5>
+            <span class="badge badge-success">Confirmada</span>
+          </div>
+          <div class="visita-item__info">
+            <span>
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              {{ visita.target_date | date: 'dd/MM/yyyy' }}
+              ({{
+                visita.shift === 'M'
+                  ? 'Manhã'
+                  : visita.shift === 'T'
+                    ? 'Tarde'
+                    : 'Noite'
+              }})
+            </span>
+            <span>
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              {{ visita.responsible_name }}
+            </span>
+            <span>
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              {{ visita.students_count }} alunos
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

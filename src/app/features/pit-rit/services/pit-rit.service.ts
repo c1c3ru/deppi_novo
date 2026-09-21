@@ -371,11 +371,11 @@ export class PitRitService {
           (data.atividades as any)[category][qKey] * multipliers[qKey];
       }
     });
-    
+
     // Check for manual overrides for t4, t5, t6
     const m = data.atividades.ensino.manutencao;
     const a = data.atividades.ensino.apoio;
-    
+
     if (m.q4 > 0) m.t4 = m.q4 * 0.8;
     if (m.q5 > 0) m.t5 = m.q5 * 0.2;
     if (a.q6 > 0) a.t6 = a.q6 * 1;
@@ -386,7 +386,7 @@ export class PitRitService {
       data.atividades.ensino.aulas.t2 +
       data.atividades.ensino.aulas.t3;
     const x = Math.min(aulasTotal, 20);
-    
+
     if (regime === '20h') {
       if (m.q5 <= 0) m.t5 = Math.min(Math.ceil(x * 0.2), 2);
       const T4_calc = Math.ceil(x - m.t5);

@@ -7,7 +7,7 @@ import { Boletim, ApiResponse } from '../../../shared/models';
 @Injectable()
 export class BoletinsService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/boletins`;
+  private readonly apiUrl = `${environment.apiUrl}/boletins`;
 
   /**
    * Busca todos os boletins publicados

@@ -2,7 +2,10 @@
   <div class="container">
     <header class="header-section reveal-up">
       <h1 class="font-display">Vitrine Tecnológica</h1>
-      <p>Conheça os laboratórios do IFCE Campus Maracanaú, explorando inovações, pesquisas e serviços especializados.</p>
+      <p>
+        Conheça os laboratórios do IFCE Campus Maracanaú, explorando inovações,
+        pesquisas e serviços especializados.
+      </p>
     </header>
 
     <div class="admin-bar reveal-up" *ngIf="isAdmin$ | async">
@@ -12,37 +15,44 @@
       </button>
     </div>
 
-    <div *ngIf="loading" style="text-align: center; padding: 5rem;">
-      <p class="reveal-up" style="color: var(--color-text-secondary);">Carregando vitrine...</p>
+    <div *ngIf="loading" style="text-align: center; padding: 5rem">
+      <p class="reveal-up" style="color: var(--color-text-secondary)">
+        Carregando vitrine...
+      </p>
     </div>
 
     <div class="labs-grid" *ngIf="!loading">
-      <article 
-        *ngFor="let lab of laboratorios; let i = index" 
-        class="glass lab-card reveal-up"
-        [style.animation-delay]="(i * 0.1) + 's'"
-        [routerLink]="['/laboratorios', lab.id]">
-        
+      <article
+        *ngFor="let lab of laboratorios; let i = index"
+        class="card lab-card reveal-up"
+        [style.animation-delay]="i * 0.1 + 's'"
+        [routerLink]="['/laboratorios', lab.id]"
+      >
         <h3 class="font-display">{{ lab.name }}</h3>
-        
+
         <p class="description-preview">{{ lab.description }}</p>
 
         <div class="card-footer">
           <div class="badges">
-            <span class="btn btn-glass" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">
-              {{ lab.productions?.length || 0 }} Produções
+            <span class="badge badge-primary">
+              {{ lab.productions.length || 0 }} Produções
             </span>
           </div>
-          <span class="btn btn-primary" style="padding: 0.5rem 1rem;">
+          <span class="btn btn-primary" style="padding: 0.5rem 1rem">
             Ver Detalhes
           </span>
         </div>
       </article>
     </div>
 
-    <div *ngIf="!loading && laboratorios.length === 0" style="text-align: center; padding: 5rem;">
-      <div class="reveal-up surface" style="padding: 3rem;">
-        <p style="color: var(--color-text-secondary);">Nenhum laboratório cadastrado na vitrine ainda.</p>
+    <div
+      *ngIf="!loading && laboratorios.length === 0"
+      style="text-align: center; padding: 5rem"
+    >
+      <div class="reveal-up card" style="padding: 3rem">
+        <p style="color: var(--color-text-secondary)">
+          Nenhum laboratório cadastrado na vitrine ainda.
+        </p>
       </div>
     </div>
   </div>

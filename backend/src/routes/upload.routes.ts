@@ -9,8 +9,9 @@ const router = Router();
 
 // Ensure uploads directory exists
 const defaultUploadDir = path.resolve(process.cwd(), 'uploads');
-const uploadDir = process.env['UPLOADS_PATH'] || 
-                   (fs.existsSync('/app/uploads') ? '/app/uploads' : defaultUploadDir);
+const uploadDir =
+  process.env['UPLOADS_PATH'] ||
+  (fs.existsSync('/app/uploads') ? '/app/uploads' : defaultUploadDir);
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -70,33 +71,39 @@ const upload = multer({
 /**
  * POST /upload/file – single file upload (requires auth, applied at route level in index.ts)
  */
-router.post('/file', upload.single('file'), async (req: Request, res: Response) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
+router.post(
+  '/file',
+  upload.single('file'),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
+      }
+
+      const { relatedId, type } = req.body;
+      const user_id = (req as any).user?.id || null;
+
+      const [uploadRecord] = await db('uploads')
+        .insert({
+          filename: req.file.filename,
+          original_name: req.file.originalname,
+          mime_type: req.file.mimetype,
+          size: req.file.size,
+          path: req.file.path,
+          url: `/uploads/${req.file.filename}`,
+          type: type || 'file',
+          uploaded_by: user_id,
+          related_boletim_id: relatedId || null,
+        })
+        .returning('*');
+
+      res.json(uploadRecord);
+    } catch (error) {
+      logger.error('Upload error:', error);
+      res.status(500).json({ error: 'Erro ao fazer upload do arquivo' });
     }
-
-    const { relatedId, type } = req.body;
-    const user_id = (req as any).user?.id || null;
-
-    const [uploadRecord] = await db('uploads').insert({
-      filename: req.file.filename,
-      original_name: req.file.originalname,
-      mime_type: req.file.mimetype,
-      size: req.file.size,
-      path: req.file.path,
-      url: `/uploads/${req.file.filename}`,
-      type: type || 'file',
-      uploaded_by: user_id,
-      related_boletim_id: relatedId || null,
-    }).returning('*');
-
-    res.json(uploadRecord);
-  } catch (error) {
-    logger.error('Upload error:', error);
-    res.status(500).json({ error: 'Erro ao fazer upload do arquivo' });
   }
-});
+);
 
 /**
  * POST /upload/multiple – multiple files upload (requires auth, applied at route level in index.ts)
@@ -115,17 +122,19 @@ router.post(
 
       const results = await Promise.all(
         (req.files as Express.Multer.File[]).map(async (file) => {
-          const [id] = await db('uploads').insert({
-            filename: file.filename,
-            original_name: file.originalname,
-            mime_type: file.mimetype,
-            size: file.size,
-            path: file.path,
-            url: `/uploads/${file.filename}`,
-            type: type || 'file',
-            uploaded_by: user_id,
-            related_boletim_id: relatedId || null,
-          }).returning('*');
+          const [id] = await db('uploads')
+            .insert({
+              filename: file.filename,
+              original_name: file.originalname,
+              mime_type: file.mimetype,
+              size: file.size,
+              path: file.path,
+              url: `/uploads/${file.filename}`,
+              type: type || 'file',
+              uploaded_by: user_id,
+              related_boletim_id: relatedId || null,
+            })
+            .returning('*');
           return id;
         })
       );
@@ -147,7 +156,7 @@ router.get('/boletim/:boletimId', async (req: Request, res: Response) => {
     const attachments = await db('uploads')
       .where({ related_boletim_id: boletimId, is_active: true })
       .orderBy('created_at', 'desc');
-    
+
     res.json(attachments);
   } catch (error) {
     logger.error('Error listing attachments:', error);
@@ -181,4 +190,3 @@ router.use((err: any, _req: Request, res: Response, next: NextFunction) => {
 });
 
 export default router;
-

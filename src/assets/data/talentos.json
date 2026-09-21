@@ -1,0 +1,140 @@
+[
+  {
+    "id": "8534be97",
+    "nome": "Antônio Augusto Frota martins",
+    "curso": "Técnico Integrado em Informática",
+    "semestre": "4",
+    "superpoder": "Programação e Desenvolvimento (Front-...",
+    "bio": "Programaçao em c, Java, python, domínio da ferramenta Power bi, Photoshop, coreldraw, pacote office.\n\nProatividade, aprendizado rápido, liderança, ...",
+    "skills": [
+      "Programação e Desenvolvimento (Front-end/Back-end/Mobile)",
+      "Redes de Computadores e Segurança",
+      "Análise e Qualidade de Software",
+      "Eletrônica e Automação Industrial"
+    ],
+    "github": null,
+    "linkedin": null,
+    "avatar_seed": "antonio-augusto-frota-martins",
+    "foto": "https://lh3.googleusercontent.com/d/19wNNp04wxuWrcnV7n85B_c7KE9y3ukeu",
+    "turno": "Diurno (Manhã e/ou Tarde)",
+    "disponibilidade": "Flexível (A definir)",
+    "idiomas": [
+      "Inglês: Intermediário",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, informal (projetos, voluntariado)",
+    "curriculo": "https://roaring-melba-589f50.netlify.app/",
+    "autorizado": true
+  },
+  {
+    "id": "9ab0a068",
+    "nome": "Mariana Silva de Holanda",
+    "curso": "Bacharelado em Ciência da Computação",
+    "semestre": "3° Semestre",
+    "superpoder": "Programação e Desenvolvimento (Front-...",
+    "bio": "Minhas principais habilidades técnicas são desenvolvimento intermediário front end, experiência em design ux/ui intermediária, social media da incu...",
+    "skills": [
+      "Programação e Desenvolvimento (Front-end/Back-end/Mobile)",
+      "Redes de Computadores e Segurança",
+      "Análise e Qualidade de Software",
+      "Manutenção Eletroeletrônica"
+    ],
+    "github": "https://github.com/mari06sho",
+    "linkedin": "https://www.linkedin.com/in/mariana-h-8b254a268?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+    "avatar_seed": "mariana-silva-de-holanda",
+    "foto": "https://lh3.googleusercontent.com/d/1blmHjol0VwHo_FJJQcuWCPVA6Ylh22ok",
+    "turno": "Integral",
+    "disponibilidade": "Flexível (A definir)",
+    "idiomas": [
+      "Inglês: Intermediário",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, informal (projetos, voluntariado)",
+    "curriculo": "https://drive.google.com/file/d/1TUudhQSOs2An1XOjbDB1jelUBLa_WcAE/view?usp=drivesdk",
+    "autorizado": true
+  },
+  {
+    "id": "076ba476",
+    "nome": "Arthur Feitosa Fernandes Lima",
+    "curso": "Técnico Integrado em Informática",
+    "semestre": "4° Semestre",
+    "superpoder": "Programação e Desenvolvimento (Front-...",
+    "bio": "Experiência sólida em montagem e manutenção de hardwares, conhecimento básico em criação de planilhas Excel, conhecimento básico em linguagem de pr...",
+    "skills": [
+      "Programação e Desenvolvimento (Front-end/Back-end/Mobile)",
+      "Redes de Computadores e Segurança",
+      "Análise e Qualidade de Software",
+      "Trainee"
+    ],
+    "github": null,
+    "linkedin": "https://www.linkedin.com/in/arthur-feitosa-fernandes-lima-6a821a351?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    "avatar_seed": "arthur-feitosa-fernandes-lima",
+    "foto": "https://lh3.googleusercontent.com/d/15vKbJrqW-hUWAghOmLxuGn3phkME_N88",
+    "turno": "Diurno (Manhã e/ou Tarde)",
+    "disponibilidade": "Parcial (Tarde)",
+    "idiomas": [
+      "Inglês: Básico",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, formal (registrada)",
+    "curriculo": "https://drive.google.com/file/d/12SVJRJJBbW9DxIr9dGeBXttoy6ffBzAf/view?usp=sharing",
+    "autorizado": true
+  },
+  {
+    "id": "c76fe37d",
+    "nome": "Juan Lucas Bezerra Insaurralde",
+    "curso": "Bacharelado em Ciência da Computação",
+    "semestre": "6º Semestre",
+    "superpoder": "Programação e Desenvolvimento (Front-...",
+    "bio": "Python, C, banco de dados, visão computacional, redes, suporte técnico, Excel (tabelas dinâmicas, gráficos), Power BI, comunicação, trabalho em equ...",
+    "skills": [
+      "Programação e Desenvolvimento (Front-end/Back-end/Mobile)",
+      "Redes de Computadores e Segurança",
+      "Análise e Qualidade de Software",
+      "Manutenção Eletroeletrônica"
+    ],
+    "github": null,
+    "linkedin": null,
+    "avatar_seed": "juan-lucas-bezerra-insaurralde",
+    "foto": "https://lh3.googleusercontent.com/d/1N4IQNsDU-hv13yJxvYdVXHqsAWCO9TEC",
+    "turno": "Diurno (Manhã e/ou Tarde)",
+    "disponibilidade": "Flexível (A definir)",
+    "idiomas": [
+      "Inglês: Avançado",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, informal (projetos, voluntariado)",
+    "curriculo": "https://drive.google.com/file/d/1ja1EKxofMbAXwdnua9V8XDpPyPrcXoc0/view?usp=drivesdk",
+    "autorizado": true
+  },
+  {
+    "id": "dff11eac",
+    "nome": "Marcos Iury de Lima Américo",
+    "curso": "Bacharelado em Ciência da Computação",
+    "semestre": "6º Semestre",
+    "superpoder": "Redes de Computadores e Segurança",
+    "bio": "Infraestrutura e Redes, Suporte e ITSM, Manutenção de Hardware e Equipamentos, Sistemas Operacionais e Servidores, Virtualização, Banco de Dados SQ...",
+    "skills": [
+      "Redes de Computadores e Segurança",
+      "Outra (Especificar no campo 'Habilidades')"
+    ],
+    "github": null,
+    "linkedin": "https://www.linkedin.com/in/marcosiury/",
+    "avatar_seed": "marcos-iury-de-lima-americo",
+    "foto": "https://lh3.googleusercontent.com/d/1C0V59oAQUQDMEPSKxfkVph84ERrQhtMG",
+    "turno": "Diurno (Manhã e/ou Tarde)",
+    "disponibilidade": "Parcial (Tarde)",
+    "idiomas": [
+      "Inglês: Fluente",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, informal (projetos, voluntariado)",
+    "curriculo": "https://drive.google.com/file/d/1XtbRcelsU1KgFZgEpMZWRhh6vk1a0OyT/view?usp=sharing",
+    "autorizado": true
+  }
+]

@@ -36,7 +36,7 @@ export class AuthService {
   public readonly isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   // URL da API
-  private readonly apiUrl = `${environment.apiUrl}/api`;
+  private readonly apiUrl = `${environment.apiUrl}`;
   private readonly tokenKey = 'auth_token';
   private readonly userKey = 'current_user';
   private readonly refreshKey = 'refresh_token';

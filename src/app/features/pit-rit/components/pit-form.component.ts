@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared/shared.module';
@@ -23,7 +28,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
   providers: [provideNgxMask()],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="pit-form-container glass-card animate-fade-in">
+    <div class="pit-form-container animate-in">
       <header class="form-header">
         <h2 class="section-title">Formulário PIT</h2>
         <p class="section-desc">
@@ -97,7 +102,9 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
                 class="form-select"
               >
                 <option value="Efetivo">Efetivo</option>
-                <option value="Dedicação Exclusiva (D.E.)">Dedicação Exclusiva (D.E.)</option>
+                <option value="Dedicação Exclusiva (D.E.)">
+                  Dedicação Exclusiva (D.E.)
+                </option>
                 <option value="Substituto">Substituto</option>
                 <option value="Temporário">Temporário</option>
                 <option value="Colaborador">Colaborador</option>
@@ -221,11 +228,19 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         </div>
 
         <div class="form-section">
-          <div class="total-alert" [class.total-excedido]="getGrandTotal() > getMaxCH()">
+          <div
+            class="total-alert"
+            [class.total-excedido]="getGrandTotal() > getMaxCH()"
+          >
             Carga Horária Total:
             <strong>{{ getGrandTotal() | number: '1.1-1' }}h</strong>
-            <span class="total-max"> (Máximo {{ data.identificacao.regime || '40h D.E.' }}: {{ getMaxCH() }}h)</span>
-            <span *ngIf="getGrandTotal() > getMaxCH()" class="total-aviso"> ⚠ CH excede o limite!</span>
+            <span class="total-max">
+              (Máximo {{ data.identificacao.regime || '40h D.E.' }}:
+              {{ getMaxCH() }}h)</span
+            >
+            <span *ngIf="getGrandTotal() > getMaxCH()" class="total-aviso">
+              ⚠ CH excede o limite!</span
+            >
           </div>
         </div>
 
@@ -297,40 +312,26 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
   `,
   styles: [
     `
-      :host {
-        --slot-bg-Aula: #e8f5e9;
-        --slot-color-Aula: #2e7d32;
-        --slot-bg-Planejamento: #fff3e0;
-        --slot-color-Planejamento: #e65100;
-        --slot-bg-Atendimento: #e3f2fd;
-        --slot-color-Atendimento: #1565c0;
-        --slot-bg-Apoio: #f3e5f5;
-        --slot-color-Apoio: #6a1b9a;
-        --slot-bg-Orientação: #fce4ec;
-        --slot-color-Orientação: #ad1457;
-        --slot-bg-Extracurricular: #eceff1;
-        --slot-color-Extracurricular: #37474f;
-        --slot-bg-Pesquisa: #e0f2f1;
-        --slot-color-Pesquisa: #00695c;
-        --slot-bg-Extensão: #fbe9e7;
-        --slot-color-Extensão: #d84315;
-        --slot-bg-Gestão: #e8eaf6;
-        --slot-color-Gestão: #283593;
-        --slot-bg-Comissões: #fff8e1;
-        --slot-color-Comissões: #ff8f00;
-      }
+      /* Cores categóricas dos tipos de atividade (tokens --slot-bg-<categoria>
+         e --slot-color-<categoria>, com variante escura) definidas em
+         src/assets/styles/tokens.css — compartilhadas com
+         rit-form.component.ts (mesmas categorias). */
       .pit-form-container {
         padding: 2.5rem;
         max-width: 1200px;
         margin: 2rem auto;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-md);
         transform: translateZ(0); /* Estabilização de renderização */
         backface-visibility: hidden;
       }
       .form-header {
         margin-bottom: 2.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid var(--color-border-light);
         padding-bottom: 1.5rem;
       }
       .section-title {
@@ -396,13 +397,13 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-size: 0.85rem;
       }
       .spreadsheet-table th {
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--color-background-hover);
         text-align: center;
         color: var(--color-text);
         font-weight: bold;
       }
       .section-row td {
-        background: rgba(0, 0, 0, 0.1);
+        background: var(--color-background-secondary);
         font-weight: bold;
         font-size: 0.9rem;
         text-align: left;
@@ -426,7 +427,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         background: rgba(var(--color-primary-rgb), 0.1);
       }
       .readonly-cell {
-        background: rgba(0, 0, 0, 0.02);
+        background: var(--color-background-hover);
         text-align: center;
         color: var(--color-text-muted);
       }
@@ -442,7 +443,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         min-height: 28px;
       }
       .input-cell input:focus {
-        outline: 2px solid #2e7d32;
+        outline: 2px solid var(--color-primary);
       }
       .result-cell {
         background: rgba(var(--color-accent-rgb), 0.1);
@@ -471,7 +472,7 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-weight: 600;
       }
       .period-cell {
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--color-background-hover);
         font-weight: 700;
         font-size: 0.8rem;
         text-align: center;
@@ -483,15 +484,18 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         font-size: 0.8rem;
         height: 36px;
         width: 100%;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
+        background: var(--color-background-secondary);
+        color: var(--color-text);
         transition: background-color 0.3s;
         cursor: default !important;
       }
-      .btn-primary, .btn-secondary {
-        cursor: pointer;
+      .btn-primary,
+      .btn-secondary {
       }
-      .btn-primary *, .btn-secondary * {
+      .btn-primary *,
+      .btn-secondary * {
         pointer-events: none;
       }
       .table-input {
@@ -568,9 +572,9 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         transition: background 0.3s;
       }
       .total-alert.total-excedido {
-        background: rgba(211, 47, 47, 0.1);
-        color: #c62828;
-        border: 1px solid rgba(211, 47, 47, 0.3);
+        background: rgba(var(--color-error-rgb), 0.1);
+        color: var(--color-error-text);
+        border: 1px solid rgba(var(--color-error-rgb), 0.3);
       }
       .total-max {
         font-size: 0.9rem;
@@ -593,12 +597,12 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
       }
       .btn-primary {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border: none;
         padding: 0.8rem 2rem;
         border-radius: 50px;
         font-weight: 600;
-        cursor: pointer;
+
         transition: transform 0.2s;
       }
       .btn-secondary {
@@ -608,7 +612,6 @@ import { PitTableRow, PIT_SHEET_DATA } from '../constants/pit.constants';
         padding: 0.8rem 2rem;
         border-radius: 50px;
         font-weight: 600;
-        cursor: pointer;
       }
       .btn-primary:hover {
         transform: translateY(-2px);
@@ -714,7 +717,7 @@ export class PitFormComponent {
 
   getGrandTotal(): number {
     let total = 0;
-    this.sheetData.forEach(sec => {
+    this.sheetData.forEach((sec) => {
       sec.rows.forEach((row: any) => {
         if (!row.isSubtotal) total += this.getTValue(row.t);
       });
@@ -772,7 +775,10 @@ export class PitFormComponent {
       return;
     }
 
-    if ((regime === '40h' || regime === '40h D.E.') && totalAtual < maxPermitido) {
+    if (
+      (regime === '40h' || regime === '40h D.E.') &&
+      totalAtual < maxPermitido
+    ) {
       this.notificationService.showError(
         `Regime ${regime}: a carga horária deve ser exatamente ${maxPermitido}h. Atual: ${totalAtual.toFixed(1)}h. Ajuste as atividades.`
       );

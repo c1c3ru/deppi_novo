@@ -41,7 +41,18 @@
               "src/assets/styles/utilities.css",
               "src/assets/styles/main.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "canvg",
+              "core-js",
+              "raf",
+              "rgbcolor",
+              "jspdf",
+              "html2canvas",
+              "quill",
+              "quill-delta",
+              "dompurify"
+            ]
           },
           "configurations": {
             "production": {
@@ -53,8 +64,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "15kb",
+                  "maximumError": "20kb"
                 }
               ],
               "outputHashing": "all",
@@ -65,7 +76,14 @@
                 }
               ],
               "sourceMap": false,
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "serviceWorker": true,
               "ngswConfigPath": "ngsw-config.json"
             },

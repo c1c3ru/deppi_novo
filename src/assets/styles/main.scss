@@ -1,251 +1,71 @@
-/* Multi-Layered Modern Global Styles - DEPPI IFCE */
+// =============================================================================
+// DEPPI IFCE Maracanaú — Estilos Globais Principais
+// Arquivo de entrada SCSS da aplicação Angular
+// Metodologia: SPDD (Structured Prompt-Driven Development)
+// =============================================================================
 
+// -----------------------------------------------------------------------------
+// 1. IMPORTAÇÕES EXTERNAS
+// -----------------------------------------------------------------------------
+
+// Tipografia principal: Outfit (300–800)
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+// Editor de texto rico — features de boletins e pesquisa
 @import 'quill/dist/quill.snow.css';
 
-/* Reset & Fluid Defaults */
+// =============================================================================
+// 2. RESET MODERNO
+// Normalização de comportamentos padrão dos navegadores
+// =============================================================================
+
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-:root {
-  /* Selection & Scrollbar */
-  --selection-bg: rgba(var(--color-primary-rgb), 0.2);
-  --selection-color: var(--color-primary);
-}
+// =============================================================================
+// 3. BASE — HTML E BODY
+// Configuração fundamental do documento
+// =============================================================================
 
-::selection {
-  background: var(--selection-bg);
-  color: var(--selection-color);
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  // Melhora a renderização de texto em telas de alta resolução
+  text-rendering: optimizeLegibility;
 }
 
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
+  font-weight: 400;
   line-height: 1.6;
   color: var(--color-text);
-  background: var(--color-background);
-  min-height: 100vh;
+  background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  // Transição suave ao alternar temas (ThemeService)
   transition:
     background-color var(--transition-normal),
     color var(--transition-normal);
 }
 
-/* Fluid Typography */
-h1,
-h2,
-h3,
-h4,
-.font-display {
-  font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.8em;
+// Seleção de texto com cores da marca IFCE
+::selection {
+  background-color: rgba(var(--color-primary-rgb), 0.2);
+  color: var(--color-text);
 }
 
-h1 {
-  font-size: clamp(2rem, 5vw, var(--font-size-4xl));
-}
-
-h2 {
-  font-size: clamp(1.5rem, 4vw, var(--font-size-3xl));
-}
-
-h3 {
-  font-size: clamp(1.25rem, 3vw, var(--font-size-2xl));
-}
-
-p {
-  margin-bottom: 1.5rem;
-  max-width: 65ch;
-  color: var(--color-text-secondary);
-}
-
-/* Glass & Surface Effects */
-.glass {
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-}
-
-.glass-card {
-  @extend .glass;
-  border-radius: var(--border-radius-lg);
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
-}
-
-.surface {
-  background: var(--color-background-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-lg);
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
-  transition: box-shadow var(--transition-normal);
-
-  /* Sem transform no hover para evitar flickering (o elemento não se desloca,
-     o que faria o cursor "sair" momentaneamente e alternar entre states) */
-  &:hover {
-    box-shadow: var(--shadow-lg);
-  }
-}
-
-/* Modern Buttons - Fluid & Reactive */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-  padding: 0.8em 1.8em;
-  border-radius: var(--border-radius-full);
-  font-weight: 600;
-  font-size: var(--font-size-sm);
-  cursor: pointer !important;
-  transition: all var(--transition-normal);
-  border: none;
-  text-decoration: none;
-  position: relative;
-  overflow: hidden;
-
-  * {
-    pointer-events: none;
-  }
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: white;
-  box-shadow: var(--shadow-primary);
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px -6px rgba(var(--color-primary-rgb), 0.5);
-    background: var(--color-primary-dark);
-    cursor: pointer !important;
-
-    &::after {
-      opacity: 1;
-    }
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.btn-glass {
-  background: rgba(var(--color-primary-rgb), 0.1);
-  color: var(--color-primary);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
-
-  &:hover {
-    background: rgba(var(--color-primary-rgb), 0.15);
-    border-color: var(--color-primary);
-  }
-}
-
-/* Innovative Grid Layouts */
-.innovative-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Animated Reveals */
-.reveal-up {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: revealUp 0.8s var(--transition-normal) forwards;
-}
-
-@keyframes revealUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Modern Forms */
-.form-group {
-  margin-bottom: 1.5rem;
-
-  label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 0.6rem;
-    font-size: var(--font-size-sm);
-    color: var(--color-text);
-  }
-
-  input,
-  textarea {
-    background: var(--color-background-secondary);
-    border: 2px solid transparent;
-    border-radius: var(--border-radius-md);
-    padding: 0.8rem 1rem;
-    color: var(--color-text);
-    transition: all var(--transition-fast);
-
-    &:focus {
-      outline: none;
-      background: var(--color-background);
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.1);
-    }
-  }
-}
-
-/* Container Utility */
-.container {
-  max-width: var(--container-max-width);
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-/* IFCE Specific Pattern Overlay (Subtle) */
-.ifce-bg-accent {
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      var(--color-primary) 0.5px,
-      transparent 0.5px
-    );
-    background-size: 24px 24px;
-    opacity: 0.03;
-    pointer-events: none;
-  }
-}
-
-/* Innovative Scrollbar */
+// Scrollbar personalizada (navegadores baseados em Chromium)
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -253,47 +73,1305 @@ p {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-primary);
   border-radius: var(--border-radius-full);
-  border: 3px solid var(--color-background-secondary);
+  opacity: 0.6;
 
   &:hover {
-    background: var(--color-text-muted);
+    opacity: 1;
   }
 }
 
-/* Loading Utilities */
+// =============================================================================
+// 4. TIPOGRAFIA
+// Headings, parágrafos, links e listas
+// =============================================================================
+
+// --- Headings ---
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+}
+
+h5 {
+  font-size: var(--font-size-lg);
+}
+
+h6 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+// --- Parágrafos ---
+p {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+// --- Links ---
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition:
+    color var(--transition-fast),
+    opacity var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+// --- Listas ---
+ul,
+ol {
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-lg);
+}
+
+li {
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+// --- Código inline ---
+code {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.875em;
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: 0.1em 0.4em;
+  color: var(--color-primary-dark);
+}
+
+// --- Linha horizontal ---
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--spacing-xl) 0;
+}
+
+// =============================================================================
+// 5. ELEMENTOS DE FORMULÁRIO
+// Inputs, textareas, selects e botões base
+// =============================================================================
+
+// --- Campos de entrada ---
+input,
+textarea,
+select {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: var(--color-background-secondary);
+  }
+}
+
+select {
+  // Select é interativo — cursor pointer definido explicitamente
+  cursor: pointer;
+  // Remove seta padrão em navegadores
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  padding-right: var(--spacing-xl);
+}
+
+// --- Botão base — FONTE DA VERDADE do cursor ---
+// cursor: pointer definido UMA VEZ aqui; componentes NÃO devem redeclarar.
+// Exceção legítima nos componentes: cursor: default !important (input somente leitura)
+button {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  // FONTE DA VERDADE: todos os <button> da aplicação herdam este cursor
+  cursor: pointer;
+  transition: var(--transition-fast);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--border-radius-sm);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// =============================================================================
+// 6. LAYOUT GLOBAL DA APLICAÇÃO ANGULAR
+// Estrutura raiz: app-container e main-content
+// =============================================================================
+
+// Contêiner raiz — garante layout em coluna full-height
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Área de conteúdo principal — empurrada pelo header fixo (80px)
+.main-content {
+  flex: 1;
+  margin-top: var(--header-height);
+  // Garante que o conteúdo não fique colado no footer
+  padding-bottom: var(--spacing-2xl);
+}
+
+// Contêiner centralizado de largura máxima
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+// =============================================================================
+// 7. GRID SYSTEM
+// Grades responsivas de 1 a 4 colunas
+// =============================================================================
+
+.grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+// Grade automática responsiva (usada em seções de cards)
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+// =============================================================================
+// 7.1. LAYOUT DE PÁGINA — SPLIT SECTION
+// Padrão usado pelas páginas institucionais (Início, Pesquisa, Extensão,
+// Inovação, Privacidade, PIT/RIT etc.): texto de um lado, imagem do outro.
+// =============================================================================
+
+.page-container {
+  min-height: 100vh;
+  padding-top: 120px;
+  padding-bottom: var(--spacing-2xl);
+  background-color: var(--color-background);
+  font-family: var(--font-family);
+  color: var(--color-text);
+}
+
+.split-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-2xl) var(--spacing-md);
+  align-items: center;
+}
+
+.content-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.image-col img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+// Label/supratítulo verde com traço decorativo — usado acima do <h1> de página
+.subtitle {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.subtitle::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+// Trecho em destaque dentro de parágrafos descritivos
+.highlight {
+  background-color: rgba(var(--color-primary-rgb), 0.15);
+  color: var(--color-text);
+  font-weight: 600;
+  padding: 0.05em 0.3em;
+  border-radius: 3px;
+}
+
+// Título com gradiente institucional (mesma técnica de .stat-numero)
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Ganha efeito vidro ao passar o mouse — cards sobre fundo neutro
+.glass-hover {
+  transition:
+    background var(--transition-normal),
+    border-color var(--transition-normal);
+
+  &:hover {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-color: var(--glass-border);
+  }
+}
+
+// Uso dentro de .split-section/.grid quando uma única coluna deve ocupar
+// todo o espaço (ex.: página de Privacidade, sem coluna de imagem)
+.full-width {
+  grid-column: 1 / -1;
+}
+
+// Link inline dentro de parágrafos de conteúdo
+.link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px dashed rgba(var(--color-primary-rgb), 0.4);
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.link:hover {
+  color: var(--color-primary-dark);
+  border-bottom-style: solid;
+  text-decoration: none;
+}
+
+// =============================================================================
+// 8. COMPONENTES GLOBAIS — CARD
+// Cartões de conteúdo usados em pesquisa, extensão, inovação etc.
+// =============================================================================
+
+.card {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  // Borda superior com cor primária ao hover
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--color-primary),
+      var(--color-secondary)
+    );
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-normal);
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+.card-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.card-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.card-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-content {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.card-footer {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+// Variante glassmorphism — usada em seções hero, innovation, header e footer
+.card-glass,
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+// Superfície neutra — base dos cards em Revista/Anais, boletins, login etc.
+.surface {
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+}
+
+// =============================================================================
+// 9. COMPONENTES GLOBAIS — BOTÕES
+// Sistema de botões alinhado à identidade visual do IFCE
+// =============================================================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  // cursor: pointer é necessário aqui porque .btn é usado em tags <a>
+  // (não apenas em <button>). Para <button>, já está definido no reset global.
+  cursor: pointer;
+  border: 2px solid transparent;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// Verde primário IFCE
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-primary);
+
+  &:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -6px rgba(var(--color-primary-rgb), 0.4);
+    text-decoration: none;
+    color: var(--color-on-primary);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Vermelho secundário IFCE
+.btn-secondary {
+  background: var(--color-secondary);
+  color: var(--color-on-secondary);
+
+  &:hover {
+    filter: brightness(0.88);
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: var(--color-on-secondary);
+  }
+}
+
+// Contorno sem preenchimento
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &:hover {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+}
+
+// Fantasma — para ações secundárias discretas
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+
+  &:hover {
+    background: var(--color-background-hover);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
+// Efeito vidro — ações secundárias sobre cabeçalhos/cards com fundo translúcido
+// (Revista/Anais, login) usando os mesmos tokens de .glass/.card-glass
+.btn-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  color: var(--color-text);
+  border-color: var(--glass-border);
+
+  &:hover {
+    background: var(--color-background-hover);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
+// Ícone inline (emoji/símbolo) ao lado de texto em botões e listas
+.icon {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+// Texto+spinner dentro de botões (estado de carregamento) — usa currentColor
+// para funcionar sobre qualquer variante de .btn (primary, outline, ghost...).
+.btn-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+
+  &::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: currentColor;
+    border-radius: var(--border-radius-full);
+    animation: girar 0.8s linear infinite;
+  }
+}
+
+// Tamanhos alternativos
+.btn-sm {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.btn-lg {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  border-radius: var(--border-radius-lg);
+}
+
+// =============================================================================
+// 10. COMPONENTES GLOBAIS — FORMULÁRIOS
+// Grupos de campo, labels, inputs estilizados e mensagens de erro
+// =============================================================================
+
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+
+  // Indicador de campo obrigatório
+  &.required::after {
+    content: ' *';
+    color: var(--color-secondary);
+  }
+}
+
+.form-input {
+  width: 100%;
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-base);
+  background: var(--color-background);
+  color: var(--color-text);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
+  }
+
+  &.is-error {
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px rgba(var(--color-error-rgb), 0.15);
+  }
+
+  &.is-success {
+    border-color: var(--color-success);
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+// Contêiner de formulário (Contato, PIT/RIT) — trabalha em conjunto com
+// .form-row/.form-group, que já cuidam do espaçamento entre campos.
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+// =============================================================================
+// 10.1. EDITOR DE TEXTO RICO (QUILL)
+// Tema institucional para o ngx-quill — usado em artigos (Revista/Anais) e
+// boletins. Sobrescreve o tema "snow" padrão do Quill com os tokens do app.
+// =============================================================================
+
+.ql-container {
+  font-family: var(--font-family) !important;
+  font-size: var(--font-size-base) !important;
+  border-color: var(--color-border) !important;
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md) !important;
+  background: var(--color-background) !important;
+  color: var(--color-text) !important;
+}
+
+.ql-toolbar {
+  border-color: var(--color-border) !important;
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0 !important;
+  background: var(--color-background-secondary) !important;
+  font-family: var(--font-family) !important;
+}
+
+.ql-toolbar button:hover,
+.ql-toolbar button.ql-active {
+  color: var(--color-primary) !important;
+}
+
+.ql-toolbar .ql-stroke {
+  stroke: var(--color-text-secondary);
+}
+
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: var(--color-primary) !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: var(--color-text-secondary);
+}
+
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button.ql-active .ql-fill {
+  fill: var(--color-primary) !important;
+}
+
+// Foco no editor
+.ql-container.ql-snow:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15) !important;
+}
+
+// =============================================================================
+// 11. COMPONENTES GLOBAIS — NOTIFICAÇÕES / TOASTS
+// Feedback visual para ações do usuário (app-notification)
+// =============================================================================
+
+.notification {
+  position: fixed;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  max-width: 400px;
+  min-width: 280px;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  animation: notificacao-entrada 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  font-weight: 500;
+
+  &.success {
+    background: var(--color-success);
+    color: var(--color-on-primary);
+  }
+
+  &.error {
+    background: var(--color-error);
+    color: var(--color-on-primary);
+  }
+
+  &.warning {
+    background: var(--color-warning);
+    color: var(--color-on-primary);
+  }
+
+  &.info {
+    background: var(--color-info);
+    color: var(--color-on-primary);
+  }
+}
+
+// =============================================================================
+// 12. COMPONENTES GLOBAIS — LOADING / SPINNER
+// Indicadores de carregamento (app-loading)
+// =============================================================================
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(var(--color-primary-rgb), 0.08);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+}
+
 .spinner {
+  display: inline-block;
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(var(--color-primary-rgb), 0.1);
+  border: 3px solid var(--color-border);
   border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  display: inline-block;
+  border-radius: var(--border-radius-full);
+  animation: girar 0.9s linear infinite;
 }
 
-.spinner-small {
+.spinner-sm {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+// Contêiner de estado de carregamento/erro de uma página ou seção
+// (Revista/Anais, Boletins) — combine com .spinner ou .surface conforme o caso.
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--color-text-secondary);
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.error-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: var(--spacing-md);
+}
+
+// Loading em linha para botões
+.loading-inline {
+  display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: var(--border-radius-full);
+  animation: girar 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+// =============================================================================
+// 13. COMPONENTES GLOBAIS — BADGES / ETIQUETAS
+// Etiquetas de status, categorias e identificação
+// =============================================================================
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.2em var(--spacing-sm);
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
+.badge-primary {
+  background: rgba(var(--color-primary-rgb), 0.12);
+  color: var(--color-primary-dark);
+}
+
+.badge-secondary {
+  background: rgba(var(--color-secondary-rgb), 0.12);
+  color: var(--color-secondary);
+}
+
+.badge-accent {
+  background: rgba(var(--color-accent-rgb), 0.2);
+  color: var(--color-accent-text);
+}
+
+.badge-success {
+  background: rgba(var(--color-success-rgb), 0.12);
+  color: var(--color-success-text);
+}
+
+.badge-error {
+  background: rgba(var(--color-error-rgb), 0.12);
+  color: var(--color-error-text);
+}
+
+// =============================================================================
+// 14. SEÇÕES DE CONTEÚDO
+// Padrões de espaçamento e layout para seções de página
+// =============================================================================
+
+.section {
+  padding: var(--spacing-2xl) 0;
+}
+
+.section-sm {
+  padding: var(--spacing-xl) 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+  position: relative;
+
+  // Sublinhado decorativo com gradiente IFCE
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--color-primary),
+      var(--color-secondary)
+    );
+    border-radius: var(--border-radius-full);
+    margin: var(--spacing-sm) auto 0;
+  }
+
+  // Quando título está à esquerda (sem section-header)
+  &.title-left::after {
+    margin-left: 0;
+  }
+}
+
+.section-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  max-width: 640px;
+  margin: var(--spacing-md) auto 0;
+  line-height: 1.6;
+}
+
+// =============================================================================
+// 15. UTILITÁRIOS ESPECÍFICOS DO DEPPI
+// Classes semânticas do domínio do sistema
+// =============================================================================
+
+// Fundo institucional de destaque — usado no rodapé (app-footer)
+.ifce-bg-accent {
+  background: var(--color-background-secondary);
+  border-top: 1px solid var(--color-border);
+}
+
+// Badge institucional do DEPPI
+.deppi-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3em var(--spacing-md);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+  color: var(--color-on-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border-radius: var(--border-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: var(--shadow-primary);
+}
+
+// Seção com barra de destaque superior (gradiente IFCE)
+.deppi-section {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--color-primary),
+      var(--color-secondary),
+      var(--color-accent)
+    );
+  }
+}
+
+// Grade de estatísticas (ex: número de pesquisadores, projetos, etc.)
+.deppi-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
+}
+
+.stat-card {
+  text-align: center;
+  padding: var(--spacing-lg);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-numero {
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: var(--spacing-xs);
+  // Efeito gradiente no número
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-rotulo {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+// =============================================================================
+// 16. ANIMAÇÕES
+// Keyframes reutilizáveis em toda a aplicação
+// =============================================================================
+
+// Entrada de notificações (slide da direita)
+@keyframes notificacao-entrada {
+  from {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Rotação para spinners de carregamento
+@keyframes girar {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Fade-in genérico (usado por router-outlet ao carregar páginas)
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Pulsação suave para indicadores de status ativo
+@keyframes pulsar {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+// Entrada de conteúdo das páginas via router-outlet
+router-outlet + * {
+  animation: aparecer 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+// Classe explícita equivalente, para uso direto em qualquer elemento
+// (raiz de página, painel) além do efeito automático acima.
 .animate-in {
-  animation: fadeIn 0.6s ease-out forwards;
+  animation: aparecer 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+// Revelação individual de itens ao montar (cards, seções) — combine com
+// [style.animation-delay] para escalonar uma lista/grade.
+@keyframes revelar-subindo {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-up {
+  animation: revelar-subindo 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+// =============================================================================
+// 17. RESPONSIVIDADE
+// Breakpoints: 1024px (tablet), 768px (mobile), 480px (mobile pequeno)
+// =============================================================================
+
+// --- Tablet (≤ 1024px) ---
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .split-section {
+    gap: var(--spacing-xl);
+  }
+}
+
+// --- Mobile (≤ 768px) ---
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+
+  h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-2xl);
+  }
+
+  h3 {
+    font-size: var(--font-size-xl);
+  }
+
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .split-section {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-sm);
+  }
+
+  .reverse-mobile .image-col {
+    order: 2;
+  }
+
+  .reverse-mobile .content-col {
+    order: 1;
+  }
+
+  .section {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .section-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .section-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .btn-lg {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
+  }
+
+  .notification {
+    right: var(--spacing-sm);
+    left: var(--spacing-sm);
+    max-width: unset;
+  }
+
+  .deppi-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// --- Mobile pequeno (≤ 480px) ---
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+
+  .container {
+    padding: 0 var(--spacing-xs);
+  }
+
+  .card {
+    padding: var(--spacing-md);
+  }
+
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+  }
+
+  .deppi-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-numero {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+// =============================================================================
+// 18. ACESSIBILIDADE
+// Suporte a preferências do sistema operacional do usuário
+// =============================================================================
+
+// Desabilita animações para usuários que preferem menos movimento
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  router-outlet + * {
+    animation: none;
+  }
+}
+
+// Alto contraste para acessibilidade visual
+// (valores extremos propositais — é o objetivo do modo alto-contraste do SO —
+// mas adaptados ao tema para não gerar borda preta sobre fundo escuro)
+@media (prefers-contrast: high) {
+  :root:not([data-theme='dark']) {
+    --color-border: #000000;
+    --color-text-secondary: #000000;
+  }
+
+  [data-theme='dark'] {
+    --color-border: #ffffff;
+    --color-text-secondary: #ffffff;
+  }
+
+  .card {
+    border: 2px solid var(--color-border);
+  }
+
+  .btn {
+    border: 2px solid currentColor;
+  }
+}
+
+// Observação: o modo escuro é resolvido pelo ThemeService (data-theme="light"|"dark"
+// em <html>, persistido em localStorage). O ThemeService já escuta
+// prefers-color-scheme quando o usuário não tem preferência salva, então não há
+// necessidade de um branch CSS "auto" separado — os valores acima em
+// [data-theme="dark"] (tokens.css) cobrem todos os casos.
+
+// Foco visível aprimorado para navegação por teclado
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+// Remove outline padrão quando o foco é via mouse (não teclado)
+:focus:not(:focus-visible) {
+  outline: none;
 }

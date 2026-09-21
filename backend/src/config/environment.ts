@@ -64,7 +64,19 @@ export const config = {
     port: parseInt(process.env.SMTP_PORT || '587', 10),
     user: process.env.SMTP_USER || '',
     pass: process.env.SMTP_PASS || '',
-    from: process.env.EMAIL_FROM || 'noreply@deppi.ifce.edu.br',
+    from: process.env.EMAIL_FROM || 'conhecaifce@maracanau.ifce.edu.br',
     fromName: process.env.EMAIL_FROM_NAME || 'DEPPI IFCE Maracanaú',
+    contactTo:
+      process.env.EMAIL_CONTACT_TO || 'conhecaifce@maracanau.ifce.edu.br',
+  },
+
+  googleCalendar: {
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    refreshToken: process.env.GOOGLE_REFRESH_TOKEN || '',
+    // ID da agenda que vai receber os eventos de visita — 'primary' é a
+    // agenda principal da conta dona do refresh token (deppi.maracanau@ifce.edu.br)
+    calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary',
+    timezone: process.env.GOOGLE_CALENDAR_TIMEZONE || 'America/Fortaleza',
   },
 };

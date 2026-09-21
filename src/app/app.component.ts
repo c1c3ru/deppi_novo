@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../environments/environment';
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   template: `
     <div class="app-container">

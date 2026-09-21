@@ -1,0 +1,34 @@
+name: Sync Hub de Talentos
+
+on:
+  schedule:
+    # Roda a cada 2 horas (Minuto 0 de horas pares)
+    - cron: '0 */2 * * *'
+  workflow_dispatch: # Permite rodar manualmente apertando um botão no GitHub Actions
+
+permissions:
+  contents: write # Necessário para o bot poder fazer o git push
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Executar script de sincronização
+        run: python3 bin/sync_talentos.py
+
+      - name: Commit e Push das alterações
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/assets/data/talentos.json
+          # O comando falha se não houver nada para commitar, então usamos o '|| true' para continuar
+          git commit -m "chore: atualiza dados do hub de talentos via automação" || true
+          git push

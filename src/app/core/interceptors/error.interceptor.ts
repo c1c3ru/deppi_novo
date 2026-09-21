@@ -49,9 +49,12 @@ export class ErrorInterceptor implements HttpInterceptor {
           errorMessage = error.error.message;
         }
 
-        // Não exibir toast para erros de auth (já tratados no AuthService)
+        // Não exibir toast para erros de auth (já tratados no AuthService) nem
+        // para 404 em GET (listagens vazias/recurso ainda não publicado são
+        // tratadas como estado vazio pela própria tela, não como erro)
         const isAuthEndpoint = request.url.includes('/auth/');
-        if (!isAuthEndpoint) {
+        const isEmptyGetResult = error.status === 404 && request.method === 'GET';
+        if (!isAuthEndpoint && !isEmptyGetResult) {
           this.notificationService.showError(errorMessage);
         }
 

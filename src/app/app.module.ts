@@ -158,6 +158,13 @@ import { AuthGuard } from './core/guards/auth.guard';
             ),
         },
         {
+          path: 'revista',
+          loadChildren: () =>
+            import('./features/revista/revista.module').then(
+              (m) => m.RevistaModule
+            ),
+        },
+        {
           path: 'contact',
           loadChildren: () =>
             import('./features/contact/contact.module').then(
@@ -183,6 +190,20 @@ import { AuthGuard } from './core/guards/auth.guard';
           loadChildren: () =>
             import('./features/pit-rit/pit-rit.module').then(
               (m) => m.PitRitModule
+            ),
+        },
+        {
+          path: 'talentos',
+          loadChildren: () =>
+            import('./features/talentos/talentos.module').then(
+              (m) => m.TalentosModule
+            ),
+        },
+        {
+          path: 'visitas',
+          loadChildren: () =>
+            import('./features/visitas/visitas.module').then(
+              (m) => m.VisitasModule
             ),
         },
         {

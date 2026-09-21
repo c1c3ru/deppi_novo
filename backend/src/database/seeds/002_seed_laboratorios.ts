@@ -20,8 +20,8 @@ export async function seed(knex: Knex): Promise<void> {
       ]),
     },
     {
-      name: 'LabVICIA - Visão & IA',
-      description: 'O LabVICIA é o centro de excelência em Visão Computacional e Inteligência Artificial do campus. Pesquisamos algoritmos de Deep Learning, processamento de imagens e reconhecimento de padrões para aplicações na saúde, segurança e agricultura.',
+      name: 'LABVICIA - Visão & IA',
+      description: 'O LABVICIA é o centro de excelência em Visão Computacional e Inteligência Artificial do campus. Pesquisamos algoritmos de Deep Learning, processamento de imagens e reconhecimento de padrões para aplicações na saúde, segurança e agricultura.',
       cover_image: '',
       productions: JSON.stringify([
         { title: 'Detecção de Pragas em Plantações de Milho via Drone', type: 'Patente', year: '2023' },
@@ -74,6 +74,49 @@ export async function seed(knex: Knex): Promise<void> {
       services: JSON.stringify([
         { name: 'Análise Vibracional', type: 'Manutenção', description: 'Diagnóstico de falhas em máquinas rotativas.' }
       ]),
-    }
+    },
+    // Laboratórios disponíveis para agendamento de visitas escolares (FEAT-002).
+    {
+      name: 'LAQAMB - Laboratório de Química Ambiental',
+      description: 'Destinado à realização de ensaios analíticos, aulas práticas e pesquisas voltadas ao monitoramento da qualidade do ar, água e solo. O espaço atende a projetos de controle de contaminação, tratamento de efluentes e desenvolvimento de tecnologias ambientais sustentáveis.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'LAPP - Laboratório de Apoio às Práticas Pedagógicas',
+      description: 'Espaço voltado ao planejamento, criação e experimentação de metodologias de ensino, recursos didáticos e tecnologias educacionais. O ambiente apoia a formação docente, o desenvolvimento de materiais pedagógicos e a inovação em processos de ensino-aprendizagem.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'MAKER - Espaço Maker',
+      description: 'Ambiente colaborativo voltado para a cultura do "faça você mesmo", inovação e prototipagem rápida. Oferece suporte ao desenvolvimento de projetos multidisciplinares por meio do uso de impressoras 3D, corte a laser, ferramentas manuais e componentes eletrônicos.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'OFICINA - Oficina de Prototipagem e Manutenção',
+      description: 'Espaço técnico equipado para a fabricação, montagem, ajuste e manutenção mecânica e eletroeletrônica de componentes e equipamentos. Presta suporte prático à execução de projetos de extensão, pesquisa aplicada e demandas institucionais.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'LQOI - Laboratório de Química Orgânica e Inorgânica',
+      description: 'Estruturado para a execução de práticas acadêmicas e de pesquisa em síntese, purificação, caracterização de compostos químicos e análise de reagentes orgânicos e inorgânicos, seguindo rígidos padrões de biossegurança.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
+    {
+      name: 'LASIC - Laboratório de Sistemas Inteligentes e Computação',
+      description: 'Dedicado ao desenvolvimento de pesquisas em inteligência artificial, computação aplicada, sistemas embarcados e redes de computadores. O laboratório apoia o desenvolvimento de software, algoritmos otimizados e soluções computacionais avançadas.',
+      cover_image: '',
+      productions: JSON.stringify([]),
+      services: JSON.stringify([]),
+    },
   ]);
 }

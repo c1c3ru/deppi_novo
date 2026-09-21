@@ -8,15 +8,7 @@ import { LabDetailComponent } from './components/lab-detail/lab-detail.component
 import { LabFormComponent } from './components/lab-form/lab-form.component';
 
 @NgModule({
-  declarations: [
-    LabListComponent,
-    LabDetailComponent,
-    LabFormComponent
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    LaboratoriosRoutingModule
-  ]
+  declarations: [LabListComponent, LabDetailComponent, LabFormComponent],
+  imports: [CommonModule, ReactiveFormsModule, LaboratoriosRoutingModule],
 })
-export class LaboratoriosModule { }
+export class LaboratoriosModule {}

@@ -14,17 +14,18 @@ import { logger } from './utils/logger';
 import { errorHandler } from './middleware/error.middleware';
 import { notFoundHandler } from './middleware/notFound.middleware';
 import { authMiddleware } from './middleware/auth.middleware';
-import { validationMiddleware } from './middleware/validation.middleware';
 
 // Routes
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import boletimRoutes from './routes/boletim.routes';
+import revistaRoutes from './routes/revista.routes';
 import uploadRoutes from './routes/upload.routes';
 import healthRoutes from './routes/health.routes';
 import contactRoutes from './routes/contact.routes';
 import laboratorioRoutes from './routes/laboratorios.routes';
-
+import visitRoutes from './routes/visit.routes';
+import { startVisitCleanupJob } from './jobs/visit-cleanup.job';
 // Sentry
 import * as Sentry from '@sentry/node';
 
@@ -122,10 +123,11 @@ class Application {
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/users', authMiddleware, userRoutes);
     this.app.use('/api/boletins', boletimRoutes);
+    this.app.use('/api/revista', revistaRoutes);
     this.app.use('/api/upload', authMiddleware, uploadRoutes);
     this.app.use('/api/contact', contactRoutes);
     this.app.use('/api/laboratorios', laboratorioRoutes);
-
+    this.app.use('/api/visitas', visitRoutes);
     // API status routes
     this.app.get('/api', (_req, res) => {
       res.json({
@@ -154,7 +156,7 @@ class Application {
             description: 'API para o sistema DEPPI do IFCE Campus Maracanaú',
             contact: {
               name: 'DEPPI Team',
-              email: 'deppi.maracanau@ifce.edu.br',
+              email: 'conhecaifce@maracanau.ifce.edu.br',
             },
           },
           servers: [
@@ -205,6 +207,12 @@ class Application {
 
       if (config.nodeEnv !== 'production') {
         logger.info(`📚 Swagger docs available at http://localhost:${config.port}/api-docs`);
+      }
+
+      // Não agenda o cron durante os testes (jest) para não manter o
+      // processo vivo nem disparar limpezas fora de controle nos testes.
+      if (config.nodeEnv !== 'test') {
+        startVisitCleanupJob();
       }
     });
   }

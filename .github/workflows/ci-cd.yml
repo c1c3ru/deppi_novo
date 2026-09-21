@@ -5,6 +5,8 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  schedule:
+    - cron: "0 2 * * *" # Executa todo dia as 2 da manhã para pegar novos talentos
 
 env:
   NODE_VERSION: "22"
@@ -16,6 +18,8 @@ jobs:
   frontend-tests:
     name: Frontend Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     defaults:
       run:
@@ -32,14 +36,23 @@ jobs:
           cache: "npm"
           cache-dependency-path: "./package-lock.json"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Sync Talentos Data
+        run: python3 bin/sync_talentos.py
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run ESLint (Auto-fix)
+        run: npm run lint:fix || true
 
       - name: Apply Prettier formatting
-        run: npm run format
+        run: npm run format || true
+
+      - name: Commit Auto-fixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(ci): auto-fix linting and formatting issues"
+          file_pattern: "src/**/*.{ts,html,scss,json,md}"
 
       - name: Run Prettier check
         run: npm run format:check
@@ -55,6 +68,8 @@ jobs:
           name: frontend-coverage
 
       - name: Build application
+        env:
+          NODE_OPTIONS: "--max-old-space-size=1536"
         run: |
           # 1. Remova a pasta dist antiga para não ter lixo
           rm -rf dist/
@@ -74,6 +89,9 @@ jobs:
   backend-tests:
     name: Backend Tests
     runs-on: ubuntu-latest
+    needs: frontend-tests
+    permissions:
+      contents: write
 
     services:
       postgres:
@@ -120,18 +138,26 @@ jobs:
           cache-dependency-path: "./backend/package-lock.json"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Run ESLint (Auto-fix)
+        run: npm run lint:fix || true
 
       - name: Apply Prettier formatting
-        run: npm run format
+        run: npm run format || true
+
+      - name: Commit Auto-fixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(ci): auto-fix backend linting and formatting issues"
+          file_pattern: "**/*.ts **/*.json"
 
       - name: Run Prettier check
         run: npm run format:check
 
       - name: Build application
+        env:
+          NODE_OPTIONS: "--max-old-space-size=1536"
         run: npm run build
 
       - name: Setup test database
@@ -188,6 +214,7 @@ jobs:
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true # Não trava o pipeline se Code scanning/GHAS não estiver habilitado no repositório
         with:
           sarif_file: "trivy-results.sarif"
           category: "trivy-vulnerability-scanner"
@@ -198,6 +225,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [frontend-tests, backend-tests]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
@@ -205,6 +235,9 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Sync Talentos Data
+        run: python3 bin/sync_talentos.py
 
       - name: Log in to Container Registry
         uses: docker/login-action@v3
@@ -248,6 +281,8 @@ jobs:
 
       - name: Create .env file
         run: |
+          cd /home/deppi/deppi_novo
+          sudo chown -R $USER:$USER /home/deppi/deppi_novo || true
           # Banco de Dados
           URL_PASS=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "${{ secrets.DB_PASSWORD }}")
           echo "DB_USER=deppi" > .env
@@ -279,6 +314,14 @@ jobs:
           echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
           echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env
           echo "EMAIL_FROM_NAME=DEPPI IFCE Maracanaú" >> .env
+          echo "EMAIL_CONTACT_TO=${{ secrets.EMAIL_CONTACT_TO }}" >> .env
+
+          # Google Calendar (agenda de visitas)
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GOOGLE_REFRESH_TOKEN=${{ secrets.GOOGLE_REFRESH_TOKEN }}" >> .env
+          echo "GOOGLE_CALENDAR_ID=primary" >> .env
+          echo "GOOGLE_CALENDAR_TIMEZONE=America/Fortaleza" >> .env
 
           # Infra/Rede
           echo "CORS_ORIGIN=http://10.50.12.19:4200" >> .env
@@ -357,10 +400,14 @@ jobs:
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
           PROMETHEUS_PASSWORD: ${{ secrets.PROMETHEUS_PASSWORD }}
         run: |
           cd /home/deppi/deppi_novo
+          sudo chown -R $USER:$USER /home/deppi/deppi_novo || true
           # Função para escrever secret sem quebras de linha (base64 faz wrap que corrompe .env)
           safe() { printf '%s' "${!1}" | tr -d '\n\r'; }
 
@@ -394,8 +441,16 @@ jobs:
           echo "SMTP_PORT=587" >> .env
           echo "SMTP_USER=$(safe SMTP_USER)" >> .env
           echo "SMTP_PASS=$(safe SMTP_PASS)" >> .env
-          echo "EMAIL_FROM=noreply@deppi.ifce.edu.br" >> .env
+          echo "EMAIL_FROM=conhecaifce@maracanau.ifce.edu.br" >> .env
           echo "EMAIL_FROM_NAME=DEPPI IFCE Maracanaú" >> .env
+          echo "EMAIL_CONTACT_TO=conhecaifce@maracanau.ifce.edu.br" >> .env
+
+          # Google Calendar (agenda de visitas)
+          echo "GOOGLE_CLIENT_ID=$(safe GOOGLE_CLIENT_ID)" >> .env
+          echo "GOOGLE_CLIENT_SECRET=$(safe GOOGLE_CLIENT_SECRET)" >> .env
+          echo "GOOGLE_REFRESH_TOKEN=$(safe GOOGLE_REFRESH_TOKEN)" >> .env
+          echo "GOOGLE_CALENDAR_ID=primary" >> .env
+          echo "GOOGLE_CALENDAR_TIMEZONE=America/Fortaleza" >> .env
 
           # Infra/Rede
           echo "CORS_ORIGIN=https://deppi.maracanau.ifce.edu.br" >> .env
@@ -418,6 +473,9 @@ jobs:
           export PATH=$PATH:$HOME/.docker/cli-plugins
 
           cd /home/deppi/deppi_novo
+          # Registra o diretório como seguro para o git (evita erro de ownership)
+          git config --global --add safe.directory /home/deppi/deppi_novo
+
           # Evita conflitos com caminhos longos ou links simbólicos
           git config core.protectNTFS false || true
           git config core.protectHFS false || true

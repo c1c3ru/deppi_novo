@@ -78,6 +78,33 @@ export interface ApiResponse<T> {
   };
 }
 
+export interface RevistaEdicao {
+  id: number;
+  volume: number;
+  ano: number;
+  title: string;
+  description?: string;
+  coverImage?: string;
+  status: 'draft' | 'published';
+  publishedAt?: string;
+  artigos?: RevistaArtigo[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface RevistaArtigo {
+  id: number;
+  edicaoId: number;
+  title: string;
+  summary?: string;
+  authors?: string;
+  content: string;
+  order: number;
+  edicao?: RevistaEdicao;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface NotificationMessage {
   id: string;
   type: 'success' | 'error' | 'warning' | 'info';

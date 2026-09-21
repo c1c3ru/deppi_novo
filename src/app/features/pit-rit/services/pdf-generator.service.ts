@@ -94,7 +94,7 @@ export class PdfGeneratorService {
     PIT_SHEET_DATA.forEach((section) => {
       const body: any[] = [];
       let subtotal = 0;
-      section.rows.forEach(row => {
+      section.rows.forEach((row) => {
         if (!row.isSubtotal && row.t) {
           const val = this.getTValue(data, row.t);
           body.push([row.desc || '', val.toFixed(1)]);
@@ -105,7 +105,7 @@ export class PdfGeneratorService {
       const subtotalRounded = Math.round(subtotal * 10) / 10;
       body.push([
         { content: 'Subtotal', styles: { fontStyle: 'bold' } },
-        { content: subtotalRounded.toFixed(1), styles: { fontStyle: 'bold' } }
+        { content: subtotalRounded.toFixed(1), styles: { fontStyle: 'bold' } },
       ]);
 
       autoTable(doc, {
@@ -133,19 +133,29 @@ export class PdfGeneratorService {
     // --- Calcular total geral localmente para garantir valor correto ---
     let totalGeralPit = 0;
     PIT_SHEET_DATA.forEach((section) => {
-      section.rows.forEach(row => {
+      section.rows.forEach((row) => {
         if (!row.isSubtotal && row.t) {
           totalGeralPit += this.getTValue(data, row.t);
         }
       });
     });
     totalGeralPit = Math.round(totalGeralPit * 10) / 10;
-    const maxCH = data.identificacao?.regime === '20h' ? 20 : data.identificacao?.regime === '30h' ? 30 : 40;
+    const maxCH =
+      data.identificacao?.regime === '20h'
+        ? 20
+        : data.identificacao?.regime === '30h'
+          ? 30
+          : 40;
 
     // Linha de Total Geral
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 2,
-      body: [[`TOTAL GERAL (Máximo ${data.identificacao?.regime || '40h D.E.'}: ${maxCH}h)`, `${totalGeralPit.toFixed(1)}h`]],
+      body: [
+        [
+          `TOTAL GERAL (Máximo ${data.identificacao?.regime || '40h D.E.'}: ${maxCH}h)`,
+          `${totalGeralPit.toFixed(1)}h`,
+        ],
+      ],
       theme: 'grid',
       styles: { fontSize: 9, fontStyle: 'bold', cellPadding: 2 },
       columnStyles: {
@@ -178,9 +188,17 @@ export class PdfGeneratorService {
         head: [['Horário', 'SEG', 'TER', 'QUA', 'QUI', 'SEX']],
         body: scheduleBodyPit,
         theme: 'grid',
-        headStyles: { fillColor: [210, 210, 210], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7, cellPadding: 1.5 },
+        headStyles: {
+          fillColor: [210, 210, 210],
+          textColor: [0, 0, 0],
+          fontStyle: 'bold',
+          fontSize: 7,
+          cellPadding: 1.5,
+        },
         styles: { fontSize: 7, halign: 'center', cellPadding: 1 },
-        columnStyles: { 0: { fontStyle: 'bold', halign: 'left', cellWidth: 20 } },
+        columnStyles: {
+          0: { fontStyle: 'bold', halign: 'left', cellWidth: 20 },
+        },
         margin: { left: 15, right: 15 },
       });
     }
@@ -202,18 +220,36 @@ export class PdfGeneratorService {
     doc.text(assinaturaLinha, xServidor, currentY);
     const nomeServidor = data.identificacao?.nome || 'Professor(a)';
     const nomeServidorLargura = doc.getTextWidth(nomeServidor);
-    doc.text(nomeServidor, xServidor + (linhaLargura / 2) - (nomeServidorLargura / 2), currentY + 5);
-    doc.text('Servidor(a)', xServidor + (linhaLargura / 2) - (doc.getTextWidth('Servidor(a)') / 2), currentY + 9);
+    doc.text(
+      nomeServidor,
+      xServidor + linhaLargura / 2 - nomeServidorLargura / 2,
+      currentY + 5
+    );
+    doc.text(
+      'Servidor(a)',
+      xServidor + linhaLargura / 2 - doc.getTextWidth('Servidor(a)') / 2,
+      currentY + 9
+    );
 
     // Assinatura do Departamento
     const xDepto = pageWidth - 15 - linhaLargura;
     doc.text(assinaturaLinha, xDepto, currentY);
     const nomeDepto = 'Departamento de Ensino';
     const nomeDeptoLargura = doc.getTextWidth(nomeDepto);
-    doc.text(nomeDepto, xDepto + (linhaLargura / 2) - (nomeDeptoLargura / 2), currentY + 5);
-    doc.text('Chefe de Departamento', xDepto + (linhaLargura / 2) - (doc.getTextWidth('Chefe de Departamento') / 2), currentY + 9);
+    doc.text(
+      nomeDepto,
+      xDepto + linhaLargura / 2 - nomeDeptoLargura / 2,
+      currentY + 5
+    );
+    doc.text(
+      'Chefe de Departamento',
+      xDepto + linhaLargura / 2 - doc.getTextWidth('Chefe de Departamento') / 2,
+      currentY + 9
+    );
 
-    doc.save(`PIT_${(data.identificacao?.nome || 'Servidor').replace(/\s/g, '_')}.pdf`);
+    doc.save(
+      `PIT_${(data.identificacao?.nome || 'Servidor').replace(/\s/g, '_')}.pdf`
+    );
   }
 
   async generateRitPdf(data: RitData) {
@@ -311,18 +347,38 @@ export class PdfGeneratorService {
     doc.text(assinaturaLinhaRit, xServidorRit, currentY);
     const nomeServidorRit = data.identificacao?.nome || 'Professor(a)';
     const nomeServidorRitLargura = doc.getTextWidth(nomeServidorRit);
-    doc.text(nomeServidorRit, xServidorRit + (linhaLarguraRit / 2) - (nomeServidorRitLargura / 2), currentY + 5);
-    doc.text('Servidor(a)', xServidorRit + (linhaLarguraRit / 2) - (doc.getTextWidth('Servidor(a)') / 2), currentY + 9);
+    doc.text(
+      nomeServidorRit,
+      xServidorRit + linhaLarguraRit / 2 - nomeServidorRitLargura / 2,
+      currentY + 5
+    );
+    doc.text(
+      'Servidor(a)',
+      xServidorRit + linhaLarguraRit / 2 - doc.getTextWidth('Servidor(a)') / 2,
+      currentY + 9
+    );
 
     // Assinatura do Departamento
     const xDeptoRit = pageWidth - 15 - linhaLarguraRit;
     doc.text(assinaturaLinhaRit, xDeptoRit, currentY);
     const nomeDeptoRit = 'Departamento de Ensino';
     const nomeDeptoRitLargura = doc.getTextWidth(nomeDeptoRit);
-    doc.text(nomeDeptoRit, xDeptoRit + (linhaLarguraRit / 2) - (nomeDeptoRitLargura / 2), currentY + 5);
-    doc.text('Chefe de Departamento', xDeptoRit + (linhaLarguraRit / 2) - (doc.getTextWidth('Chefe de Departamento') / 2), currentY + 9);
+    doc.text(
+      nomeDeptoRit,
+      xDeptoRit + linhaLarguraRit / 2 - nomeDeptoRitLargura / 2,
+      currentY + 5
+    );
+    doc.text(
+      'Chefe de Departamento',
+      xDeptoRit +
+        linhaLarguraRit / 2 -
+        doc.getTextWidth('Chefe de Departamento') / 2,
+      currentY + 9
+    );
 
-    doc.save(`RIT_${(data.identificacao?.nome || 'Servidor').replace(/\s/g, '_')}.pdf`);
+    doc.save(
+      `RIT_${(data.identificacao?.nome || 'Servidor').replace(/\s/g, '_')}.pdf`
+    );
   }
 
   private getCategoryTotal(category: any): number {
