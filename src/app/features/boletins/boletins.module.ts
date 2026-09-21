@@ -22,7 +22,7 @@ import { boletinsReducer } from './store/boletins.reducer';
 import { BoletinsEffects } from './store/boletins.effects';
 
 // Guards
-import { BoletinsGuard } from './guards/boletins.guard';
+import { AuthGuard } from '../../core/guards/auth.guard';
 
 // SharedModule
 import { SharedModule } from '../../shared/shared.module';
@@ -48,12 +48,12 @@ const routes: Routes = [
       {
         path: 'admin/novo',
         component: BoletimFormComponent,
-        canActivate: [BoletinsGuard],
+        canActivate: [AuthGuard],
       },
       {
         path: 'admin/:id/editar',
         component: BoletimFormComponent,
-        canActivate: [BoletinsGuard],
+        canActivate: [AuthGuard],
       },
     ],
   },
@@ -76,6 +76,6 @@ const routes: Routes = [
     EffectsModule.forFeature([BoletinsEffects]),
     QuillModule.forRoot(),
   ],
-  providers: [BoletinsService, BoletinsGuard, provideNgxMask()],
+  providers: [BoletinsService, provideNgxMask()],
 })
 export class BoletinsModule {}

@@ -116,64 +116,19 @@ import { Component } from '@angular/core';
   `,
   styles: [
     `
-      .page-container {
-        min-height: 100vh;
-        padding-top: 120px;
-        padding-bottom: 60px;
-        background-color: #ffffff;
-        font-family: var(--font-display, 'Inter', sans-serif);
-        color: #333;
-      }
-      .split-section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 4rem 2rem;
-        align-items: center;
-      }
-      .subtitle {
-        color: #00d97e;
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-      .subtitle::before {
-        content: '';
-        display: inline-block;
-        width: 30px;
-        height: 2px;
-        background-color: #00d97e;
-        margin-right: 15px;
-      }
+      /* Layout, subtítulo, destaque e imagem herdam de main.scss
+         (.page-container, .split-section, .subtitle, .highlight,
+         .image-col img) — usam os tokens institucionais e já respondem ao
+         modo escuro. Aqui só o específico desta página. */
       .title {
         font-size: 3.5rem;
         font-weight: 800;
-        color: #1a1a1a;
         margin: 0 0 1.5rem;
         line-height: 1.1;
       }
       .description {
         font-size: 1.1rem;
         line-height: 1.8;
-        color: #4a4a4a;
-      }
-      .highlight {
-        background-color: #00e676;
-        color: #000;
-        font-weight: 600;
-        padding: 0 0.2rem;
-      }
-      .image-col img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-        border-radius: 4px;
       }
 
       .attributes-section {
@@ -185,7 +140,6 @@ import { Component } from '@angular/core';
         text-align: center;
         font-size: 2rem;
         font-weight: 800;
-        color: #1a1a1a;
         margin-bottom: 3rem;
       }
       .numbered-list {
@@ -206,9 +160,9 @@ import { Component } from '@angular/core';
         justify-content: center;
         width: 35px;
         height: 35px;
-        border: 2px solid #00d97e;
+        border: 2px solid var(--color-primary);
         border-radius: 50%;
-        color: #333;
+        color: var(--color-text);
         font-weight: 700;
         font-size: 1rem;
       }
@@ -216,21 +170,10 @@ import { Component } from '@angular/core';
         margin: 0;
         font-size: 1rem;
         line-height: 1.6;
-        color: #4a4a4a;
         padding-top: 5px;
       }
 
       @media (max-width: 768px) {
-        .split-section {
-          grid-template-columns: 1fr;
-          gap: 2rem;
-        }
-        .reverse-mobile .image-col {
-          order: 2;
-        }
-        .reverse-mobile .content-col {
-          order: 1;
-        }
         .title {
           font-size: 2.5rem;
         }

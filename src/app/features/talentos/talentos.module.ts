@@ -496,12 +496,112 @@ function diceBearUrl(seed: string): string {
   `,
   styles: [
     `
+      /* ─── Design Tokens (paleta local "neo-brutalista") ───
+         Paleta própria desta página (fundo creme, tinta quase-
+         preta, bordas grossas, sombras duras deslocadas) —
+         independente das cores institucionais (verde/vermelho/
+         dourado do IFCE) usadas no resto do site.
+
+         Os valores em :host são os valores originais (modo
+         claro, inalterados). :host-context([data-theme='dark'])
+         redefine as MESMAS variáveis com uma paleta escura
+         (nunca preto/branco puro em áreas grandes) mantendo a
+         estética de bordas/sombras duras — a cor de tinta/borda
+         inverte para um tom claro para permanecer visível sobre
+         o fundo escuro. ─────────────────────────────────────── */
+      :host {
+        /* Núcleo — invertem entre claro/escuro */
+        --talentos-cream: #f5f0e8;
+        --talentos-ink: #1a1a1a;
+        --talentos-surface: #ffffff;
+
+        /* Texto secundário / labels / placeholders — invertem */
+        --talentos-text-secondary: #444444;
+        --talentos-muted: #666666;
+        --talentos-label-muted: #888888;
+        --talentos-placeholder: #999999;
+        --talentos-faint: #aaaaaa;
+        --talentos-track: #dddddd;
+        --talentos-avatar-bg: #f0e8d8;
+
+        /* Semânticas do swipe (like/pass) — invertem */
+        --talentos-success: #16a34a;
+        --talentos-danger-neutral: #4b5563;
+
+        /* Botão de contato — invertem */
+        --talentos-contact-bg: #5746e3;
+        --talentos-contact-hover-bg: #4a3bc2;
+
+        /* Sombra de hover do card (rgba) — inverte */
+        --talentos-hover-shadow: rgba(0, 0, 0, 0.15);
+
+        /* Acentos de marca / decorativos — FIXOS nos dois temas,
+           não participam da inversão claro/escuro (ver bloco
+           dark abaixo para a justificativa de cada um). */
+        --talentos-accent-gold: #f5c842;
+        --talentos-stripe-coral: #ff6b6b;
+        --talentos-stripe-teal: #4ecdc4;
+        --talentos-stripe-purple: #a29bfe;
+        --talentos-linkedin: #0077b5;
+        --talentos-cv: #ff5e5e;
+        --talentos-on-accent: #ffffff;
+        --talentos-ink-fixed: #1a1a1a;
+        --talentos-cream-fixed: #f5f0e8;
+        --talentos-on-gold-soft: #333333;
+        --talentos-shadow-soft: #444444;
+      }
+
+      :host-context([data-theme='dark']) {
+        /* Núcleo: creme claro ↔ chumbo quente escuro; tinta
+           quase-preta ↔ quase-branco quente (nunca #000/#fff). */
+        --talentos-cream: #201d1a;
+        --talentos-ink: #f0ece4;
+        --talentos-surface: #332c23;
+
+        --talentos-text-secondary: #cfc7ba;
+        --talentos-muted: #b0a89c;
+        --talentos-label-muted: #a89f90;
+        --talentos-placeholder: #9c9284;
+        --talentos-faint: #9c9182;
+        --talentos-track: #59503f;
+        --talentos-avatar-bg: #3d3120;
+
+        --talentos-success: #4ade80;
+        --talentos-danger-neutral: #9aa4b2;
+
+        --talentos-contact-bg: #7b6ae0;
+        /* Sem hover distinto no dark no design original — o hover
+           já ganha destaque via box-shadow (ver .contact-btn:hover). */
+        --talentos-contact-hover-bg: #7b6ae0;
+
+        --talentos-hover-shadow: rgba(255, 255, 255, 0.15);
+
+        /* Mantidos IGUAIS no escuro — cores fixas de marca/acento
+           que não seguem a inversão da página: dourado/listras são
+           puramente decorativos; ícones/textos brancos ficam sobre
+           botões de cor sólida (GitHub/LinkedIn/CV/Contato) que não
+           mudam com o tema; "ink-fixed"/"cream-fixed" são o par
+           tinta/creme fixo usado no verso do card (sempre escuro,
+           como um "carimbo"), que não deve clarear no dark mode. */
+        --talentos-accent-gold: #f5c842;
+        --talentos-stripe-coral: #ff6b6b;
+        --talentos-stripe-teal: #4ecdc4;
+        --talentos-stripe-purple: #a29bfe;
+        --talentos-linkedin: #0077b5;
+        --talentos-cv: #ff5e5e;
+        --talentos-on-accent: #ffffff;
+        --talentos-ink-fixed: #1a1a1a;
+        --talentos-cream-fixed: #f5f0e8;
+        --talentos-on-gold-soft: #333333;
+        --talentos-shadow-soft: #444444;
+      }
+
       /* ─── Reset / Base ─────────────────────────────── */
       .hub-container {
         min-height: 100vh;
         padding-top: 100px;
         padding-bottom: 80px;
-        background: #f5f0e8;
+        background: var(--talentos-cream);
         font-family: 'Inter', 'Segoe UI', sans-serif;
       }
 
@@ -514,8 +614,8 @@ function diceBearUrl(seed: string): string {
       }
       .hero-badge {
         display: inline-block;
-        background: #1a1a1a;
-        color: #f5f0e8;
+        background: var(--talentos-ink);
+        color: var(--talentos-cream);
         font-size: 0.7rem;
         font-weight: 800;
         letter-spacing: 2px;
@@ -523,26 +623,26 @@ function diceBearUrl(seed: string): string {
         padding: 0.35rem 0.9rem;
         border-radius: 2px;
         margin-bottom: 1.5rem;
-        border: 2px solid #1a1a1a;
+        border: 2px solid var(--talentos-ink);
       }
       .hero-title {
         font-size: clamp(2.8rem, 8vw, 5rem);
         font-weight: 900;
-        color: #1a1a1a;
+        color: var(--talentos-ink);
         line-height: 1.05;
         margin: 0 0 1rem;
         letter-spacing: -2px;
       }
       .hero-accent {
-        color: #f5f0e8;
-        background: #1a1a1a;
+        color: var(--talentos-cream);
+        background: var(--talentos-ink);
         padding: 0 0.15em;
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;
       }
       .hero-sub {
         font-size: 1.05rem;
-        color: #444;
+        color: var(--talentos-text-secondary);
         line-height: 1.7;
         margin: 0 0 2rem;
       }
@@ -553,14 +653,14 @@ function diceBearUrl(seed: string): string {
         flex-wrap: wrap;
       }
       .stat-pill {
-        background: #fff;
-        border: 2.5px solid #1a1a1a;
-        box-shadow: 3px 3px 0 #1a1a1a;
+        background: var(--talentos-surface);
+        border: 2.5px solid var(--talentos-ink);
+        box-shadow: 3px 3px 0 var(--talentos-ink);
         border-radius: 100px;
         padding: 0.4rem 1rem;
         font-size: 0.88rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: var(--talentos-ink);
       }
 
       /* ─── Controls ───────────────────────────────────── */
@@ -575,9 +675,9 @@ function diceBearUrl(seed: string): string {
       .search-wrapper {
         display: flex;
         align-items: center;
-        background: #fff;
-        border: 2.5px solid #1a1a1a;
-        box-shadow: 4px 4px 0 #1a1a1a;
+        background: var(--talentos-surface);
+        border: 2.5px solid var(--talentos-ink);
+        box-shadow: 4px 4px 0 var(--talentos-ink);
         border-radius: 8px;
         padding: 0 1rem;
         gap: 0.5rem;
@@ -592,11 +692,11 @@ function diceBearUrl(seed: string): string {
         font-size: 1rem;
         padding: 0.75rem 0;
         background: transparent;
-        color: #1a1a1a;
+        color: var(--talentos-ink);
         font-family: inherit;
       }
       .search-input::placeholder {
-        color: #999;
+        color: var(--talentos-placeholder);
       }
 
       .filter-chips {
@@ -605,9 +705,9 @@ function diceBearUrl(seed: string): string {
         flex-wrap: wrap;
       }
       .chip {
-        background: #fff;
-        border: 2px solid #1a1a1a;
-        box-shadow: 2px 2px 0 #1a1a1a;
+        background: var(--talentos-surface);
+        border: 2px solid var(--talentos-ink);
+        box-shadow: 2px 2px 0 var(--talentos-ink);
         border-radius: 100px;
         padding: 0.3rem 0.9rem;
         font-size: 0.82rem;
@@ -615,27 +715,27 @@ function diceBearUrl(seed: string): string {
         cursor: pointer;
         transition: all 0.1s;
         font-family: inherit;
-        color: #1a1a1a;
+        color: var(--talentos-ink);
       }
       .chip:hover,
       .chip.active {
-        background: #1a1a1a;
-        color: #f5f0e8;
+        background: var(--talentos-ink);
+        color: var(--talentos-cream);
         transform: translate(-1px, -1px);
-        box-shadow: 3px 3px 0 #f5c842;
+        box-shadow: 3px 3px 0 var(--talentos-accent-gold);
       }
 
       /* ─── States ─────────────────────────────────────── */
       .loading-state {
         text-align: center;
         padding: 4rem;
-        color: #666;
+        color: var(--talentos-muted);
       }
       .spinner {
         width: 40px;
         height: 40px;
-        border: 4px solid #ddd;
-        border-top-color: #1a1a1a;
+        border: 4px solid var(--talentos-track);
+        border-top-color: var(--talentos-ink);
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
         margin: 0 auto 1rem;
@@ -648,7 +748,7 @@ function diceBearUrl(seed: string): string {
       .empty-state {
         text-align: center;
         padding: 4rem;
-        color: #666;
+        color: var(--talentos-muted);
         font-size: 1.1rem;
       }
       .empty-emoji {
@@ -703,21 +803,21 @@ function diceBearUrl(seed: string): string {
       }
       .swipe-yes {
         background: rgba(34, 197, 94, 0.18);
-        color: #16a34a;
+        color: var(--talentos-success);
       }
       .swipe-yes span {
         transform: rotate(-15deg);
-        color: #16a34a;
-        border-color: #16a34a;
+        color: var(--talentos-success);
+        border-color: var(--talentos-success);
       }
       .swipe-no {
         background: rgba(107, 114, 128, 0.15);
-        color: #4b5563;
+        color: var(--talentos-danger-neutral);
       }
       .swipe-no span {
         transform: rotate(15deg);
-        color: #4b5563;
-        border-color: #4b5563;
+        color: var(--talentos-danger-neutral);
+        border-color: var(--talentos-danger-neutral);
       }
       .talent-card.blurred-card .card-face {
         filter: blur(6px) grayscale(50%);
@@ -730,14 +830,14 @@ function diceBearUrl(seed: string): string {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: #1a1a1a;
-        color: #fff;
+        background: var(--talentos-ink-fixed);
+        color: var(--talentos-on-accent);
         padding: 0.5rem 1rem;
         border-radius: 4px;
         font-weight: 800;
         font-size: 0.85rem;
         z-index: 10;
-        box-shadow: 4px 4px 0 #f5c842;
+        box-shadow: 4px 4px 0 var(--talentos-accent-gold);
         pointer-events: none;
         text-align: center;
       }
@@ -745,7 +845,7 @@ function diceBearUrl(seed: string): string {
         transform: translateY(-8px);
       }
       .talent-card:not(.blurred-card):hover .card-front {
-        box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.15);
+        box-shadow: 12px 12px 0 var(--talentos-hover-shadow);
       }
       @keyframes fadeUp {
         from {
@@ -768,10 +868,10 @@ function diceBearUrl(seed: string): string {
       .card-face {
         position: absolute;
         inset: 0;
-        border: 2.5px solid #1a1a1a;
+        border: 2.5px solid var(--talentos-ink);
         border-radius: 12px;
-        background: #fff;
-        box-shadow: 4px 4px 0 #1a1a1a;
+        background: var(--talentos-surface);
+        box-shadow: 4px 4px 0 var(--talentos-ink);
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
         transition:
@@ -786,25 +886,28 @@ function diceBearUrl(seed: string): string {
       }
       .card-back {
         transform: rotateY(180deg);
-        background: #1a1a1a;
-        color: #f5f0e8;
+        /* Verso do card é um painel sempre escuro (tinta/creme
+           fixos), independente do tema do site — ver comentário
+           no bloco de tokens no topo do arquivo. */
+        background: var(--talentos-ink-fixed);
+        color: var(--talentos-cream-fixed);
         padding: 1.5rem;
         justify-content: center;
       }
 
-      /* stripes de cor no topo — neo-brutalism */
+      /* stripes de cor no topo — neo-brutalism (decorativo, fixo) */
       .card-header-stripe {
         height: 8px;
         background: repeating-linear-gradient(
           90deg,
-          #f5c842 0px,
-          #f5c842 20px,
-          #ff6b6b 20px,
-          #ff6b6b 40px,
-          #4ecdc4 40px,
-          #4ecdc4 60px,
-          #a29bfe 60px,
-          #a29bfe 80px
+          var(--talentos-accent-gold) 0px,
+          var(--talentos-accent-gold) 20px,
+          var(--talentos-stripe-coral) 20px,
+          var(--talentos-stripe-coral) 40px,
+          var(--talentos-stripe-teal) 40px,
+          var(--talentos-stripe-teal) 60px,
+          var(--talentos-stripe-purple) 60px,
+          var(--talentos-stripe-purple) 80px
         );
         flex-shrink: 0;
       }
@@ -812,11 +915,11 @@ function diceBearUrl(seed: string): string {
       .card-avatar {
         width: 80px;
         height: 80px;
-        border: 2.5px solid #1a1a1a;
+        border: 2.5px solid var(--talentos-ink);
         border-radius: 10px;
         margin: 1rem auto 0;
         display: block;
-        background: #f0e8d8;
+        background: var(--talentos-avatar-bg);
         object-fit: cover;
       }
       .card-body {
@@ -826,13 +929,13 @@ function diceBearUrl(seed: string): string {
       .card-name {
         font-size: 1.15rem;
         font-weight: 900;
-        color: #1a1a1a;
+        color: var(--talentos-ink);
         margin: 0 0 0.2rem;
         letter-spacing: -0.5px;
       }
       .card-course {
         font-size: 0.78rem;
-        color: #666;
+        color: var(--talentos-muted);
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -840,22 +943,24 @@ function diceBearUrl(seed: string): string {
       }
       .market-badge {
         display: inline-block;
-        background: #f5c842;
-        color: #1a1a1a;
+        /* Selo dourado fixo (mesmo tratamento nos dois temas);
+           só a borda/sombra acompanham a inversão claro/escuro. */
+        background: var(--talentos-accent-gold);
+        color: var(--talentos-ink-fixed);
         font-size: 0.65rem;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         padding: 0.2rem 0.5rem;
-        border: 2px solid #1a1a1a;
+        border: 2px solid var(--talentos-ink);
         border-radius: 4px;
-        box-shadow: 2px 2px 0 #1a1a1a;
+        box-shadow: 2px 2px 0 var(--talentos-ink);
         margin-top: 0.5rem;
       }
       .card-power {
         margin: 0.75rem 0;
-        background: #f5f0e8;
-        border: 2px solid #1a1a1a;
+        background: var(--talentos-cream);
+        border: 2px solid var(--talentos-ink);
         border-radius: 6px;
         padding: 0.4rem 0.7rem;
         display: flex;
@@ -865,17 +970,17 @@ function diceBearUrl(seed: string): string {
         font-size: 0.65rem;
         font-weight: 800;
         letter-spacing: 1.5px;
-        color: #888;
+        color: var(--talentos-label-muted);
         text-transform: uppercase;
       }
       .power-value {
         font-size: 0.92rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: var(--talentos-ink);
       }
       .card-bio {
         font-size: 0.85rem;
-        color: #444;
+        color: var(--talentos-text-secondary);
         line-height: 1.5;
         margin: 0;
         display: -webkit-box;
@@ -898,7 +1003,7 @@ function diceBearUrl(seed: string): string {
         gap: 0.4rem;
         font-size: 0.72rem;
         font-weight: 700;
-        color: #16a34a;
+        color: var(--talentos-success);
         letter-spacing: 0.03em;
         text-transform: uppercase;
       }
@@ -922,15 +1027,15 @@ function diceBearUrl(seed: string): string {
       }
       .hint-tap {
         font-size: 0.65rem;
-        color: #aaa;
+        color: var(--talentos-faint);
         font-weight: 600;
       }
 
-      /* Back side */
+      /* Back side — painel sempre escuro (fixo), ver .card-back */
       .back-name {
         font-size: 1.2rem;
         font-weight: 900;
-        color: #f5c842;
+        color: var(--talentos-accent-gold);
         margin: 0 0 1rem;
         letter-spacing: -0.5px;
       }
@@ -946,7 +1051,7 @@ function diceBearUrl(seed: string): string {
       .skill-tag {
         background: rgba(255, 255, 255, 0.1);
         border: 1.5px solid rgba(255, 255, 255, 0.25);
-        color: #f5f0e8;
+        color: var(--talentos-cream-fixed);
         border-radius: 100px;
         padding: 0.25rem 0.65rem;
         font-size: 0.8rem;
@@ -974,7 +1079,7 @@ function diceBearUrl(seed: string): string {
       }
       .detail-label {
         font-weight: 700;
-        color: #f5c842;
+        color: var(--talentos-accent-gold);
         text-transform: uppercase;
         font-size: 0.7rem;
         display: block;
@@ -1006,41 +1111,36 @@ function diceBearUrl(seed: string): string {
       }
       .contact-btn {
         flex: 1 1 100%;
-        background-color: #5746e3;
-        color: #fff;
+        background-color: var(--talentos-contact-bg);
+        color: var(--talentos-on-accent);
         font-size: 0.9rem;
         padding: 0.6rem 0.85rem;
-        border: 2px solid #1a1a1a;
-        box-shadow: 2px 2px 0px #1a1a1a;
+        border: 2px solid var(--talentos-ink);
+        box-shadow: 2px 2px 0px var(--talentos-ink);
         justify-content: center;
         margin-bottom: 0.5rem;
       }
       .contact-btn:hover {
-        background-color: #4a3bc2;
+        background-color: var(--talentos-contact-hover-bg);
         transform: translate(-2px, -2px) !important;
-        box-shadow: 4px 4px 0px #1a1a1a;
+        box-shadow: 4px 4px 0px var(--talentos-ink);
         opacity: 1 !important;
       }
-      :host-context([data-theme='dark']) .contact-btn {
-        background-color: #7b6ae0;
-        border: 2px solid #fff;
-        box-shadow: 2px 2px 0px #fff;
-      }
-      :host-context([data-theme='dark']) .contact-btn:hover {
-        box-shadow: 4px 4px 0px #fff;
-      }
+      /* GitHub/LinkedIn/CV vivem no verso do card (painel sempre
+         escuro e fixo — ver .card-back), por isso mantêm cores
+         fixas nos dois temas em vez de seguir a inversão da página. */
       .github-btn {
-        background: #f5f0e8;
-        color: #1a1a1a;
+        background: var(--talentos-cream-fixed);
+        color: var(--talentos-ink-fixed);
       }
       .linkedin-btn {
-        background: #0077b5;
-        color: #fff;
+        background: var(--talentos-linkedin);
+        color: var(--talentos-on-accent);
       }
       .cv-btn {
-        background: #ff5e5e;
-        color: #fff;
-        border-color: #1a1a1a;
+        background: var(--talentos-cv);
+        color: var(--talentos-on-accent);
+        border-color: var(--talentos-ink-fixed);
       }
 
       /* ─── CTA ────────────────────────────────────────── */
@@ -1050,9 +1150,11 @@ function diceBearUrl(seed: string): string {
         padding: 0 1.5rem;
       }
       .cta-card {
-        background: #f5c842;
-        border: 2.5px solid #1a1a1a;
-        box-shadow: 6px 6px 0 #1a1a1a;
+        /* Cartão "ilha" dourada, fixo nos dois temas; só a borda/
+           sombra (que tocam o fundo da página) acompanham o tema. */
+        background: var(--talentos-accent-gold);
+        border: 2.5px solid var(--talentos-ink);
+        box-shadow: 6px 6px 0 var(--talentos-ink);
         border-radius: 12px;
         padding: 2rem 2.5rem;
         display: flex;
@@ -1071,18 +1173,18 @@ function diceBearUrl(seed: string): string {
       .cta-text h2 {
         font-size: 1.4rem;
         font-weight: 900;
-        color: #1a1a1a;
+        color: var(--talentos-ink-fixed);
         margin: 0 0 0.3rem;
       }
       .cta-text p {
         font-size: 0.9rem;
-        color: #333;
+        color: var(--talentos-on-gold-soft);
         margin: 0;
       }
       .cta-btn {
-        background: #1a1a1a;
-        color: #f5c842;
-        border: 2px solid #1a1a1a;
+        background: var(--talentos-ink-fixed);
+        color: var(--talentos-accent-gold);
+        border: 2px solid var(--talentos-ink-fixed);
         border-radius: 8px;
         padding: 0.75rem 1.5rem;
         font-size: 0.95rem;
@@ -1092,11 +1194,11 @@ function diceBearUrl(seed: string): string {
         transition:
           transform 0.1s,
           box-shadow 0.1s;
-        box-shadow: 3px 3px 0 #444;
+        box-shadow: 3px 3px 0 var(--talentos-shadow-soft);
       }
       .cta-btn:hover {
         transform: translate(-2px, -2px);
-        box-shadow: 5px 5px 0 #444;
+        box-shadow: 5px 5px 0 var(--talentos-shadow-soft);
       }
 
       /* ─── Responsive ─────────────────────────────────── */
@@ -1113,100 +1215,12 @@ function diceBearUrl(seed: string): string {
         }
       }
 
-      /* ─── Dark Mode ──────────────────────────────────── */
-      :host-context([data-theme='dark']) .hub-container {
-        background: var(--color-background);
-      }
-      :host-context([data-theme='dark']) .hero-title,
-      :host-context([data-theme='dark']) .card-name,
-      :host-context([data-theme='dark']) .power-value {
-        color: var(--color-text);
-      }
-      :host-context([data-theme='dark']) .hero-sub,
-      :host-context([data-theme='dark']) .card-course,
-      :host-context([data-theme='dark']) .card-bio,
-      :host-context([data-theme='dark']) .loading-state,
-      :host-context([data-theme='dark']) .empty-state {
-        color: var(--color-text-secondary);
-      }
-      :host-context([data-theme='dark']) .hero-accent {
-        color: var(--color-background);
-        background: var(--color-text);
-      }
-      :host-context([data-theme='dark']) .hero-badge {
-        background: var(--color-text);
-        color: var(--color-background);
-        border-color: var(--color-text);
-      }
-      :host-context([data-theme='dark']) .stat-pill,
-      :host-context([data-theme='dark']) .search-wrapper,
-      :host-context([data-theme='dark']) .chip,
-      :host-context([data-theme='dark']) .card-face.card-front,
-      :host-context([data-theme='dark']) .card-power {
-        background: var(--color-surface);
-        border-color: var(--color-border);
-        color: var(--color-text);
-      }
-      :host-context([data-theme='dark']) .search-input {
-        color: var(--color-text);
-      }
-      :host-context([data-theme='dark']) .stat-pill,
-      :host-context([data-theme='dark']) .search-wrapper {
-        box-shadow: 3px 3px 0 var(--color-border);
-      }
-      :host-context([data-theme='dark']) .card-face {
-        box-shadow: 4px 4px 0 var(--color-border);
-      }
-      :host-context([data-theme='dark']) .chip:hover,
-      :host-context([data-theme='dark']) .chip.active {
-        background: var(--color-text);
-        color: var(--color-background);
-        box-shadow: 3px 3px 0 #f5c842;
-        border-color: var(--color-text);
-      }
-      :host-context([data-theme='dark']) .card-face.card-back {
-        background: var(--color-surface-secondary);
-        border-color: var(--color-border);
-        box-shadow: 4px 4px 0 var(--color-border);
-      }
-      :host-context([data-theme='dark']) .market-badge {
-        box-shadow: 2px 2px 0 var(--color-border);
-        border-color: var(--color-border);
-      }
-      :host-context([data-theme='dark']) .card-avatar {
-        background: var(--color-background);
-        border-color: var(--color-border);
-      }
-      :host-context([data-theme='dark']) .power-label,
-      :host-context([data-theme='dark']) .card-tap-hint {
-        color: var(--color-text-secondary);
-      }
-      :host-context([data-theme='dark'])
-        .talent-card:not(.blurred-card):hover
-        .card-front {
-        box-shadow: 8px 8px 0 rgba(255, 255, 255, 0.15);
-      }
-      :host-context([data-theme='dark']) .cta-card {
-        border-color: var(--color-border);
-        box-shadow: 6px 6px 0 var(--color-border);
-      }
-      :host-context([data-theme='dark']) .cta-btn {
-        background: var(--color-text);
-        color: var(--color-background);
-        border-color: var(--color-border);
-        box-shadow: 3px 3px 0 var(--color-border);
-      }
-      :host-context([data-theme='dark']) .github-btn {
-        background: var(--color-surface);
-        color: var(--color-text);
-        border-color: var(--color-border);
-      }
-      :host-context([data-theme='dark']) .talent-card.blurred-card::after {
-        box-shadow: 4px 4px 0 var(--color-border);
-      }
-      :host-context([data-theme='dark']) .cta-text h2 {
-        color: #1a1a1a;
-      }
+      /* ─── Dark Mode ──────────────────────────────────────
+         Não há regras específicas aqui: todas as cores acima já
+         usam var(--talentos-*), e essas variáveis são redefinidas
+         no bloco :host-context([data-theme='dark']) no topo deste
+         arquivo — a troca de tema é automática via cascata das
+         custom properties, sem precisar duplicar seletores. ─── */
     `,
   ],
 })

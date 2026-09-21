@@ -8,13 +8,13 @@
       <span>&larr;</span> Voltar para Laboratório
     </a>
 
-    <div class="surface reveal-up form-surface">
+    <div class="card reveal-up form-surface">
       <h1 class="font-display form-header">
         {{ labId ? 'Editar Laboratório' : 'Novo Laboratório' }}
       </h1>
 
       <ng-container *ngIf="loading && labId">
-        <div class="loading-state glass">
+        <div class="loading-state card">
           <div class="spinner"></div>
           <p class="loading-text">Carregando dados do laboratório...</p>
         </div>
@@ -60,14 +60,14 @@
           <div
             *ngFor="let prod of productions.controls; let i = index"
             [formGroupName]="i"
-            class="glass item-card reveal-up"
+            class="card item-card reveal-up"
           >
             <div class="item-header">
               <b>Produção #{{ i + 1 }}</b>
               <button
                 type="button"
                 (click)="removeProduction(i)"
-                class="btn btn-glass btn-remove"
+                class="btn btn-ghost btn-remove"
                 [attr.aria-label]="'Remover produção ' + (i + 1)"
               >
                 <span>&times;</span> Remover
@@ -116,7 +116,7 @@
         </div>
         <button
           type="button"
-          class="btn btn-glass add-btn"
+          class="btn btn-ghost add-btn"
           (click)="addProduction()"
         >
           + Adicionar Produção
@@ -134,14 +134,14 @@
           <div
             *ngFor="let serv of services.controls; let i = index"
             [formGroupName]="i"
-            class="glass item-card reveal-up"
+            class="card item-card reveal-up"
           >
             <div class="item-header">
               <b>Serviço #{{ i + 1 }}</b>
               <button
                 type="button"
                 (click)="removeService(i)"
-                class="btn btn-glass btn-remove"
+                class="btn btn-ghost btn-remove"
                 [attr.aria-label]="'Remover serviço ' + (i + 1)"
               >
                 <span>&times;</span> Remover
@@ -181,14 +181,14 @@
         </div>
         <button
           type="button"
-          class="btn btn-glass add-btn"
+          class="btn btn-ghost add-btn"
           (click)="addService()"
         >
           + Adicionar Serviço
         </button>
 
         <div class="form-actions">
-          <a [routerLink]="['/laboratorios', labId]" class="btn btn-glass"
+          <a [routerLink]="['/laboratorios', labId]" class="btn btn-ghost"
             >Cancelar</a
           >
           <button

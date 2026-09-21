@@ -104,66 +104,21 @@ import { RitFormComponent } from './components/rit-form.component';
   `,
   styles: [
     `
-      .page-container {
-        min-height: 100vh;
-        padding-top: 120px;
-        padding-bottom: 60px;
-        background-color: #fafafa;
-        font-family: var(--font-display, 'Inter', sans-serif);
-        color: #333;
-      }
-      .split-section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 4rem 2rem;
-        align-items: center;
-      }
-      .subtitle {
-        color: #00d97e;
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-      .subtitle::before {
-        content: '';
-        display: inline-block;
-        width: 30px;
-        height: 2px;
-        background-color: #00d97e;
-        margin-right: 15px;
-      }
+      /* Layout, subtítulo, destaque e imagem herdam de main.scss
+         (.page-container, .split-section, .subtitle, .highlight,
+         .image-col img), assim como .btn/.btn-outline (verde institucional) —
+         todos já compatíveis com o modo escuro. Aqui só o específico desta
+         página: as abas PIT/RIT e a seção de CTA. */
       .title {
         font-size: 3.5rem;
         font-weight: 800;
-        color: #1a1a1a;
         margin: 0 0 1.5rem;
         line-height: 1.1;
       }
       .description {
         font-size: 1.1rem;
         line-height: 1.8;
-        color: #4a4a4a;
         margin-bottom: 2.5rem;
-      }
-      .highlight {
-        background-color: #00e676;
-        color: #000;
-        font-weight: 600;
-        padding: 0 0.2rem;
-      }
-      .image-col img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-        border-radius: 4px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       }
 
       .action-buttons.tabs {
@@ -174,21 +129,21 @@ import { RitFormComponent } from './components/rit-form.component';
       .tab-btn {
         padding: 1rem 2rem;
         border-radius: 12px;
-        border: 1px solid #ddd;
-        background: white;
+        border: 1px solid var(--color-border);
+        background: var(--color-background);
         font-weight: 600;
 
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #666;
+        color: var(--color-text-secondary);
       }
       .tab-btn.active {
-        background: #0066b3;
-        border-color: #0066b3;
-        color: white;
-        box-shadow: 0 10px 20px rgba(0, 102, 179, 0.2);
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: var(--color-on-primary);
+        box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.25);
         transform: translateY(-2px);
       }
       .btn-icon {
@@ -196,10 +151,10 @@ import { RitFormComponent } from './components/rit-form.component';
       }
 
       .form-section-wrapper {
-        background: #fff;
+        background: var(--color-background);
         padding: 5rem 0;
-        border-top: 1px solid #eee;
-        border-bottom: 1px solid #eee;
+        border-top: 1px solid var(--color-border-light);
+        border-bottom: 1px solid var(--color-border-light);
       }
       .container-narrow {
         max-width: 1100px;
@@ -208,8 +163,12 @@ import { RitFormComponent } from './components/rit-form.component';
       }
 
       .cta-section {
-        background: linear-gradient(135deg, #0066b3 0%, #004d87 100%);
-        color: white;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary) 0%,
+          var(--color-primary-dark) 100%
+        );
+        color: var(--color-on-primary);
         padding: 6rem 2rem;
         text-align: center;
         margin-top: 4rem;
@@ -222,52 +181,26 @@ import { RitFormComponent } from './components/rit-form.component';
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
+        color: var(--color-on-primary);
       }
       .cta-content p {
         font-size: 1.2rem;
         opacity: 0.9;
         margin-bottom: 2.5rem;
       }
-
-      .btn {
-        display: inline-block;
-        padding: 1rem 2.5rem;
-        border-radius: 50px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.33s cubic-bezier(0.4, 0, 0.2, 1);
-
-        border: none;
+      /* Botão "recortado" com a cor de fundo da página — funciona sobre o
+         gradiente institucional em qualquer tema, sem depender de branco fixo. */
+      .cta-section .btn-outline {
+        background: var(--color-background);
+        color: var(--color-primary-dark);
+        border-color: var(--color-background);
       }
-      .btn-primary {
-        background: #0066b3;
-        color: white;
-        box-shadow: 0 4px 14px rgba(0, 102, 179, 0.39);
-      }
-      .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0, 102, 179, 0.23);
-      }
-      .btn-outline {
-        background: white;
-        color: #0066b3;
-      }
-      .btn-outline:hover {
+      .cta-section .btn-outline:hover {
         transform: translateY(-3px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       }
 
       @media (max-width: 768px) {
-        .split-section {
-          grid-template-columns: 1fr;
-          gap: 2rem;
-        }
-        .reverse-mobile .image-col {
-          order: 2;
-        }
-        .reverse-mobile .content-col {
-          order: 1;
-        }
         .title {
           font-size: 2.5rem;
         }

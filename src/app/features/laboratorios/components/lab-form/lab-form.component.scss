@@ -24,7 +24,7 @@
 
   .form-header {
     margin-bottom: 2.5rem;
-    color: var(--color-text-primary);
+    color: var(--color-text);
   }
 
   .form-group {
@@ -45,7 +45,7 @@
       border: 1px solid var(--color-border);
       border-radius: 8px;
       padding: 0.8rem 1rem;
-      color: var(--color-text-primary);
+      color: var(--color-text);
       transition: all 0.3s ease;
 
       &:focus {
@@ -79,7 +79,6 @@
     margin-bottom: 1.5rem;
     border-radius: 12px;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 
     .item-header {
       display: flex;
@@ -93,12 +92,13 @@
       }
     }
 
+    // Vermelho institucional IFCE — mesma cor de marca do .btn-secondary
     .btn-remove {
-      color: var(--color-error, #ff4d4f);
+      color: var(--color-secondary);
 
       &:hover {
-        background: rgba(255, 77, 79, 0.1);
-        border-color: #ff4d4f;
+        background: rgba(var(--color-secondary-rgb), 0.1);
+        border-color: var(--color-secondary);
       }
     }
   }

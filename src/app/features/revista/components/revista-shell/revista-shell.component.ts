@@ -13,12 +13,14 @@ import { AuthService } from '../../../../core/services/auth.service';
         <div class="header-inner">
           <div class="badge">Recurso Contínuo Online &middot; ISSN em processo</div>
           <h1 class="revista-title">
-            Revista <span class="highlight">DEPPI</span>
+            Anais da <span class="highlight">Mostra Científica</span> do IFCE
+            Campus Maracanaú
           </h1>
           <p class="revista-subtitle">
-            Publicação online de divulgação técnico-científica do
-            Departamento de Extensão, Pesquisa, Pós-Graduação e Inovação do
-            IFCE Campus Maracanaú.
+            Registro e divulgação dos trabalhos apresentados na Mostra
+            Científica, publicação online do Departamento de Extensão,
+            Pesquisa, Pós-Graduação e Inovação (DEPPI) do IFCE Campus
+            Maracanaú.
           </p>
 
           <nav class="revista-tabs">

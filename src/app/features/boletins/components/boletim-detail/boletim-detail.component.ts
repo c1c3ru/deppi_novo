@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BoletinsService } from '../../services/boletins.service';
 import { Boletim } from '../../../../shared/models';
+import { getFileIcon } from '../../../../shared/utils/file-icon.util';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -226,7 +227,7 @@ import { CommonModule } from '@angular/common';
 
       .detail-badge.featured {
         background: rgba(var(--color-accent-rgb), 0.15);
-        color: #b45309;
+        color: var(--color-accent-text);
       }
 
       .detail-date {
@@ -415,7 +416,7 @@ import { CommonModule } from '@angular/common';
         height: 50px;
         border-radius: 50%;
         background: var(--color-primary);
-        color: white;
+        color: var(--color-on-primary);
         border: none;
         box-shadow: var(--shadow-xl);
 
@@ -597,18 +598,5 @@ export class BoletimDetailComponent implements OnInit {
     });
   }
 
-  getFileIcon(mimeType: string): string {
-    if (!mimeType) return '📁';
-    const lower = mimeType.toLowerCase();
-    if (lower.includes('pdf')) return '📄';
-    if (
-      lower.includes('word') ||
-      lower.includes('docx') ||
-      lower.includes('msword')
-    )
-      return '📝';
-    if (lower.includes('image')) return '🖼️';
-    if (lower.includes('video')) return '🎥';
-    return '📁';
-  }
+  readonly getFileIcon = getFileIcon;
 }

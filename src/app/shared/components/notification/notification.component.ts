@@ -62,20 +62,20 @@ import { NotificationMessage } from '../../../shared/models';
       }
 
       .notification-card.success {
-        background: rgba(16, 185, 129, 0.15);
-        border-left: 4px solid #10b981;
+        background: rgba(var(--color-success-rgb), 0.15);
+        border-left: 4px solid var(--color-success);
       }
       .notification-card.error {
-        background: rgba(239, 68, 68, 0.15);
-        border-left: 4px solid #ef4444;
+        background: rgba(var(--color-error-rgb), 0.15);
+        border-left: 4px solid var(--color-error);
       }
       .notification-card.warning {
-        background: rgba(245, 158, 11, 0.15);
-        border-left: 4px solid #f59e0b;
+        background: rgba(var(--color-warning-rgb), 0.15);
+        border-left: 4px solid var(--color-warning);
       }
       .notification-card.info {
-        background: rgba(59, 130, 246, 0.15);
-        border-left: 4px solid #3b82f6;
+        background: rgba(var(--color-info-rgb), 0.15);
+        border-left: 4px solid var(--color-info);
       }
 
       .notification-icon {
