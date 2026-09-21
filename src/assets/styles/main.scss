@@ -486,12 +486,19 @@ button {
   gap: var(--spacing-sm);
 }
 
-// Variante glassmorphism — usada em seções hero e innovation
-.card-glass {
+// Variante glassmorphism — usada em seções hero, innovation, header e footer
+.card-glass,
+.glass {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
+}
+
+// Superfície neutra — base dos cards em Revista/Anais, boletins, login etc.
+.surface {
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
 }
 
 // =============================================================================
@@ -671,6 +678,57 @@ button {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+}
+
+// =============================================================================
+// 10.1. EDITOR DE TEXTO RICO (QUILL)
+// Tema institucional para o ngx-quill — usado em artigos (Revista/Anais) e
+// boletins. Sobrescreve o tema "snow" padrão do Quill com os tokens do app.
+// =============================================================================
+
+.ql-container {
+  font-family: var(--font-family) !important;
+  font-size: var(--font-size-base) !important;
+  border-color: var(--color-border) !important;
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md) !important;
+  background: var(--color-background) !important;
+  color: var(--color-text) !important;
+}
+
+.ql-toolbar {
+  border-color: var(--color-border) !important;
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0 !important;
+  background: var(--color-background-secondary) !important;
+  font-family: var(--font-family) !important;
+}
+
+.ql-toolbar button:hover,
+.ql-toolbar button.ql-active {
+  color: var(--color-primary) !important;
+}
+
+.ql-toolbar .ql-stroke {
+  stroke: var(--color-text-secondary);
+}
+
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: var(--color-primary) !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: var(--color-text-secondary);
+}
+
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button.ql-active .ql-fill {
+  fill: var(--color-primary) !important;
+}
+
+// Foco no editor
+.ql-container.ql-snow:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15) !important;
 }
 
 // =============================================================================
@@ -859,6 +917,12 @@ button {
 // 15. UTILITÁRIOS ESPECÍFICOS DO DEPPI
 // Classes semânticas do domínio do sistema
 // =============================================================================
+
+// Fundo institucional de destaque — usado no rodapé (app-footer)
+.ifce-bg-accent {
+  background: var(--color-background-secondary);
+  border-top: 1px solid var(--color-border);
+}
 
 // Badge institucional do DEPPI
 .deppi-badge {
