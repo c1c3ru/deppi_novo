@@ -196,7 +196,7 @@
             class="btn btn-primary"
             [disabled]="saving || labForm.invalid"
           >
-            <span *ngIf="saving" class="spinner-small"></span>
+            <span *ngIf="saving" class="loading-inline"></span>
             {{ saving ? 'Salvando...' : 'Confirmar Alterações' }}
           </button>
         </div>
