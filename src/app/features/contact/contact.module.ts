@@ -273,6 +273,22 @@ import { NotificationService } from '../../core/services/notification.service';
         font-size: 1rem;
       }
 
+      .contact-info-card,
+      .form-container {
+        border-radius: var(--border-radius-lg);
+        transition:
+          transform var(--transition-normal),
+          box-shadow var(--transition-normal),
+          border-color var(--transition-normal);
+      }
+
+      .contact-info-card:hover,
+      .form-container:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+        border-color: rgba(var(--color-primary-rgb), 0.25);
+      }
+
       .form-container {
         padding: 4rem;
       }
