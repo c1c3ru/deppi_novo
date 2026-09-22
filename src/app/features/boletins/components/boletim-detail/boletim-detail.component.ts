@@ -1,9 +1,10 @@
 import { Component, OnInit, HostListener, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { SafeHtml } from '@angular/platform-browser';
 import { BoletinsService } from '../../services/boletins.service';
 import { Boletim } from '../../../../shared/models';
 import { getFileIcon } from '../../../../shared/utils/file-icon.util';
+import { HtmlSanitizerService } from '../../../../core/services/html-sanitizer.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -546,7 +547,7 @@ export class BoletimDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly boletinsService = inject(BoletinsService);
-  private readonly sanitizer = inject(DomSanitizer);
+  private readonly htmlSanitizer = inject(HtmlSanitizerService);
 
   boletim: Boletim | null = null;
   safeContent: SafeHtml | null = null;
@@ -573,10 +574,8 @@ export class BoletimDetailComponent implements OnInit {
     this.boletinsService.getById(id).subscribe({
       next: (b) => {
         this.boletim = b;
-        // Sanitize HTML content from Quill to prevent XSS
-        this.safeContent = b.content
-          ? this.sanitizer.bypassSecurityTrustHtml(b.content)
-          : null;
+        // HTML do Quill passa pelo DOMPurify antes de virar SafeHtml
+        this.safeContent = this.htmlSanitizer.sanitizeRichText(b.content);
         this.loading = false;
       },
       error: () => {
