@@ -1,8 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { SafeHtml } from '@angular/platform-browser';
 import { RevistaService } from '../../services/revista.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { HtmlSanitizerService } from '../../../../core/services/html-sanitizer.service';
 import { RevistaArtigo } from '../../../../shared/models';
 
 @Component({
@@ -17,11 +18,15 @@ import { RevistaArtigo } from '../../../../shared/models';
 
       <div class="error-state surface" *ngIf="error">
         <p>{{ error }}</p>
-        <a routerLink="/revista/edicoes" class="btn btn-glass">Voltar às edições</a>
+        <a routerLink="/revista/edicoes" class="btn btn-glass"
+          >Voltar às edições</a
+        >
       </div>
 
       <ng-container *ngIf="!loading && !error && artigo">
-        <button class="btn-back" (click)="goBack()">&larr; Voltar à edição</button>
+        <button class="btn-back" (click)="goBack()">
+          &larr; Voltar à edição
+        </button>
 
         <article class="artigo-card surface">
           <div class="artigo-meta">
@@ -151,7 +156,7 @@ export class RevistaArtigoDetailComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly sanitizer = inject(DomSanitizer);
+  private readonly htmlSanitizer = inject(HtmlSanitizerService);
 
   artigo: RevistaArtigo | null = null;
   sanitizedContent: SafeHtml = '';
@@ -173,9 +178,9 @@ export class RevistaArtigoDetailComponent implements OnInit {
     this.revistaService.getArtigoById(id).subscribe({
       next: (artigo) => {
         this.artigo = artigo;
-        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(
-          artigo.content || ''
-        );
+        // HTML do Quill passa pelo DOMPurify antes de virar SafeHtml
+        this.sanitizedContent =
+          this.htmlSanitizer.sanitizeRichText(artigo.content) ?? '';
         this.loading = false;
       },
       error: () => {
