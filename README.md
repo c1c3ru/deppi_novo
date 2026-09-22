@@ -300,6 +300,12 @@ O projeto utiliza **GitHub Actions** com o workflow [`ci-cd.yml`](.github/workfl
 - Build e push de imagem Docker para `ghcr.io/deppimaracanau/deppi_novo`
 - Sincronização automática de dados de talentos ([`sync-talentos.yml`](.github/workflows/sync-talentos.yml))
 
+### Deploy automático
+
+Os jobs `deploy-staging` e `deploy-production` rodam em um **runner self-hosted** (a máquina do DEPPI) e só são executados quando a variável de repositório `SELF_HOSTED_DEPLOY` está definida como `true` em *Settings → Secrets and variables → Actions → Variables*.
+
+Sem essa variável, o pipeline termina nos testes e no build da imagem. O motivo é prático: com o runner offline, o job de deploy ficava em `queued` até o limite de 24 h do GitHub e derrubava o run inteiro como `cancelled`, mesmo com todos os testes verdes.
+
 ---
 
 ## 🤝 Contribuição
