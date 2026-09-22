@@ -4,6 +4,7 @@ import {
   authMiddleware,
   optionalAuthMiddleware,
 } from '../middleware/auth.middleware';
+import { sanitizeRichText } from '../utils/sanitize';
 
 const router = Router();
 
@@ -182,8 +183,10 @@ router.put(
       const updateData: Record<string, unknown> = { updated_at: new Date() };
       if (volume !== undefined) updateData.volume = Number(volume);
       if (ano !== undefined) updateData.ano = Number(ano);
-      if (title !== undefined) updateData.title = title.trim().substring(0, 500);
-      if (description !== undefined) updateData.description = description?.trim();
+      if (title !== undefined)
+        updateData.title = title.trim().substring(0, 500);
+      if (description !== undefined)
+        updateData.description = description?.trim();
       if (coverImage !== undefined) updateData.cover_image = coverImage;
       if (safeStatus !== undefined) {
         updateData.status = safeStatus;
@@ -264,9 +267,12 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const edicaoId = parseInt(req.params.edicaoId, 10);
-      if (isNaN(edicaoId)) return res.status(400).json({ error: 'ID inválido' });
+      if (isNaN(edicaoId))
+        return res.status(400).json({ error: 'ID inválido' });
 
-      const edicao = await db('revista_edicoes').where({ id: edicaoId }).first();
+      const edicao = await db('revista_edicoes')
+        .where({ id: edicaoId })
+        .first();
       if (!edicao) {
         return res.status(404).json({ error: 'Edição não encontrada' });
       }
@@ -288,7 +294,7 @@ router.post(
           title: title.trim().substring(0, 500),
           summary: summary?.trim(),
           authors: authors?.trim().substring(0, 1000),
-          content,
+          content: sanitizeRichText(content),
           order: Number(order) || 0,
         })
         .returning('id');
@@ -315,11 +321,12 @@ router.put(
       const { title, summary, authors, content, order } = req.body;
 
       const updateData: Record<string, unknown> = { updated_at: new Date() };
-      if (title !== undefined) updateData.title = title.trim().substring(0, 500);
+      if (title !== undefined)
+        updateData.title = title.trim().substring(0, 500);
       if (summary !== undefined) updateData.summary = summary?.trim();
       if (authors !== undefined)
         updateData.authors = authors?.trim().substring(0, 1000);
-      if (content !== undefined) updateData.content = content;
+      if (content !== undefined) updateData.content = sanitizeRichText(content);
       if (order !== undefined) updateData.order = Number(order) || 0;
 
       await db('revista_artigos').where({ id }).update(updateData);

@@ -269,11 +269,18 @@ jobs:
           cache-to: type=gha,mode=max
 
   # Deploy to Staging
+  # Os deploys rodam em runner self-hosted (a maquina do DEPPI). Quando esse
+  # runner esta offline, o job fica em "queued" ate o limite de 24h do GitHub e
+  # o run inteiro termina como "cancelled", o que faz a CI da branch parecer
+  # quebrada mesmo com todos os testes verdes. A variavel de repositorio
+  # SELF_HOSTED_DEPLOY liga o deploy: defina-a como "true" em
+  # Settings > Secrets and variables > Actions > Variables quando o runner
+  # estiver registrado e online.
   deploy-staging:
     name: Deploy to Staging
     runs-on: self-hosted
     needs: build-and-push
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' && vars.SELF_HOSTED_DEPLOY == 'true'
 
     steps:
       - name: Checkout code
@@ -361,11 +368,18 @@ jobs:
           exit 1
 
   # Deploy to Production
+  # Os deploys rodam em runner self-hosted (a maquina do DEPPI). Quando esse
+  # runner esta offline, o job fica em "queued" ate o limite de 24h do GitHub e
+  # o run inteiro termina como "cancelled", o que faz a CI da branch parecer
+  # quebrada mesmo com todos os testes verdes. A variavel de repositorio
+  # SELF_HOSTED_DEPLOY liga o deploy: defina-a como "true" em
+  # Settings > Secrets and variables > Actions > Variables quando o runner
+  # estiver registrado e online.
   deploy-production:
     name: Deploy to Production
     runs-on: self-hosted
     needs: build-and-push
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && vars.SELF_HOSTED_DEPLOY == 'true'
 
     steps:
       - name: Checkout code

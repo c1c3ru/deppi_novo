@@ -4,6 +4,7 @@ import {
   authMiddleware,
   optionalAuthMiddleware,
 } from '../middleware/auth.middleware';
+import { sanitizeRichText } from '../utils/sanitize';
 
 const router = Router();
 
@@ -231,7 +232,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       .insert({
         title: title.trim().substring(0, 255),
         description: description?.trim().substring(0, 1000),
-        content,
+        content: sanitizeRichText(content),
         publication_date: publicationDate || new Date(),
         file_url: fileUrl,
         status: safeStatus,
@@ -273,7 +274,7 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
     if (title !== undefined) updateData.title = title.trim().substring(0, 255);
     if (description !== undefined)
       updateData.description = description?.trim().substring(0, 1000);
-    if (content !== undefined) updateData.content = content;
+    if (content !== undefined) updateData.content = sanitizeRichText(content);
     if (publicationDate !== undefined)
       updateData.publication_date = publicationDate;
     if (fileUrl !== undefined) updateData.file_url = fileUrl;
