@@ -3,6 +3,7 @@ import {
   OnInit,
   OnDestroy,
   HostListener,
+  ElementRef,
   inject,
 } from '@angular/core';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
@@ -97,19 +98,31 @@ import { CommonModule } from '@angular/common';
           <!-- Dropdown Mais -->
           <div
             class="dropdown-container"
-            (mouseenter)="isDropdownOpen = true; setHoverPos($event)"
-            (mouseleave)="isDropdownOpen = false; clearHoverPos()"
+            (mouseenter)="onDropdownEnter($event)"
+            (mouseleave)="onDropdownLeave()"
           >
             <button
+              type="button"
               class="nav-link dropdown-toggle"
               [class.active]="isDropdownActive()"
+              [attr.aria-expanded]="isDropdownOpen"
+              aria-haspopup="true"
+              aria-controls="nav-dropdown-mais"
+              (click)="toggleDropdown()"
             >
               <span>Mais</span>
-              <span class="dropdown-arrow" [class.open]="isDropdownOpen"
+              <span
+                class="dropdown-arrow"
+                [class.open]="isDropdownOpen"
+                aria-hidden="true"
                 >▼</span
               >
             </button>
-            <div class="dropdown-menu glass" [class.show]="isDropdownOpen">
+            <div
+              id="nav-dropdown-mais"
+              class="dropdown-menu glass"
+              [class.show]="isDropdownOpen"
+            >
               <a
                 routerLink="/boletins"
                 class="dropdown-item"
@@ -216,6 +229,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
   private readonly authService = inject(AuthService);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
 
   currentRoute = '';
   isDarkTheme = false;
@@ -233,6 +247,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.isScrolled = window.scrollY > 20;
+  }
+
+  /** Fecha o dropdown "Mais" ao clicar fora dele. */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.isDropdownOpen) return;
+    const dropdown = this.elementRef.nativeElement.querySelector(
+      '.dropdown-container'
+    );
+    if (dropdown && !dropdown.contains(event.target as Node)) {
+      this.isDropdownOpen = false;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.isMenuOpen || this.isDropdownOpen) {
+      this.closeMenu();
+    }
+  }
+
+  /** Ao voltar para o layout desktop, desfaz o estado do menu mobile. */
+  @HostListener('window:resize')
+  onResize(): void {
+    if (this.isMenuOpen && this.isDesktop()) {
+      this.closeMenu();
+    }
   }
 
   ngOnInit(): void {
@@ -282,6 +323,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
+    // No mobile o "Mais" já vem aberto quando a página atual está nele
+    this.isDropdownOpen = this.isMenuOpen && this.isDropdownActive();
     if (this.isMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -293,6 +336,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isMenuOpen = false;
     this.isDropdownOpen = false;
     document.body.style.overflow = '';
+  }
+
+  toggleDropdown(): void {
+    // No desktop o hover já abre; o clique (ou Enter no teclado) só garante
+    // que fique aberto, sem fechar o que o mouse acabou de abrir
+    this.isDropdownOpen = this.isDesktop() ? true : !this.isDropdownOpen;
+  }
+
+  // Hover só controla o dropdown no desktop; no toque, o clique decide
+  onDropdownEnter(event: MouseEvent): void {
+    if (!this.isDesktop()) return;
+    this.isDropdownOpen = true;
+    this.setHoverPos(event);
+  }
+
+  onDropdownLeave(): void {
+    if (!this.isDesktop()) return;
+    this.isDropdownOpen = false;
+    this.clearHoverPos();
+  }
+
+  private isDesktop(): boolean {
+    return window.matchMedia('(min-width: 1025px)').matches;
   }
 
   isDropdownActive(): boolean {
