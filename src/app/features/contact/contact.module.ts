@@ -28,36 +28,44 @@ import { NotificationService } from '../../core/services/notification.service';
           <div class="contact-sidebar reveal-up" style="animation-delay: 0.1s">
             <div class="contact-info-card surface">
               <h2 class="card-title">Informações Diretas</h2>
-              <div class="contact-list-modern">
-                <div class="contact-item">
-                  <span class="item-icon">📧</span>
+              <ul class="contact-list-modern">
+                <li class="contact-item">
+                  <span class="item-icon" aria-hidden="true">📧</span>
                   <div class="item-content">
-                    <label>E-mail Institucional</label>
-                    <p>deppi.maracanau&#64;ifce.edu.br</p>
+                    <span class="item-label">E-mail Institucional</span>
+                    <a
+                      class="item-value item-link"
+                      href="mailto:deppi.maracanau&#64;ifce.edu.br"
+                      >deppi.maracanau&#64;ifce.edu.br</a
+                    >
                   </div>
-                </div>
-                <div class="contact-item">
-                  <span class="item-icon">📞</span>
+                </li>
+                <li class="contact-item">
+                  <span class="item-icon" aria-hidden="true">📞</span>
                   <div class="item-content">
-                    <label>Telefone / Ramal</label>
-                    <p>(85) 3401.2233</p>
+                    <span class="item-label">Telefone / Ramal</span>
+                    <a class="item-value item-link" href="tel:+558534012233"
+                      >(85) 3401.2233</a
+                    >
                   </div>
-                </div>
-                <div class="contact-item">
-                  <span class="item-icon">📍</span>
+                </li>
+                <li class="contact-item">
+                  <span class="item-icon" aria-hidden="true">📍</span>
                   <div class="item-content">
-                    <label>Presencial</label>
-                    <p>Av. Parque Central, S/N - Maracanaú, CE</p>
+                    <span class="item-label">Presencial</span>
+                    <p class="item-value">
+                      Av. Parque Central, S/N - Maracanaú, CE
+                    </p>
                   </div>
-                </div>
-                <div class="contact-item">
-                  <span class="item-icon">🕐</span>
+                </li>
+                <li class="contact-item">
+                  <span class="item-icon" aria-hidden="true">🕐</span>
                   <div class="item-content">
-                    <label>Atendimento</label>
-                    <p>Segunda a Sexta, 08h às 18h</p>
+                    <span class="item-label">Atendimento</span>
+                    <p class="item-value">Segunda a Sexta, 08h às 18h</p>
                   </div>
-                </div>
-              </div>
+                </li>
+              </ul>
             </div>
           </div>
 
@@ -232,23 +240,38 @@ import { NotificationService } from '../../core/services/notification.service';
         align-items: start;
       }
 
+      .contact-info-card {
+        padding: 2.5rem;
+      }
+
+      .card-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        color: var(--color-text);
+        margin: 0 0 2rem;
+      }
+
       .contact-list-modern {
+        list-style: none;
+        margin: 0;
+        padding: 0;
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
-        margin-top: 2rem;
       }
 
       .contact-item {
         display: flex;
-        gap: 1.2rem;
-        align-items: flex-start;
+        gap: 1rem;
+        align-items: center;
       }
 
       .item-icon {
+        flex-shrink: 0;
         width: 44px;
         height: 44px;
         background: rgba(var(--color-primary-rgb), 0.1);
+        border: 1px solid rgba(var(--color-primary-rgb), 0.15);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -256,7 +279,11 @@ import { NotificationService } from '../../core/services/notification.service';
         font-size: 1.2rem;
       }
 
-      .item-content label {
+      .item-content {
+        min-width: 0;
+      }
+
+      .item-label {
         display: block;
         font-size: 0.75rem;
         font-weight: 800;
@@ -266,11 +293,25 @@ import { NotificationService } from '../../core/services/notification.service';
         margin-bottom: 0.2rem;
       }
 
-      .item-content p {
+      .item-value {
+        display: block;
         font-weight: 600;
         color: var(--color-text);
         margin: 0;
         font-size: 1rem;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+      }
+
+      .item-link {
+        text-decoration: none;
+        transition: color var(--transition-fast);
+      }
+
+      .item-link:hover,
+      .item-link:focus-visible {
+        color: var(--color-primary);
+        text-decoration: underline;
       }
 
       .contact-info-card,
@@ -339,11 +380,35 @@ import { NotificationService } from '../../core/services/notification.service';
         .form-container {
           padding: 2.5rem 1.5rem;
         }
+        .contact-info-card {
+          padding: 2rem 1.5rem;
+        }
       }
 
       @media (max-width: 640px) {
         .form-row {
           grid-template-columns: 1fr;
+        }
+        .page-hero {
+          padding: 3rem 1.25rem 2.5rem;
+        }
+        .page-icon {
+          font-size: 3.5rem;
+          margin-bottom: 1.25rem;
+        }
+        .page-subtitle {
+          font-size: 1.05rem;
+        }
+        .content-area {
+          margin: 3rem auto;
+          padding: 0 1rem;
+        }
+        .contact-grid {
+          gap: 2rem;
+        }
+        .form-title {
+          font-size: 1.6rem;
+          margin-bottom: 1.75rem;
         }
       }
     `,
@@ -374,25 +439,23 @@ export class ContactComponent {
 
     this.isSubmitting = true;
 
-    this.http
-      .post(`${environment.apiUrl}/contact`, this.form.value)
-      .subscribe({
-        next: () => {
-          this.notificationService.showSuccess(
-            'Sua mensagem foi enviada com sucesso! Responderemos em breve.'
-          );
-          this.isSubmitting = false;
-          this.form.reset();
-        },
-        error: (err: any) => {
-          console.error('Erro ao enviar mensagem', err);
-          const msg =
-            err?.error?.message ||
-            'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.';
-          this.notificationService.showError(msg);
-          this.isSubmitting = false;
-        },
-      });
+    this.http.post(`${environment.apiUrl}/contact`, this.form.value).subscribe({
+      next: () => {
+        this.notificationService.showSuccess(
+          'Sua mensagem foi enviada com sucesso! Responderemos em breve.'
+        );
+        this.isSubmitting = false;
+        this.form.reset();
+      },
+      error: (err: any) => {
+        console.error('Erro ao enviar mensagem', err);
+        const msg =
+          err?.error?.message ||
+          'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.';
+        this.notificationService.showError(msg);
+        this.isSubmitting = false;
+      },
+    });
   }
 }
 
