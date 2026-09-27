@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import DOMPurify from 'dompurify';
 
-// Conteúdo vindo do editor Quill (boletins e artigos da revista) é renderizado
+// Conteúdo vindo do editor Quill (boletins e trabalhos dos anais) é renderizado
 // com [innerHTML], o que exige `bypassSecurityTrustHtml` e desliga a proteção
 // padrão do Angular. Esta camada devolve a proteção: o HTML é limpo pelo
 // DOMPurify antes de ser marcado como confiável, então nem conteúdo antigo,

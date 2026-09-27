@@ -3,24 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <!--
-      Aplica o tema salvo (ou a preferência do sistema) em <html> ANTES do
-      primeiro paint, evitando o "flash" de tema claro seguido de escuro.
-      Mantém a mesma chave/lógica do ThemeService (core/services/theme.service.ts).
+      Aplica o tema em <html> antes do primeiro paint. O padrão é sempre o
+      claro; o escuro só vale se a pessoa escolheu no botão de tema. Mantém a
+      mesma chave do ThemeService (core/services/theme.service.ts). Se este
+      script mudar, recalcule o hash dele no Content-Security-Policy do nginx.conf.
     -->
     <script>
       (function () {
+        var theme = 'light';
         try {
-          var saved = localStorage.getItem('theme');
-          var theme =
-            saved === 'light' || saved === 'dark'
-              ? saved
-              : window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light';
-          document.documentElement.setAttribute('data-theme', theme);
-        } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
+          if (localStorage.getItem('theme-preference') === 'dark') {
+            theme = 'dark';
+          }
+        } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
     <title>Deppi</title>
