@@ -67,7 +67,7 @@ O **DEPPI** é o sistema web completo do Departamento de Extensão, Pesquisa, P�
 | Módulo | Rota | Descrição |
 |--------|------|-----------|
 | **Boletins** | `/boletins` | CRUD completo de informativos com editor Quill v2, upload de imagens e publicação |
-| **Revista Científica** | `/revista` | Gestão de edições e artigos dos *Anais da Mostra Científica* (submissão, expediente, apresentação) |
+| **Anais da Mostra Científica** | `/anais` | Catálogo de trabalhos por edição, com busca, PDF e edição em tela para usuários logados |
 | **PIT/RIT** | `/pit-rit` | Plano Individual de Trabalho e Relatório Individual de Trabalho com cálculo automático de carga horária (20h, 30h, 40h, 40h D.E.) e exportação em PDF |
 | **Gestão de Visitas** | `/visitas/admin` | Painel administrativo de visitas: aprovação, rejeição, controle de capacidade e sincronização com Google Calendar |
 

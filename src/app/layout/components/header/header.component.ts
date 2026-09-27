@@ -131,9 +131,9 @@ import { CommonModule } from '@angular/common';
                 >Boletins</a
               >
               <a
-                routerLink="/revista"
+                routerLink="/anais"
                 class="dropdown-item"
-                [class.active]="isActive('/revista')"
+                [class.active]="isActive('/anais')"
                 (click)="closeMenu()"
                 >Anais da Mostra Científica</a
               >
@@ -364,7 +364,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isDropdownActive(): boolean {
     return (
       this.isActive('/boletins') ||
-      this.isActive('/revista') ||
+      this.isActive('/anais') ||
       this.isActive('/pit-rit') ||
       this.isActive('/talentos') ||
       this.isActive('/visitas') ||
