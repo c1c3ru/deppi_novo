@@ -1,12 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RevistaService } from '../../services/revista.service';
+import { AnaisService } from '../../services/anais.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   standalone: false,
-  selector: 'app-revista-edicao-form',
+  selector: 'app-anais-edicao-form',
   template: `
     <div class="edicao-form-page animate-in">
       <div class="header-container">
@@ -55,7 +55,9 @@ import { NotificationService } from '../../../../core/services/notification.serv
           </div>
 
           <div class="form-group">
-            <label for="title">Título da edição <span class="required">*</span></label>
+            <label for="title"
+              >Título da edição <span class="required">*</span></label
+            >
             <input
               id="title"
               type="text"
@@ -84,7 +86,11 @@ import { NotificationService } from '../../../../core/services/notification.serv
             (click)="onSubmit('draft')"
             [disabled]="loading || edicaoForm.invalid"
           >
-            {{ loading && actionType === 'draft' ? 'Salvando...' : 'Salvar Rascunho' }}
+            {{
+              loading && actionType === 'draft'
+                ? 'Salvando...'
+                : 'Salvar Rascunho'
+            }}
           </button>
           <button
             type="submit"
@@ -235,9 +241,9 @@ import { NotificationService } from '../../../../core/services/notification.serv
     `,
   ],
 })
-export class RevistaEdicaoFormComponent implements OnInit {
+export class AnaisEdicaoFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly revistaService = inject(RevistaService);
+  private readonly anaisService = inject(AnaisService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
@@ -252,7 +258,10 @@ export class RevistaEdicaoFormComponent implements OnInit {
   ngOnInit(): void {
     this.edicaoForm = this.fb.group({
       volume: [1, [Validators.required, Validators.min(1)]],
-      ano: [new Date().getFullYear(), [Validators.required, Validators.min(2000)]],
+      ano: [
+        new Date().getFullYear(),
+        [Validators.required, Validators.min(2000)],
+      ],
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: [''],
     });
@@ -269,7 +278,7 @@ export class RevistaEdicaoFormComponent implements OnInit {
 
   private loadEdicao(id: number): void {
     this.loadingInit = true;
-    this.revistaService.getEdicaoById(id).subscribe({
+    this.anaisService.getEdicaoById(id).subscribe({
       next: (edicao) => {
         this.edicaoForm.patchValue({
           volume: edicao.volume,
@@ -280,8 +289,10 @@ export class RevistaEdicaoFormComponent implements OnInit {
         this.loadingInit = false;
       },
       error: () => {
-        this.notificationService.showError('Não foi possível carregar a edição.');
-        this.router.navigate(['/revista/edicoes']);
+        this.notificationService.showError(
+          'Não foi possível carregar a edição.'
+        );
+        this.router.navigate(['/anais/edicoes']);
       },
     });
   }
@@ -303,7 +314,7 @@ export class RevistaEdicaoFormComponent implements OnInit {
           status === 'published' ? 'Edição publicada!' : 'Rascunho salvo!'
         );
         const targetId = this.isEditMode ? this.edicaoId : res?.id;
-        this.router.navigate(['/revista/edicoes', targetId]);
+        this.router.navigate(['/anais/edicoes', targetId]);
       },
       error: (err: any) => {
         this.notificationService.showError(
@@ -314,16 +325,16 @@ export class RevistaEdicaoFormComponent implements OnInit {
     };
 
     if (this.isEditMode && this.edicaoId) {
-      this.revistaService.updateEdicao(this.edicaoId, formData).subscribe({
+      this.anaisService.updateEdicao(this.edicaoId, formData).subscribe({
         next: () => handler.next({ id: this.edicaoId }),
         error: handler.error,
       });
     } else {
-      this.revistaService.createEdicao(formData).subscribe(handler);
+      this.anaisService.createEdicao(formData).subscribe(handler);
     }
   }
 
   goBack(): void {
-    this.router.navigate(['/revista/edicoes']);
+    this.router.navigate(['/anais/edicoes']);
   }
 }

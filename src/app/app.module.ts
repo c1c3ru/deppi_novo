@@ -158,11 +158,9 @@ import { AuthGuard } from './core/guards/auth.guard';
             ),
         },
         {
-          path: 'revista',
+          path: 'anais',
           loadChildren: () =>
-            import('./features/revista/revista.module').then(
-              (m) => m.RevistaModule
-            ),
+            import('./features/anais/anais.module').then((m) => m.AnaisModule),
         },
         {
           path: 'contact',

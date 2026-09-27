@@ -2,15 +2,23 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { ApiResponse, RevistaEdicao, RevistaArtigo } from '../../../shared/models';
+import {
+  ApiResponse,
+  RevistaEdicao,
+  RevistaArtigo,
+} from '../../../shared/models';
 
 @Injectable()
-export class RevistaService {
+export class AnaisService {
   private readonly http = inject(HttpClient);
+  // A API e as tabelas continuam com o nome antigo (revista_*); só a rota do
+  // site mudou para /anais.
   private readonly apiUrl = `${environment.apiUrl}/revista`;
 
   getEdicoes(): Observable<ApiResponse<RevistaEdicao[]>> {
-    return this.http.get<ApiResponse<RevistaEdicao[]>>(`${this.apiUrl}/edicoes`);
+    return this.http.get<ApiResponse<RevistaEdicao[]>>(
+      `${this.apiUrl}/edicoes`
+    );
   }
 
   getAdminEdicoes(): Observable<ApiResponse<RevistaEdicao[]>> {

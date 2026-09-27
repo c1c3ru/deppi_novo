@@ -32,6 +32,8 @@
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(var(--color-primary-rgb), 0.15);
+  /* Referência para o painel do menu mobile (posicionado em absolute) */
+  position: relative;
 }
 
 .nav-brand {
@@ -144,7 +146,7 @@
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
-    min-width: 200px;
+    min-width: 220px;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 1rem;
@@ -186,6 +188,7 @@
       border-radius: 0.5rem;
       font-size: 0.9rem;
       font-weight: 500;
+      white-space: nowrap;
       transition: all 0.2s ease;
 
       &:hover,
@@ -319,27 +322,37 @@
     }
   }
 
+  /*
+   * O painel fica ancorado no próprio .nav-container: como ele usa
+   * backdrop-filter, um "position: fixed" aqui dentro seria calculado em
+   * relação a ele e não à janela, deslocando o menu.
+   */
   .nav-menu {
-    position: fixed;
-    top: 5rem;
-    left: 1.5rem;
-    right: 1.5rem;
-    background: rgba(var(--color-surface-rgb), 0.85);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    left: 0;
+    right: 0;
+    /*
+     * Fundo sólido: dentro de um pai com backdrop-filter o desfoque do painel
+     * não é aplicado, e o texto da página aparecia por trás dos links.
+     */
+    background: var(--color-surface);
     border: 1px solid rgba(var(--color-primary-rgb), 0.15);
-    padding: 2rem;
+    padding: 1rem;
     flex-direction: column;
-    gap: 1rem;
-    border-radius: 2rem;
+    align-items: stretch;
+    gap: 0.25rem;
+    border-radius: 1.5rem;
     box-shadow: var(--shadow-2xl);
     transform: translateY(-20px);
     opacity: 0;
     pointer-events: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
-    max-height: calc(100vh - 8rem);
+    max-height: calc(100vh - 7rem);
+    max-height: calc(100dvh - 7rem);
     overflow-y: auto;
+    overscroll-behavior: contain;
 
     &.mobile-open {
       transform: translateY(0);
@@ -349,14 +362,10 @@
 
     .nav-link {
       width: 100%;
-      padding: 1.2rem;
-      font-size: 1.1rem;
+      padding: 0.9rem 1.2rem;
+      font-size: 1.05rem;
       justify-content: flex-start;
-      border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.05);
-
-      &:last-child {
-        border-bottom: none;
-      }
+      border-radius: 1rem;
 
       &.active {
         background: rgba(var(--color-primary-rgb), 0.1);
@@ -366,6 +375,113 @@
     .nav-indicator {
       display: none;
     }
+
+    /* "Mais" vira um acordeão dentro do painel, sem ficar cortado */
+    .dropdown-container {
+      display: block;
+      width: 100%;
+      border-top: 1px solid rgba(var(--color-primary-rgb), 0.1);
+      margin-top: 0.25rem;
+      padding-top: 0.25rem;
+
+      .dropdown-toggle {
+        font-size: 1.05rem;
+        justify-content: space-between;
+        color: var(--color-text-secondary);
+      }
+
+      .dropdown-menu {
+        position: static;
+        display: none;
+        min-width: 0;
+        margin: 0.25rem 0 0.5rem 0.75rem;
+        padding: 0 0 0 0.75rem;
+        background: none;
+        border: none;
+        border-left: 2px solid rgba(var(--color-primary-rgb), 0.2);
+        border-radius: 0;
+        box-shadow: none;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+        transition: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+
+        &.show {
+          display: flex;
+        }
+
+        &::before {
+          display: none;
+        }
+
+        .dropdown-item {
+          padding: 0.75rem 1rem;
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
+
+/* Telas médias: aproxima os itens para o menu caber numa linha só */
+@media (min-width: 1025px) and (max-width: 1200px) {
+  .nav-menu {
+    gap: 0.15rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0.7rem;
+  }
+
+  .nav-actions {
+    gap: 0.6rem;
+  }
+}
+
+/* Celulares: evita que marca + ações estourem a largura da barra */
+@media (max-width: 480px) {
+  .header {
+    top: 0.75rem;
+    padding: 0 0.75rem;
+  }
+
+  .nav-container {
+    padding: 0.5rem 0.75rem;
+    height: 56px;
+  }
+
+  .logo-wrapper {
+    gap: 0.5rem;
+  }
+
+  .logo-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .brand-text {
+    font-size: 1.2rem;
+  }
+
+  .nav-actions {
+    gap: 0.4rem;
+  }
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .login-btn {
+    padding: 0.5rem 0.9rem;
+  }
+
+  .nav-menu {
+    max-height: calc(100vh - 5.5rem);
+    max-height: calc(100dvh - 5.5rem);
   }
 }
 

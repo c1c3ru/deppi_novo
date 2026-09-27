@@ -1,12 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RevistaService } from '../../services/revista.service';
+import { AnaisService } from '../../services/anais.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { UploadService } from '../../../../core/services/upload.service';
+import { extrairLinkPdf } from '../../anais.utils';
 
 @Component({
   standalone: false,
-  selector: 'app-revista-artigo-form',
+  selector: 'app-anais-artigo-form',
   template: `
     <div class="artigo-form-page animate-in">
       <div class="header-container">
@@ -14,14 +16,14 @@ import { NotificationService } from '../../../../core/services/notification.serv
         <div class="title-wrapper">
           <span class="badge">{{ isEditMode ? 'Edição' : 'Criação' }}</span>
           <h1 class="page-title">
-            {{ isEditMode ? 'Editar Artigo' : 'Novo Artigo' }}
+            {{ isEditMode ? 'Editar trabalho' : 'Novo trabalho' }}
           </h1>
         </div>
       </div>
 
       <div class="loading-state" *ngIf="loadingInit">
         <div class="spinner"></div>
-        <p>Carregando dados do artigo...</p>
+        <p>Carregando dados do trabalho...</p>
       </div>
 
       <form
@@ -32,7 +34,9 @@ import { NotificationService } from '../../../../core/services/notification.serv
       >
         <div class="form-content">
           <div class="form-group">
-            <label for="title">Título do artigo <span class="required">*</span></label>
+            <label for="title"
+              >Título do trabalho <span class="required">*</span></label
+            >
             <input
               id="title"
               type="text"
@@ -62,8 +66,31 @@ import { NotificationService } from '../../../../core/services/notification.serv
             ></textarea>
           </div>
 
+          <div class="form-group">
+            <label for="pdf">Arquivo PDF do trabalho</label>
+            <input
+              id="pdf"
+              type="file"
+              accept="application/pdf,.pdf"
+              class="input-modern"
+              [disabled]="enviandoPdf"
+              (change)="anexarPdf($event)"
+            />
+            <small class="hint" *ngIf="enviandoPdf">Enviando PDF...</small>
+            <small class="hint" *ngIf="!enviandoPdf && pdfAtual">
+              PDF anexado:
+              <a [href]="pdfAtual" target="_blank" rel="noopener"
+                >abrir arquivo</a
+              >. Enviar outro substitui o link no texto.
+            </small>
+            <small class="hint" *ngIf="!enviandoPdf && !pdfAtual">
+              Opcional. O link entra no fim do texto e vira o botão "PDF" na
+              listagem dos anais.
+            </small>
+          </div>
+
           <div class="form-group editor-group">
-            <label>Conteúdo do artigo <span class="required">*</span></label>
+            <label>Conteúdo do trabalho <span class="required">*</span></label>
             <div class="quill-wrapper">
               <quill-editor
                 *ngIf="quillReady"
@@ -75,7 +102,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
                 }"
                 [modules]="quillModules"
                 (onEditorCreated)="onEditorCreated($event)"
-                placeholder="Escreva o conteúdo completo do artigo aqui..."
+                placeholder="Escreva o texto do trabalho aqui..."
               >
               </quill-editor>
               <div *ngIf="!quillReady" class="editor-placeholder">
@@ -102,7 +129,13 @@ import { NotificationService } from '../../../../core/services/notification.serv
             class="btn btn-primary"
             [disabled]="loading || artigoForm.invalid"
           >
-            {{ loading ? 'Salvando...' : isEditMode ? 'Salvar Alterações' : 'Publicar Artigo' }}
+            {{
+              loading
+                ? 'Salvando...'
+                : isEditMode
+                  ? 'Salvar alterações'
+                  : 'Publicar trabalho'
+            }}
           </button>
         </div>
       </form>
@@ -110,6 +143,18 @@ import { NotificationService } from '../../../../core/services/notification.serv
   `,
   styles: [
     `
+      .hint {
+        display: block;
+        margin-top: 0.4rem;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+
+      .hint a {
+        color: var(--color-primary-dark);
+        font-weight: 700;
+      }
+
       .artigo-form-page {
         max-width: 900px;
         margin: 0 auto;
@@ -250,14 +295,20 @@ import { NotificationService } from '../../../../core/services/notification.serv
     `,
   ],
 })
-export class RevistaArtigoFormComponent implements OnInit {
+export class AnaisArtigoFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly revistaService = inject(RevistaService);
+  private readonly anaisService = inject(AnaisService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
+  private readonly uploadService = inject(UploadService);
 
   artigoForm!: FormGroup;
+  enviandoPdf = false;
+
+  get pdfAtual(): string | null {
+    return extrairLinkPdf(this.artigoForm?.value?.content);
+  }
   isEditMode = false;
   artigoId: number | null = null;
   edicaoId: number | null = null;
@@ -329,12 +380,14 @@ export class RevistaArtigoFormComponent implements OnInit {
 
   private loadArtigo(id: number): void {
     this.loadingInit = true;
-    this.revistaService.getArtigoById(id).subscribe({
+    this.anaisService.getArtigoById(id).subscribe({
       next: (artigo) => {
         this.edicaoId = artigo.edicaoId;
 
         if (this.editorInstance) {
-          this.editorInstance.clipboard.dangerouslyPasteHTML(artigo.content || '');
+          this.editorInstance.clipboard.dangerouslyPasteHTML(
+            artigo.content || ''
+          );
         } else {
           this.pendingContent = artigo.content || '';
         }
@@ -351,8 +404,48 @@ export class RevistaArtigoFormComponent implements OnInit {
         this.loadingInit = false;
       },
       error: () => {
-        this.notificationService.showError('Não foi possível carregar o artigo.');
+        this.notificationService.showError(
+          'Não foi possível carregar o trabalho.'
+        );
         this.goBack();
+      },
+    });
+  }
+
+  /**
+   * Envia o PDF pelo endpoint de upload já existente e grava o link no próprio
+   * conteúdo do trabalho (o banco não tem coluna para o PDF). Se já havia um
+   * link de PDF, ele é trocado pelo novo.
+   */
+  anexarPdf(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!/\.pdf$/i.test(file.name)) {
+      this.notificationService.showError('Envie um arquivo em PDF.');
+      input.value = '';
+      return;
+    }
+    this.enviandoPdf = true;
+    this.uploadService.uploadFile(file).subscribe({
+      next: (anexo) => {
+        const conteudo: string = this.artigoForm.value.content || '';
+        const antigo = extrairLinkPdf(conteudo);
+        const novo = antigo
+          ? conteudo.split(antigo).join(anexo.url)
+          : `${conteudo}<p><a href="${anexo.url}">PDF do trabalho</a></p>`;
+        if (this.editorInstance) {
+          this.editorInstance.clipboard.dangerouslyPasteHTML(novo);
+        }
+        this.artigoForm.patchValue({ content: novo });
+        this.notificationService.showSuccess('PDF anexado ao trabalho.');
+        this.enviandoPdf = false;
+        input.value = '';
+      },
+      error: () => {
+        this.notificationService.showError('Não foi possível enviar o PDF.');
+        this.enviandoPdf = false;
+        input.value = '';
       },
     });
   }
@@ -368,33 +461,35 @@ export class RevistaArtigoFormComponent implements OnInit {
 
     const handler = {
       next: (res: any) => {
-        this.notificationService.showSuccess('Artigo salvo com sucesso!');
+        this.notificationService.showSuccess('Trabalho salvo com sucesso!');
         const targetId = this.isEditMode ? this.artigoId : res?.id;
-        this.router.navigate(['/revista/artigos', targetId]);
+        this.router.navigate(['/anais/artigos', targetId]);
       },
       error: (err: any) => {
         this.notificationService.showError(
-          err.error?.error || 'Erro ao salvar o artigo.'
+          err.error?.error || 'Erro ao salvar o trabalho.'
         );
         this.loading = false;
       },
     };
 
     if (this.isEditMode && this.artigoId) {
-      this.revistaService.updateArtigo(this.artigoId, formData).subscribe({
+      this.anaisService.updateArtigo(this.artigoId, formData).subscribe({
         next: () => handler.next({ id: this.artigoId }),
         error: handler.error,
       });
     } else {
-      this.revistaService.createArtigo(this.edicaoId, formData).subscribe(handler);
+      this.anaisService
+        .createArtigo(this.edicaoId, formData)
+        .subscribe(handler);
     }
   }
 
   goBack(): void {
     if (this.edicaoId) {
-      this.router.navigate(['/revista/edicoes', this.edicaoId]);
+      this.router.navigate(['/anais/edicoes', this.edicaoId]);
     } else {
-      this.router.navigate(['/revista/edicoes']);
+      this.router.navigate(['/anais/edicoes']);
     }
   }
 }
