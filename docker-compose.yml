@@ -139,10 +139,14 @@ services:
     image: grafana/grafana:latest
     container_name: deppi-grafana
     restart: unless-stopped
+    # Acesso pelo site em /monitoramento/ (proxy do Nginx do app); a porta
+    # 3001 fica só no localhost do servidor.
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3001:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL:-http://localhost:3001/monitoramento/}
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana_data:/var/lib/grafana
