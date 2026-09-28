@@ -16,7 +16,11 @@ export const ANAIS_INFO = {
   issn: 'A solicitar',
   contato: 'sic@maracanau.ifce.edu.br',
   coordenacao: 'Luis José Silveira de Sousa',
-  revisao: ['Cícero José Sousa da Silva', 'Luiz Carlos Silveira de Sousa'],
+  revisao: [
+    'Cícero José Sousa da Silva',
+    'Luiz Carlos Silveira de Sousa',
+    'Stenisia Denis Holanda Lavor Gurgel',
+  ],
   comissao: [
     'Adriana Gonçalves de Sales Costa',
     'Francisco de Assis Francelino Alves',
