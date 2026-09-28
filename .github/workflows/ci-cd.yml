@@ -338,7 +338,6 @@ jobs:
 
           # Monitoramento
           echo "GRAFANA_PASSWORD=${{ secrets.GRAFANA_PASSWORD }}" >> .env
-          echo "PROMETHEUS_PASSWORD=${{ secrets.PROMETHEUS_PASSWORD }}" >> .env
 
       - name: Deploy to staging (Local Runner)
         run: |
@@ -418,7 +417,6 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
-          PROMETHEUS_PASSWORD: ${{ secrets.PROMETHEUS_PASSWORD }}
         run: |
           cd /home/deppi/deppi_novo
           sudo chown -R $USER:$USER /home/deppi/deppi_novo || true
@@ -474,7 +472,7 @@ jobs:
 
           # Monitoramento
           echo "GRAFANA_PASSWORD=$(safe GRAFANA_PASSWORD)" >> .env
-          echo "PROMETHEUS_PASSWORD=$(safe PROMETHEUS_PASSWORD)" >> .env
+          echo "GRAFANA_ROOT_URL=https://deppi.maracanau.ifce.edu.br/monitoramento/" >> .env
 
       - name: Setup Docker Compose (Self-hosted)
         run: |
