@@ -172,7 +172,7 @@ npm run docker:down     # Derruba tudo
 |---------|-----|
 | Aplicação | http://localhost:4000 |
 | Prometheus | http://localhost:9090 (só no próprio servidor; de fora, use `ssh -L 9090:localhost:9090`) |
-| Grafana | http://localhost:3001 |
+| Grafana | http://localhost:3001/monitoramento/ (em produção: https://deppi.maracanau.ifce.edu.br/monitoramento/) |
 
 ---
 

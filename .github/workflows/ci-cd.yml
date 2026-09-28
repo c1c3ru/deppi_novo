@@ -472,6 +472,7 @@ jobs:
 
           # Monitoramento
           echo "GRAFANA_PASSWORD=$(safe GRAFANA_PASSWORD)" >> .env
+          echo "GRAFANA_ROOT_URL=https://deppi.maracanau.ifce.edu.br/monitoramento/" >> .env
 
       - name: Setup Docker Compose (Self-hosted)
         run: |
