@@ -4,11 +4,17 @@ import urllib.request
 import re
 import os
 import time
-from io import StringIO
+from io import BytesIO, StringIO
 import hashlib
 
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuC5jSqZ72h5nfHUoqUN6QhIyN9DVXJdz5GVlmJs1_WAC1seOEouEnIr4LHmZurM7dfhTGyWdlkGUD/pub?output=csv"
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), '..', 'src', 'assets', 'data', 'talentos.json')
+# As fotos são baixadas aqui e servidas pelo próprio site. Carregar direto do
+# Google Drive no navegador falha com frequência (403/429), e aí o card caía
+# no avatar mesmo para quem enviou foto.
+FOTOS_DIR = os.path.join(os.path.dirname(__file__), '..', 'src', 'assets', 'img', 'talentos')
+FOTOS_URL_BASE = 'assets/img/talentos'
+FOTO_MAX_PX = 600
 
 def slugify(text):
     text = text.lower()
@@ -67,12 +73,44 @@ def fetch_with_retry(url, max_retries=5, backoff=3):
                     f"Falha ao baixar dados após {max_retries} tentativas: {e}"
                 ) from e
 
+def baixar_foto(drive_id, destino):
+    """Baixa a foto do Drive para `destino` (JPEG). Devolve True se deu certo."""
+    url = f"https://lh3.googleusercontent.com/d/{drive_id}"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (DEPPI sync_talentos)"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as response:
+            tipo = response.headers.get('Content-Type', '')
+            dados = response.read()
+    except Exception as e:
+        print(f"  ⚠️  Não foi possível baixar a foto {drive_id}: {e}")
+        return False
+    if not tipo.startswith('image/'):
+        # Arquivo sem compartilhamento público: o Google devolve uma página de login.
+        print(f"  ⚠️  A foto {drive_id} não veio como imagem ({tipo or 'sem tipo'}). O arquivo está compartilhado como público?")
+        return False
+    try:
+        from PIL import Image, ImageOps
+        img = Image.open(BytesIO(dados))
+        # Aplica a orientação do EXIF, como o navegador faria com o original.
+        img = ImageOps.exif_transpose(img).convert('RGB')
+        img.thumbnail((FOTO_MAX_PX, FOTO_MAX_PX))
+        img.save(destino, 'JPEG', quality=85, optimize=True)
+    except ImportError:
+        with open(destino, 'wb') as f:
+            f.write(dados)
+    except Exception as e:
+        print(f"  ⚠️  A foto {drive_id} não pôde ser lida como imagem: {e}")
+        return False
+    return True
+
 def main():
     print("Baixando dados do Google Sheets...")
     content = fetch_with_retry(CSV_URL)
     
     reader = csv.DictReader(StringIO(content))
     talentos = []
+    os.makedirs(FOTOS_DIR, exist_ok=True)
+    fotos_em_uso = set()
     
     for row in reader:
         nome = row.get('Nome Completo', '').strip()
@@ -113,20 +151,26 @@ def main():
         experiencia = row.get('Possui experiência anterior em estágio, monitoria ou trabalho na área?', '').strip()
         curriculo = row.get('Link para seu Currículo Vitae (Ex: PDF no Google Drive, OneDrive ou similar - Certifique-se de que o link está configurado para acesso público/compartilhável)', '').strip()
         
-        # Foto do Google Drive (conversão para direct link)
-        foto_url = row.get('Foto para o card de apresentação', '').strip()
-        foto_direta = None
-        if foto_url:
-            drive_id = extract_drive_id(foto_url)
-            if drive_id:
-                # O endpoint lh3.googleusercontent.com/d/ preserva os metadados EXIF (orientação da foto) 
-                # e funciona diretamente agora que a pasta é pública.
-                foto_direta = f"https://lh3.googleusercontent.com/d/{drive_id}"
-                
         avatar_seed = slugify(nome)
         email = row.get('Endereço de e-mail', '')
         id_hash = hashlib.md5((email + nome).encode()).hexdigest()[:8]
-        
+
+        # Foto do Google Drive, baixada para o próprio site.
+        # Sem foto (ou se o download falhar), o card usa o avatar gerado.
+        foto_url = row.get('Foto para o card de apresentação', '').strip()
+        foto_local = None
+        if foto_url:
+            drive_id = extract_drive_id(foto_url)
+            if drive_id:
+                arquivo = f"{id_hash}.jpg"
+                destino = os.path.join(FOTOS_DIR, arquivo)
+                # Se o download falhar, mantém a foto baixada numa execução anterior.
+                if baixar_foto(drive_id, destino) or os.path.exists(destino):
+                    foto_local = f"{FOTOS_URL_BASE}/{arquivo}"
+                    fotos_em_uso.add(arquivo)
+                else:
+                    print(f"  ↳ {nome} ficará com o avatar gerado.")
+
         consentimento = row.get('Termo de Consentimento: Autorizo o IFCE Campus Maracanaú a utilizar e compartilhar as informações fornecidas neste formulário com empresas parceiras interessadas em contratar estagiários.', '')
         
         autorizado = 'Sim' in consentimento or consentimento.strip() == ''
@@ -142,7 +186,7 @@ def main():
             "github": github,
             "linkedin": linkedin,
             "avatar_seed": avatar_seed,
-            "foto": foto_direta,
+            "foto": foto_local,
             "turno": turno,
             "disponibilidade": disponibilidade,
             "idiomas": idiomas,
@@ -151,6 +195,11 @@ def main():
             "autorizado": autorizado
         })
             
+    # Remove fotos de quem saiu da planilha ou trocou de foto.
+    for arquivo in os.listdir(FOTOS_DIR):
+        if arquivo.endswith('.jpg') and arquivo not in fotos_em_uso:
+            os.remove(os.path.join(FOTOS_DIR, arquivo))
+
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
@@ -158,6 +207,7 @@ def main():
         
     print(f"✅ Arquivo gerado com sucesso em: {OUTPUT_FILE}")
     print(f"Total de talentos processados: {len(talentos)}")
+    print(f"Fotos baixadas: {len(fotos_em_uso)} de {len(talentos)}")
 
 if __name__ == '__main__':
     main()
