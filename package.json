@@ -39,6 +39,8 @@
     "@angular/platform-browser-dynamic": "^21.2.20",
     "@angular/router": "^21.2.20",
     "@angular/service-worker": "^21.2.20",
+    "@dicebear/core": "^9.4.3",
+    "@dicebear/pixel-art": "^9.4.2",
     "@mgreminger/quill-image-resize-module": "^1.2.1",
     "@ngrx/effects": "^21.1.1",
     "@ngrx/router-store": "^21.1.1",
