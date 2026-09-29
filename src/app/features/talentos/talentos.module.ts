@@ -13,6 +13,8 @@ import {
   NgZone,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { createAvatar } from '@dicebear/core';
+import * as pixelArt from '@dicebear/pixel-art';
 import { environment } from '../../../environments/environment';
 
 interface Talento {
@@ -189,8 +191,22 @@ function getSkillEmoji(skill: string): string {
   return '🎯';
 }
 
+// Os avatares eram carregados de api.dicebear.com, que fica fora do ar às vezes
+// (504) e deixava os cards sem imagem. Agora o mesmo estilo pixel-art é gerado
+// no próprio navegador, com o mesmo seed, então os desenhos não mudam.
+const avatarCache = new Map<string, string>();
+
 function diceBearUrl(seed: string): string {
-  return `https://api.dicebear.com/9.x/pixel-art/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&radius=12`;
+  let uri = avatarCache.get(seed);
+  if (!uri) {
+    uri = createAvatar(pixelArt, {
+      seed,
+      backgroundColor: ['b6e3f4', 'c0aede', 'd1d4f9', 'ffd5dc', 'ffdfbf'],
+      radius: 12,
+    }).toDataUri();
+    avatarCache.set(seed, uri);
+  }
+  return uri;
 }
 
 @Component({
@@ -1369,8 +1385,12 @@ export class TalentosComponent implements OnInit, OnDestroy {
   }
 
   handleImageError(event: any, t: Talento): void {
-    // Se a imagem do Google Drive falhar (ex: erro 403), usa o fallback do DiceBear
-    event.target.src = this.diceBearUrl(t.avatar_seed);
+    // Se a foto (ex.: Google Drive com erro 403) falhar, usa o avatar gerado.
+    // Só troca uma vez, para não entrar em laço caso o fallback também falhe.
+    const fallback = this.diceBearUrl(t.avatar_seed);
+    if (event.target.src !== fallback) {
+      event.target.src = fallback;
+    }
   }
 
   getContactUrl(t: Talento): string {
