@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Instalar Pillow (redimensiona as fotos)
+        run: python3 -m pip install Pillow
+
       - name: Executar script de sincronização
         run: python3 bin/sync_talentos.py
 
@@ -28,7 +31,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/assets/data/talentos.json
+          git add -A src/assets/data/talentos.json src/assets/img/talentos
           # O comando falha se não houver nada para commitar, então usamos o '|| true' para continuar
           git commit -m "chore: atualiza dados do hub de talentos via automação" || true
           git push
