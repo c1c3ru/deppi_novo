@@ -85,6 +85,8 @@ export interface RevistaEdicao {
   title: string;
   description?: string;
   coverImage?: string;
+  /** Link do edital da edição: PDF enviado (/uploads/...) ou endereço http(s). */
+  editalUrl?: string | null;
   status: 'draft' | 'published';
   publishedAt?: string;
   artigos?: RevistaArtigo[];

@@ -65,11 +65,13 @@ Nenhuma falha. Validação feita:
 
 Pendências que não são erro:
 
-- O banco não tem campo próprio para o PDF. O link fica no conteúdo do
-  trabalho (o upload do formulário cuida disso). Nada foi alterado no banco
+- O banco não tem campo próprio para o PDF do trabalho. O link fica no
+  conteúdo do trabalho (o upload do formulário cuida disso)
 - A API e as tabelas continuam com o nome antigo (`/api/revista`,
   `revista_edicoes`, `revista_artigos`)
-- Links de "Documentos da edição" (edital, programação) ainda dependem da TI
+- O edital de cada edição já tem campo no banco (`revista_edicoes.edital_url`,
+  migration 013) e aparece em "Documentos da edição". Falta a TI cadastrar o
+  link ou o PDF de cada edital em "Editar edição"
 - ISSN segue como "A solicitar" até sair o número oficial
 - A regra de redirecionamento do nginx não foi testada localmente (não há
   nginx no ambiente de desenvolvimento)

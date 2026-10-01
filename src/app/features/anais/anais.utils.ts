@@ -90,3 +90,10 @@ export function sugestaoDeCitacao(
   const prefixo = autores ? `${autores}. ` : '';
   return `${prefixo}${artigo.title}. In: ${ANAIS_TITULO}${volume}. Maracanaú: IFCE${ano}.`;
 }
+
+/**
+ * Link aceito para o edital da edição, com o mesmo critério do backend: PDF
+ * enviado pelo próprio site (/uploads/...) ou endereço http(s).
+ */
+export const EDITAL_URL_PATTERN =
+  /^(https?:\/\/\S+|\/uploads\/(?!.*\.\.)\S+)$/i;

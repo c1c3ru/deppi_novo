@@ -162,6 +162,26 @@ import { filtrarTrabalhos } from '../../anais.utils';
             </button>
           </nav>
         </section>
+
+        <section class="anais-card" data-testid="documentos-edicao">
+          <h2>Documentos da edição</h2>
+          <p *ngIf="edicao.editalUrl">
+            <a
+              class="anais-button secondary"
+              [href]="edicao.editalUrl"
+              target="_blank"
+              rel="noopener"
+              data-testid="edital-edicao"
+              >Edital da edição</a
+            >
+          </p>
+          <p class="anais-muted" *ngIf="!edicao.editalUrl">
+            O edital desta edição ainda não foi disponibilizado.
+            <ng-container *ngIf="isLoggedIn">
+              Para incluir, use "Editar edição".
+            </ng-container>
+          </p>
+        </section>
       </section>
 
       <aside>
