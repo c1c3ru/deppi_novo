@@ -209,11 +209,31 @@ import {
       .artigo-content {
         line-height: 1.8;
         color: var(--color-text);
+        overflow-wrap: anywhere;
       }
 
-      ::ng-deep .artigo-content img {
+      ::ng-deep .artigo-content img,
+      ::ng-deep .artigo-content iframe,
+      ::ng-deep .artigo-content video {
         max-width: 100%;
+        height: auto;
         border-radius: var(--border-radius-md);
+      }
+
+      ::ng-deep .artigo-content iframe {
+        aspect-ratio: 16 / 9;
+        width: 100%;
+      }
+
+      ::ng-deep .artigo-content pre {
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      ::ng-deep .artigo-content table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
       }
 
       .citacao {

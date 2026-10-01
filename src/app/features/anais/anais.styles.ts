@@ -12,6 +12,8 @@ export const ANAIS_BASE_STYLES = `
     padding: 1.5rem;
     margin-bottom: 1.4rem;
     box-shadow: var(--shadow-sm);
+    min-width: 0;
+    overflow-wrap: break-word;
   }
 
   .anais-card h2 {
