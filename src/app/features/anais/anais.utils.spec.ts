@@ -1,4 +1,5 @@
 import {
+  EDITAL_URL_PATTERN,
   extrairLinkPdf,
   filtrarTrabalhos,
   sugestaoDeCitacao,
@@ -69,5 +70,15 @@ describe('anais.utils', () => {
     expect(sugestaoDeCitacao(artigo, edicao)).toBe(
       'SOUZA, Ana; LIMA, Bruno. Horta no campus. In: Anais da Mostra Científica do IFCE Campus Maracanaú, v. 2. Maracanaú: IFCE, 2026.'
     );
+  });
+
+  it('aceita como edital só PDF do site ou link http(s)', () => {
+    expect(EDITAL_URL_PATTERN.test('/uploads/edital-2026.pdf')).toBeTrue();
+    expect(
+      EDITAL_URL_PATTERN.test('https://ifce.edu.br/edital.pdf')
+    ).toBeTrue();
+    expect(EDITAL_URL_PATTERN.test('javascript:alert(1)')).toBeFalse();
+    expect(EDITAL_URL_PATTERN.test('/uploads/../.env')).toBeFalse();
+    expect(EDITAL_URL_PATTERN.test('edital.pdf')).toBeFalse();
   });
 });

@@ -60,6 +60,14 @@ import { ANAIS_BASE_STYLES } from '../../anais.styles';
             [routerLink]="['/anais/edicoes', e.id]"
             >Acessar volume</a
           >
+          <a
+            *ngIf="e.editalUrl"
+            class="anais-button secondary"
+            [href]="e.editalUrl"
+            target="_blank"
+            rel="noopener"
+            >Edital da edição</a
+          >
           <ng-container *ngIf="isLoggedIn">
             <a
               class="anais-button secondary"
