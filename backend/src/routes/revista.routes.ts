@@ -16,12 +16,40 @@ function formatEdicao(e: any) {
     title: e.title,
     description: e.description,
     coverImage: e.cover_image,
+    editalUrl: e.edital_url ?? null,
     status: e.status,
     publishedAt: e.published_at,
     createdAt: e.created_at,
     updatedAt: e.updated_at,
   };
 }
+
+// O edital pode ser um PDF enviado pelo próprio site (/uploads/...) ou um
+// link externo http(s). Qualquer outra coisa (javascript:, data: etc.) é
+// recusada para não virar link perigoso na página pública.
+export function normalizarEditalUrl(
+  valor: unknown
+): { ok: true; url: string | null } | { ok: false } {
+  if (valor === undefined || valor === null) return { ok: true, url: null };
+  if (typeof valor !== 'string') return { ok: false };
+  const url = valor.trim();
+  if (url === '') return { ok: true, url: null };
+  if (url.length > 1000) return { ok: false };
+  if (url.startsWith('/uploads/')) {
+    return url.includes('..') ? { ok: false } : { ok: true, url };
+  }
+  try {
+    const { protocol } = new URL(url);
+    return protocol === 'http:' || protocol === 'https:'
+      ? { ok: true, url }
+      : { ok: false };
+  } catch {
+    return { ok: false };
+  }
+}
+
+const EDITAL_INVALIDO =
+  'Link do edital inválido: use um endereço http(s) ou envie o PDF pelo formulário';
 
 function formatArtigo(a: any) {
   return {
@@ -119,7 +147,8 @@ router.get(
 
 router.post('/edicoes', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { volume, ano, title, description, coverImage, status } = req.body;
+    const { volume, ano, title, description, coverImage, editalUrl, status } =
+      req.body;
 
     if (!volume || !ano) {
       return res.status(400).json({ error: 'Volume e ano são obrigatórios' });
@@ -129,6 +158,9 @@ router.post('/edicoes', authMiddleware, async (req: Request, res: Response) => {
         .status(400)
         .json({ error: 'Título obrigatório (mín. 3 caracteres)' });
     }
+
+    const edital = normalizarEditalUrl(editalUrl);
+    if (!edital.ok) return res.status(400).json({ error: EDITAL_INVALIDO });
 
     const validStatuses = ['draft', 'published'];
     const safeStatus = validStatuses.includes(status) ? status : 'draft';
@@ -140,6 +172,7 @@ router.post('/edicoes', authMiddleware, async (req: Request, res: Response) => {
         title: title.trim().substring(0, 500),
         description: description?.trim(),
         cover_image: coverImage,
+        edital_url: edital.url,
         status: safeStatus,
         published_at: safeStatus === 'published' ? new Date() : null,
         created_by: req.user?.id,
@@ -169,7 +202,11 @@ router.put(
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
 
-      const { volume, ano, title, description, coverImage, status } = req.body;
+      const { volume, ano, title, description, coverImage, editalUrl, status } =
+        req.body;
+
+      const edital = normalizarEditalUrl(editalUrl);
+      if (!edital.ok) return res.status(400).json({ error: EDITAL_INVALIDO });
 
       const current = await db('revista_edicoes').where({ id }).first();
       if (!current) {
@@ -188,6 +225,7 @@ router.put(
       if (description !== undefined)
         updateData.description = description?.trim();
       if (coverImage !== undefined) updateData.cover_image = coverImage;
+      if (editalUrl !== undefined) updateData.edital_url = edital.url;
       if (safeStatus !== undefined) {
         updateData.status = safeStatus;
         if (safeStatus === 'published' && !current.published_at) {

@@ -55,6 +55,12 @@ describe('HtmlSanitizerService', () => {
     expect(result).toContain('<blockquote>citação</blockquote>');
   });
 
+  it('troca o &nbsp; do Quill por espaço comum para o texto quebrar linha', () => {
+    expect(service.clean('<p>Contrary&nbsp;to&nbsp;popular belief</p>')).toBe(
+      '<p>Contrary to popular belief</p>'
+    );
+  });
+
   it('devolve null quando não há conteúdo', () => {
     expect(service.sanitizeRichText('')).toBeNull();
     expect(service.sanitizeRichText(null)).toBeNull();

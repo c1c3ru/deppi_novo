@@ -92,12 +92,15 @@ export class HtmlSanitizerService {
   // Limpa o HTML devolvendo string — útil para prévias e testes.
   clean(html: string): string {
     this.installIframeHook();
-    return DOMPurify.sanitize(html, {
+    const limpo = DOMPurify.sanitize(html, {
       ALLOWED_TAGS,
       ALLOWED_ATTR,
       // Quill embute imagens coladas como data URI base64.
       ADD_DATA_URI_TAGS: ['img'],
     });
+    // O Quill 2 grava todo espaço como &nbsp;, e aí o navegador não tem onde
+    // quebrar a linha: o parágrafo inteiro vira uma linha só e vaza da tela.
+    return limpo.replace(/&nbsp;| /g, ' ');
   }
 
   // O vídeo do Quill é um <iframe>; só plataformas conhecidas podem ser
