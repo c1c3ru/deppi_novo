@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError, timer } from 'rxjs';
@@ -24,6 +24,7 @@ export class AuthService {
   private readonly storageService = inject(StorageService);
   private readonly notificationService = inject(NotificationService);
   private readonly analyticsService = inject(AnalyticsService);
+  private readonly ngZone = inject(NgZone);
 
   private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   private readonly isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
@@ -40,10 +41,22 @@ export class AuthService {
   private readonly tokenKey = 'auth_token';
   private readonly userKey = 'current_user';
   private readonly refreshKey = 'refresh_token';
+  private readonly lastActivityKey = 'last_activity';
+
+  /** Encerra a sessão após este tempo sem interação do usuário */
+  private readonly idleTimeoutMs = 30 * 60 * 1000;
+  /** Renova o token este tempo antes de ele expirar */
+  private readonly refreshMarginMs = 10 * 60 * 1000;
+  /** Usado quando não dá para ler a expiração do token */
+  private readonly fallbackRefreshMs = 50 * 60 * 1000;
+
+  private idleCheckTimer: number | null = null;
+  private lastActivityWrite = 0;
 
   constructor() {
     this.initializeAuthFromStorage();
     this.setupTokenRefresh();
+    this.setupIdleLogout();
   }
 
   /**
@@ -287,6 +300,12 @@ export class AuthService {
     const userStr = this.storageService.getItem(this.userKey);
 
     if (token && userStr) {
+      // Sessão parada há mais tempo que o limite (ex.: navegador fechado)
+      if (this.getIdleTime() >= this.idleTimeoutMs) {
+        this.clearAuthData();
+        return;
+      }
+
       try {
         const user = JSON.parse(userStr);
         this.currentUserSubject.next(user);
@@ -311,24 +330,127 @@ export class AuthService {
   }
 
   /**
-   * Agenda refresh do token
+   * Agenda o refresh do token para pouco antes de ele expirar.
+   * Após cada renovação, agenda a próxima.
    */
   private scheduleTokenRefresh(): void {
     this.cancelTokenRefresh();
 
-    // Agenda refresh 5 minutos antes da expiração
-    const refreshTime = 4 * 60 * 1000; // 4 minutos
+    const expiresAt = this.getTokenExpiration(this.token);
+    const delay =
+      expiresAt !== null
+        ? Math.max(expiresAt - Date.now() - this.refreshMarginMs, 0)
+        : this.fallbackRefreshMs;
 
     const timerId = window.setTimeout(() => {
       this.refreshToken().subscribe({
-        error: () => {
-          this.clearAuthData();
-          this.router.navigate(['/login']);
-        },
+        next: () => this.scheduleTokenRefresh(),
+        error: () => this.router.navigate(['/boletins/login']),
       });
-    }, refreshTime);
+    }, delay);
 
     this.tokenRefreshTimer$.next(timerId);
+  }
+
+  /**
+   * Lê o campo `exp` do JWT (em ms). Retorna null se não conseguir.
+   */
+  private getTokenExpiration(token: string | null): number | null {
+    if (!token) return null;
+    try {
+      const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const { exp } = JSON.parse(atob(payload));
+      return typeof exp === 'number' ? exp * 1000 : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Configura o logout automático por inatividade
+   */
+  private setupIdleLogout(): void {
+    this.ngZone.runOutsideAngular(() => {
+      const onActivity = () => this.registerActivity();
+      ['click', 'keydown', 'mousemove', 'scroll', 'touchstart'].forEach(
+        (event) => window.addEventListener(event, onActivity, { passive: true })
+      );
+
+      // Ao voltar para a aba (ex.: depois de suspender o computador),
+      // confere a inatividade e renova o token se ele estiver perto de expirar
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') return;
+        this.ngZone.run(() => {
+          if (this.isAuthenticated && !this.checkIdle()) {
+            this.scheduleTokenRefresh();
+          }
+        });
+      });
+    });
+
+    this.isAuthenticated$.subscribe((isAuth) => {
+      if (isAuth) {
+        this.startIdleCheck();
+      } else {
+        this.stopIdleCheck();
+      }
+    });
+  }
+
+  /**
+   * Registra interação do usuário. Fica no localStorage para que
+   * atividade em qualquer aba mantenha a sessão aberta nas demais.
+   */
+  private registerActivity(force = false): void {
+    if (!this.isAuthenticated) return;
+    const now = Date.now();
+    if (!force && now - this.lastActivityWrite < 15 * 1000) return;
+    this.lastActivityWrite = now;
+    this.storageService.setItem(this.lastActivityKey, String(now));
+  }
+
+  private getIdleTime(): number {
+    const last = Number(this.storageService.getItem(this.lastActivityKey));
+    return last ? Date.now() - last : 0;
+  }
+
+  private startIdleCheck(): void {
+    this.stopIdleCheck();
+    if (!this.storageService.getItem(this.lastActivityKey)) {
+      this.registerActivity(true);
+    }
+    this.idleCheckTimer = this.ngZone.runOutsideAngular(() =>
+      window.setInterval(
+        () => this.ngZone.run(() => this.checkIdle()),
+        60 * 1000
+      )
+    );
+  }
+
+  private stopIdleCheck(): void {
+    if (this.idleCheckTimer !== null) {
+      clearInterval(this.idleCheckTimer);
+      this.idleCheckTimer = null;
+    }
+  }
+
+  /**
+   * Faz logout se o usuário passou do limite sem interagir.
+   * Retorna true quando a sessão foi encerrada.
+   */
+  private checkIdle(): boolean {
+    if (!this.isAuthenticated || this.getIdleTime() < this.idleTimeoutMs) {
+      return false;
+    }
+    this.notificationService.showInfo(
+      'Sua sessão foi encerrada após 30 minutos sem atividade.'
+    );
+    // O logout só limpa os dados quando o servidor responde; para a checagem
+    // aqui para não disparar um segundo logout enquanto isso
+    this.stopIdleCheck();
+    this.cancelTokenRefresh();
+    this.logout('/boletins/login');
+    return true;
   }
 
   /**
@@ -349,6 +471,7 @@ export class AuthService {
     this.updateTokens(response);
     this.currentUserSubject.next(response.user);
     this.isAuthenticatedSubject.next(true);
+    this.registerActivity(true);
     this.notificationService.showSuccess('Login realizado com sucesso!');
   }
 
@@ -358,7 +481,11 @@ export class AuthService {
   private updateTokens(response: LoginResponse): void {
     this.storageService.setItem(this.tokenKey, response.accessToken);
     this.storageService.setItem(this.refreshKey, response.refreshToken);
-    this.storageService.setItem(this.userKey, JSON.stringify(response.user));
+    // A resposta do /auth/refresh não traz o usuário; sem este cuidado
+    // o texto "undefined" era gravado e a sessão caía ao recarregar a página
+    if (response.user) {
+      this.storageService.setItem(this.userKey, JSON.stringify(response.user));
+    }
   }
 
   /**
@@ -368,6 +495,7 @@ export class AuthService {
     this.storageService.removeItem(this.tokenKey);
     this.storageService.removeItem(this.refreshKey);
     this.storageService.removeItem(this.userKey);
+    this.storageService.removeItem(this.lastActivityKey);
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
     this.cancelTokenRefresh();
