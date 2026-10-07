@@ -11,6 +11,7 @@ import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
+import { REQUISICAO_SILENCIOSA } from './silent-request';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -22,6 +23,11 @@ export class ErrorInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
+    // Requisições em lote tratam o próprio erro (sem toast nem redirecionamento)
+    if (request.context.get(REQUISICAO_SILENCIOSA)) {
+      return next.handle(request);
+    }
+
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         let errorMessage = 'Ocorreu um erro inesperado.';
@@ -53,7 +59,8 @@ export class ErrorInterceptor implements HttpInterceptor {
         // para 404 em GET (listagens vazias/recurso ainda não publicado são
         // tratadas como estado vazio pela própria tela, não como erro)
         const isAuthEndpoint = request.url.includes('/auth/');
-        const isEmptyGetResult = error.status === 404 && request.method === 'GET';
+        const isEmptyGetResult =
+          error.status === 404 && request.method === 'GET';
         if (!isAuthEndpoint && !isEmptyGetResult) {
           this.notificationService.showError(errorMessage);
         }
