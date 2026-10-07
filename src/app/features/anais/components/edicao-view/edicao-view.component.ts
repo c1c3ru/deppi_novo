@@ -78,6 +78,12 @@ import { filtrarTrabalhos } from '../../anais.utils';
             >
             <a
               class="anais-button secondary"
+              [routerLink]="['/anais/admin/edicoes', edicao.id, 'importar']"
+              data-testid="importar-lote"
+              >Importar resumos em lote</a
+            >
+            <a
+              class="anais-button secondary"
               [routerLink]="['/anais/admin/edicoes', edicao.id, 'editar']"
               >Editar edição</a
             >

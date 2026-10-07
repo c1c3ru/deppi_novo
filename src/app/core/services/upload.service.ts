@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { contextoSilencioso } from '../interceptors/silent-request';
 
 export interface Attachment {
   id: number;
@@ -31,6 +32,18 @@ export class UploadService {
       formData.append('relatedId', relatedId.toString());
     }
     return this.http.post<Attachment>(`${this.apiUrl}/file`, formData);
+  }
+
+  /**
+   * Upload de um arquivo sem toast nem carregamento de tela cheia, para
+   * envios em lote que tratam o erro de cada item na própria tela.
+   */
+  uploadFileSilencioso(file: File): Observable<Attachment> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<Attachment>(`${this.apiUrl}/file`, formData, {
+      context: contextoSilencioso(),
+    });
   }
 
   /**

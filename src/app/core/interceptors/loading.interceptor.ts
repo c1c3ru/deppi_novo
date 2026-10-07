@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { LoadingService } from '../services/loading.service';
+import { REQUISICAO_SILENCIOSA } from './silent-request';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
@@ -19,7 +20,9 @@ export class LoadingInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     // Ignorar carregamento para algumas URLs se necessário
     const silentUrls = ['/health', '/assets/'];
-    const isSilent = silentUrls.some((url) => request.url.includes(url));
+    const isSilent =
+      request.context.get(REQUISICAO_SILENCIOSA) ||
+      silentUrls.some((url) => request.url.includes(url));
 
     if (!isSilent) {
       this.loadingService.setLoading(true);
