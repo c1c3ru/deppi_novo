@@ -16,6 +16,7 @@ import { AnaisCorpoEditorialComponent } from './components/corpo-editorial/corpo
 import { AnaisExpedienteComponent } from './components/expediente/expediente.component';
 import { AnaisEdicaoFormComponent } from './components/edicao-form/edicao-form.component';
 import { AnaisArtigoFormComponent } from './components/artigo-form/artigo-form.component';
+import { AnaisImportacaoLoteComponent } from './components/importacao-lote/importacao-lote.component';
 
 // Services
 import { AnaisService } from './services/anais.service';
@@ -55,6 +56,16 @@ export const ANAIS_ROUTES: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        path: 'admin/importar',
+        component: AnaisImportacaoLoteComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'admin/edicoes/:edicaoId/importar',
+        component: AnaisImportacaoLoteComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'admin/artigos/:id/editar',
         component: AnaisArtigoFormComponent,
         canActivate: [AuthGuard],
@@ -76,6 +87,7 @@ export const ANAIS_ROUTES: Routes = [
     AnaisExpedienteComponent,
     AnaisEdicaoFormComponent,
     AnaisArtigoFormComponent,
+    AnaisImportacaoLoteComponent,
   ],
   imports: [
     CommonModule,

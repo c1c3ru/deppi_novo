@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { contextoSilencioso } from '../../../core/interceptors/silent-request';
 import {
   ApiResponse,
   RevistaEdicao,
@@ -63,5 +64,25 @@ export class AnaisService {
 
   deleteArtigo(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/artigos/${id}`);
+  }
+
+  // Versões usadas pela importação em lote: o erro de cada item é tratado na
+  // própria tela, sem toast nem carregamento de tela cheia por requisição.
+
+  getEdicaoSilenciosa(id: number): Observable<RevistaEdicao> {
+    return this.http.get<RevistaEdicao>(`${this.apiUrl}/edicoes/${id}`, {
+      context: contextoSilencioso(),
+    });
+  }
+
+  createArtigoSilencioso(
+    edicaoId: number,
+    data: Partial<RevistaArtigo>
+  ): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>(
+      `${this.apiUrl}/edicoes/${edicaoId}/artigos`,
+      data,
+      { context: contextoSilencioso() }
+    );
   }
 }
