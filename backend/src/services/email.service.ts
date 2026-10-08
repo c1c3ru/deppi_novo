@@ -1,9 +1,9 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { config } from '../config/environment';
 import { logger } from '../utils/logger';
 
 class EmailService {
-  private transporter: nodemailer.Transporter;
+  private transporter: Transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
