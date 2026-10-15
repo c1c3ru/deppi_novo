@@ -23,6 +23,7 @@ export const ANAIS_INFO = {
   ],
   comissao: [
     'Adriana Gonçalves de Sales Costa',
+    'Fábio Timbó Brito',
     'Francisco de Assis Francelino Alves',
     'Francisco Jucivanio Felix de Sousa',
     'Heloisa Beatriz Cordeiro Moreira',
@@ -31,7 +32,6 @@ export const ANAIS_INFO = {
     'Keyla de Souza Lima Cruz',
     'Luiz Carlos Silveira de Sousa',
     'Maria do Socorro Ribeiro Hortegal Filha',
-    'Stenisia Denis Holanda Lavor Gurgel',
   ],
 } as const;
 
