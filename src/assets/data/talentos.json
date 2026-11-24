@@ -24,8 +24,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "autorizado": true,
-    "tem_curriculo": true
+    "tem_curriculo": true,
+    "autorizado": true
   },
   {
     "id": "9ab0a068",
@@ -52,8 +52,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "autorizado": true,
-    "tem_curriculo": true
+    "tem_curriculo": true,
+    "autorizado": true
   },
   {
     "id": "076ba476",
@@ -80,8 +80,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, formal (registrada)",
-    "autorizado": true,
-    "tem_curriculo": true
+    "tem_curriculo": true,
+    "autorizado": true
   },
   {
     "id": "c76fe37d",
@@ -108,8 +108,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "autorizado": true,
-    "tem_curriculo": true
+    "tem_curriculo": true,
+    "autorizado": true
   },
   {
     "id": "dff11eac",
@@ -134,7 +134,34 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "autorizado": true,
-    "tem_curriculo": true
+    "tem_curriculo": true,
+    "autorizado": true
+  },
+  {
+    "id": "3988780c",
+    "nome": "Everton Vinicius da Silva Soares",
+    "curso": "Técnico Integrado em Informática",
+    "semestre": "4° Semestre",
+    "superpoder": "Programação e Desenvolvimento (Front-...",
+    "bio": "Lógica de programação; desenvolvimento em C, Java e JavaScript; HTML e CSS; banco de dados PostgreSQL; versionamento com Git e GitHub; manutenção d...",
+    "skills": [
+      "Programação e Desenvolvimento (Front-end/Back-end/Mobile)",
+      "Redes de Computadores e Segurança",
+      "Logística e Gestão"
+    ],
+    "github": null,
+    "linkedin": null,
+    "avatar_seed": "everton-vinicius-da-silva-soares",
+    "foto": "assets/img/talentos/3988780c.jpg",
+    "turno": "Diurno (Manhã e/ou Tarde)",
+    "disponibilidade": "Integral (20h ou 30h semanais)",
+    "idiomas": [
+      "Inglês: Fluente",
+      "Espanhol: Básico",
+      "Outro: Básico"
+    ],
+    "experiencia": "Sim, formal (registrada)",
+    "tem_curriculo": true,
+    "autorizado": true
   }
 ]
