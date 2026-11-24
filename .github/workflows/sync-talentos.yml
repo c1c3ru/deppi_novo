@@ -25,6 +25,10 @@ jobs:
         run: python3 -m pip install Pillow
 
       - name: Executar script de sincronização
+        env:
+          # Opcional: URL do CSV publicado (de preferência só a aba "vitrine").
+          # Sem o secret, o script usa a URL que está no código.
+          TALENTOS_CSV_URL: ${{ secrets.TALENTOS_CSV_URL }}
         run: python3 bin/sync_talentos.py
 
       - name: Commit e Push das alterações
