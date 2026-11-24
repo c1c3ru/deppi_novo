@@ -7,7 +7,9 @@ import time
 from io import BytesIO, StringIO
 import hashlib
 
-CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuC5jSqZ72h5nfHUoqUN6QhIyN9DVXJdz5GVlmJs1_WAC1seOEouEnIr4LHmZurM7dfhTGyWdlkGUD/pub?output=csv"
+# A URL pode vir do secret TALENTOS_CSV_URL (recomendado: publicar só uma aba
+# "vitrine", sem e-mail, telefone ou link do currículo).
+CSV_URL = os.environ.get('TALENTOS_CSV_URL') or "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuC5jSqZ72h5nfHUoqUN6QhIyN9DVXJdz5GVlmJs1_WAC1seOEouEnIr4LHmZurM7dfhTGyWdlkGUD/pub?output=csv"
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), '..', 'src', 'assets', 'data', 'talentos.json')
 # As fotos são baixadas aqui e servidas pelo próprio site. Carregar direto do
 # Google Drive no navegador falha com frequência (403/429), e aí o card caía
@@ -191,7 +193,10 @@ def main():
             "disponibilidade": disponibilidade,
             "idiomas": idiomas,
             "experiencia": experiencia,
-            "curriculo": curriculo,
+            # O link do currículo NÃO vai para o JSON público (o arquivo é
+            # servido pelo site e versionado num repositório público). O
+            # recrutador pede o CV pelo formulário de contato e o DEPPI envia.
+            "tem_curriculo": bool(curriculo),
             "autorizado": autorizado
         })
             
