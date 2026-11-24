@@ -33,7 +33,7 @@ interface Talento {
   disponibilidade?: string;
   idiomas?: string[];
   experiencia?: string;
-  curriculo?: string;
+  tem_curriculo?: boolean;
   autorizado?: boolean;
 }
 
@@ -424,12 +424,15 @@ function diceBearUrl(seed: string): string {
             </div>
 
             <div class="card-links">
+              <!-- O CV não é público: o recrutador pede pelo formulário de
+                   contato e o DEPPI envia a quem tiver interesse. -->
               <a
-                *ngIf="t.curriculo"
-                [href]="t.curriculo"
+                *ngIf="t.tem_curriculo"
+                [href]="getContactUrl(t)"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="link-btn cv-btn"
+                title="O currículo é enviado pelo DEPPI a recrutadores interessados"
                 (click)="$event.stopPropagation()"
               >
                 <svg
@@ -442,7 +445,7 @@ function diceBearUrl(seed: string): string {
                     d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"
                   />
                 </svg>
-                CV
+                Solicitar CV
               </a>
               <a
                 *ngIf="t.github"

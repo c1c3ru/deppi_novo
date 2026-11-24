@@ -24,8 +24,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "curriculo": "https://roaring-melba-589f50.netlify.app/",
-    "autorizado": true
+    "autorizado": true,
+    "tem_curriculo": true
   },
   {
     "id": "9ab0a068",
@@ -52,8 +52,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "curriculo": "https://drive.google.com/file/d/1TUudhQSOs2An1XOjbDB1jelUBLa_WcAE/view?usp=drivesdk",
-    "autorizado": true
+    "autorizado": true,
+    "tem_curriculo": true
   },
   {
     "id": "076ba476",
@@ -80,8 +80,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, formal (registrada)",
-    "curriculo": "https://drive.google.com/file/d/12SVJRJJBbW9DxIr9dGeBXttoy6ffBzAf/view?usp=sharing",
-    "autorizado": true
+    "autorizado": true,
+    "tem_curriculo": true
   },
   {
     "id": "c76fe37d",
@@ -108,8 +108,8 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "curriculo": "https://drive.google.com/file/d/1ja1EKxofMbAXwdnua9V8XDpPyPrcXoc0/view?usp=drivesdk",
-    "autorizado": true
+    "autorizado": true,
+    "tem_curriculo": true
   },
   {
     "id": "dff11eac",
@@ -134,7 +134,7 @@
       "Outro: Básico"
     ],
     "experiencia": "Sim, informal (projetos, voluntariado)",
-    "curriculo": "https://drive.google.com/file/d/1XtbRcelsU1KgFZgEpMZWRhh6vk1a0OyT/view?usp=sharing",
-    "autorizado": true
+    "autorizado": true,
+    "tem_curriculo": true
   }
 ]
